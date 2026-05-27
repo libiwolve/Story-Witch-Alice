@@ -43,13 +43,14 @@ public class AlchemyManager : MonoBehaviour
     //当一个新的元素被合成出来的时候，调用此方法，解锁以它为原料的配方
     public void OnElementCrafted(ElementData newElement)
     {
-        if (unlockedRecipeDictionary.ContainsKey(newElement.elementID)) return; // 已经解锁过这个元素了，直接返回
+        if (unlockedElementIDs.Contains(newElement.elementID)) return; // 已经解锁过这个元素了，直接返回
         unlockedElementIDs.Add(newElement.elementID);
         TryUnlockRecipent(newElement.elementID);
     }
-    //用一个元素的elementID，尝试解锁以它为原料的配方，如果这个元素没有被任何配方使用过，
-    // 就直接返回，如果有，就检查这些配方的其他原料是否都已经解锁了，如果都解锁了，
-    // 就把这个配方加入到unlockedRecipeDictionary中
+    /*
+        用一个元素的elementID，尝试解锁以它为原料的配方，如果这个元素没有被任何配方使用过就直接返回，如果有，就检查这些配方的其他原料是否都已经解锁了，如果都解锁了，
+        就把这个配方加入到unlockedRecipeDictionary中
+    */
     void TryUnlockRecipent(string elementID)
     {
         if(!ingredientToRecipesDictionary.ContainsKey(elementID)) return; // 没有任何配方包含这个元素，直接返回
