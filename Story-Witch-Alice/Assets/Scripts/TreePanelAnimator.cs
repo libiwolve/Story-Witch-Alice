@@ -21,7 +21,7 @@ public class TreePanelAnimator : MonoBehaviour, IPointerEnterHandler, IPointerEx
         // 靠近时向左偏移 peekAmount
         peekPos = hiddenPos + Vector2.left * peekAmount;
         // 完全展开：让面板左边缘贴到屏幕左边缘
-        shownPos = new Vector2(-135, hiddenPos.y);
+        shownPos = new Vector2(-635, hiddenPos.y);
     }
 
     public void OnPointerEnter(PointerEventData eventData)

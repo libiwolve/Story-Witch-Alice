@@ -1,0 +1,35 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 1e6b2da83f8212949baea08f1b817bc6, type: 3}
+  m_Name: alice_geologist
+  m_EditorClassIdentifier: 
+  elementName: "\u5CA9\u77F3\u5B66\u5BB6\u7231\u4E3D\u4E1D"
+  elementID: alice_geologist
+  description: "\u5979\u503E\u542C\u5927\u5730\u7684\u8109\u640F\uFF0C\u89E3\u8BFB\u77F3\u5934\u91CC\u7684\u53F2\u8BD7\u3002"
+  tags:
+  - alice
+  - science
+  - earth
+  - explorer
+  Properties:
+  - key: order
+    value: 3
+  - key: creativity
+    value: 1
+  - key: empathy
+    value: 0
+  - key: desire
+    value: 2
+  - key: mystery
+    value: 1
+  - key: vitality
+    value: 1

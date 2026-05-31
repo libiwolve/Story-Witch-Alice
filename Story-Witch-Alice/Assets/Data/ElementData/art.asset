@@ -1,0 +1,35 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 1e6b2da83f8212949baea08f1b817bc6, type: 3}
+  m_Name: art
+  m_EditorClassIdentifier: 
+  elementName: "\u827A\u672F"
+  elementID: art
+  description: "\u7075\u9B42\u7684\u8BED\u8A00\uFF0C\u7528\u7F8E\u5BF9\u6297\u865A\u65E0\u7684\u6C38\u6052\u5C1D\u8BD5\u3002"
+  tags:
+  - culture
+  - beauty
+  - expression
+  - emotion
+  Properties:
+  - key: order
+    value: -2
+  - key: creativity
+    value: 5
+  - key: empathy
+    value: 4
+  - key: desire
+    value: 1
+  - key: mystery
+    value: 3
+  - key: vitality
+    value: 1

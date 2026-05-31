@@ -1,0 +1,39 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 1e6b2da83f8212949baea08f1b817bc6, type: 3}
+  m_Name: wind
+  m_EditorClassIdentifier: 
+  elementName: "\u98CE"
+  elementID: wind
+  description: "\u770B\u4E0D\u89C1\u7684\u65C5\u4EBA\uFF0C\u96D5\u523B\u5730\u8C8C\u7684\u827A\u672F\u5BB6\u3002"
+  tags:
+  - natural
+  - movement
+  - free
+  - weather
+  Properties:
+  - key: order
+    value: -2
+  - key: creativity
+    value: 2
+  - key: empathy
+    value: 0
+  - key: desire
+    value: 2
+  - key: mystery
+    value: 2
+  - key: vitality
+    value: 1
+  - key: speed
+    value: 100
+  - key: density
+    value: 5

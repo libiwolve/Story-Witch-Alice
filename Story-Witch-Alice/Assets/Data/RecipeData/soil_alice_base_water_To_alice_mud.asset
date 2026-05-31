@@ -1,0 +1,20 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5d619e9171318b34ea7c0f26ecc83671, type: 3}
+  m_Name: soil_alice_base_water_To_alice_mud
+  m_EditorClassIdentifier: 
+  ingredients:
+  - {fileID: 11400000, guid: 5e7839affe4d84b458c6495e81ad8a25, type: 2}
+  - {fileID: 11400000, guid: 4354f343e7384b74fb166ac0b8bd9be5, type: 2}
+  - {fileID: 11400000, guid: aee83a18e09d06040b08e2dccf0a699c, type: 2}
+  product: {fileID: 11400000, guid: d8566ca78831b8c43a445a5d6c699fab, type: 2}
+  condition: 
