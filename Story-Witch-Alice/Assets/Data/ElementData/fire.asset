@@ -14,25 +14,27 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   elementName: "\u706B"
   elementID: fire
+  elementIcon: {fileID: 96411657, guid: 23575baeed1cf804c9bb5fd2e8401403, type: 3}
   description: "\u5E26\u6765\u5149\u660E\u4E0E\u6BC1\u706D\u7684\u539F\u59CB\u529B\u91CF\u3002"
   tags:
+  - basic
   - natural
   - hot
   - energy
   - destruction
   Properties:
   - key: order
-    value: -1
+    value: 0
   - key: creativity
-    value: 1
+    value: 0
   - key: empathy
-    value: -1
+    value: 0
   - key: desire
-    value: 1
+    value: 0
   - key: mystery
-    value: 1
+    value: 0
   - key: vitality
-    value: 1
+    value: 0
   - key: temperature
     value: 100
   - key: brightness

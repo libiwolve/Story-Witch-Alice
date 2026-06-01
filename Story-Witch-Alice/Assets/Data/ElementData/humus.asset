@@ -14,25 +14,27 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   elementName: "\u8150\u6B96\u8D28"
   elementID: humus
+  elementIcon: {fileID: 0}
   description: "\u751F\u547D\u51CB\u96F6\u540E\u7684\u9988\u8D60\uFF0C\u6B7B\u4EA1\u5B55\u80B2\u65B0\u751F\u3002"
   tags:
+  - material
   - organic
   - decay
   - life
   - fertile
   Properties:
   - key: order
-    value: 2
+    value: 0
   - key: creativity
-    value: 2
+    value: 0
   - key: empathy
-    value: 3
+    value: 0
   - key: desire
     value: 0
   - key: mystery
-    value: 1
+    value: 0
   - key: vitality
-    value: 3
+    value: 0
   - key: fertility
     value: 90
   - key: density

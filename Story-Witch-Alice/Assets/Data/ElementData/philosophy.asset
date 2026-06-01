@@ -14,22 +14,24 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   elementName: "\u54F2\u5B66"
   elementID: philosophy
+  elementIcon: {fileID: 0}
   description: "\u5BF9\u5B58\u5728\u672C\u8EAB\u7684\u8FFD\u95EE\uFF0C\u4EBA\u7C7B\u601D\u60F3\u7684\u6781\u9650\u8FD0\u52A8\u3002"
   tags:
+  - material
   - knowledge
   - abstract
   - thought
   - wisdom
   Properties:
   - key: order
-    value: 4
+    value: 0
   - key: creativity
-    value: 3
+    value: 0
   - key: empathy
-    value: 1
+    value: 0
   - key: desire
-    value: 2
+    value: 0
   - key: mystery
-    value: 4
+    value: 0
   - key: vitality
-    value: -2
+    value: 0

@@ -14,25 +14,27 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   elementName: "\u7535"
   elementID: electricity
+  elementIcon: {fileID: 0}
   description: "\u5929\u7A7A\u7684\u6012\u706B\uFF0C\u4E5F\u662F\u6587\u660E\u6700\u6E29\u9A6F\u7684\u4EC6\u4EBA\u3002"
   tags:
+  - relic
   - energy
   - sudden
   - power
   - natural
   Properties:
   - key: order
-    value: -2
+    value: 0
   - key: creativity
-    value: 2
+    value: 0
   - key: empathy
-    value: -1
+    value: 0
   - key: desire
-    value: 3
+    value: 0
   - key: mystery
-    value: 2
+    value: 0
   - key: vitality
-    value: 2
+    value: 0
   - key: voltage
     value: 100
   - key: frequency

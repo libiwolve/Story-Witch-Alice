@@ -10,10 +10,10 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 5d619e9171318b34ea7c0f26ecc83671, type: 3}
-  m_Name: cyanobacteria_time_To_plant
+  m_Name: cyanobacteria_fossil_time_To_seed_of_life
   m_EditorClassIdentifier: 
   ingredients:
-  - {fileID: 11400000, guid: 68b97da0267e9b848b7bb861e6a5b7e0, type: 2}
+  - {fileID: 11400000, guid: b347741c984fc2349abd9a277185a160, type: 2}
   - {fileID: 11400000, guid: fdfdba33c97cce141ae1a1bd712602af, type: 2}
-  product: {fileID: 11400000, guid: e85876924eef7b04fb629e305a9c3dc1, type: 2}
+  product: {fileID: 11400000, guid: 09cffdf73b2e5bd40a8c06e554c8f685, type: 2}
   condition: 

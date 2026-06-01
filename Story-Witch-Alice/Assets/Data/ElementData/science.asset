@@ -14,22 +14,24 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   elementName: "\u79D1\u5B66"
   elementID: science
+  elementIcon: {fileID: 0}
   description: "\u7528\u7406\u6027\u4E4B\u5149\u7167\u4EAE\u672A\u77E5\uFF0C\u4EBA\u7C7B\u6700\u950B\u5229\u7684\u8BA4\u77E5\u5DE5\u5177\u3002"
   tags:
+  - material
   - knowledge
   - rational
   - empirical
   - progress
   Properties:
   - key: order
-    value: 4
+    value: 0
   - key: creativity
-    value: 3
+    value: 0
   - key: empathy
-    value: -1
+    value: 0
   - key: desire
-    value: 2
+    value: 0
   - key: mystery
-    value: -2
+    value: 0
   - key: vitality
     value: 0

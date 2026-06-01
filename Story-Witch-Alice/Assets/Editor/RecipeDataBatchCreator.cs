@@ -28,6 +28,9 @@ public class RecipeDataBatchCreator : EditorWindow
         int createdCount = 0;
         int updatedCount = 0;
 
+        // 收集 CSV 中所有产物的 ID，用于后续孤儿检测
+        HashSet<string> csvProductIDs = new HashSet<string>();
+
         for (int i = 1; i < lines.Length; i++)
         {
             string line = lines[i].Trim();
@@ -45,6 +48,9 @@ public class RecipeDataBatchCreator : EditorWindow
             string ing3ID = cols[2];
             string productID = cols[3];
             string condition = cols.Length > 4 ? cols[4] : "";
+
+            // 记录产物 ID
+            csvProductIDs.Add(productID);
 
             // 查找元素资产
             ElementData ing1 = LoadElement(ing1ID);
@@ -89,6 +95,36 @@ public class RecipeDataBatchCreator : EditorWindow
         }
 
         AssetDatabase.SaveAssets();
+
+        // 检查是否存在 CSV 中没有的孤立配方资产
+        string[] existingFiles = Directory.GetFiles(saveFolder, "*.asset");
+        List<string> orphaned = new List<string>();
+        foreach (string file in existingFiles)
+        {
+            string fileName = Path.GetFileNameWithoutExtension(file);
+            // 文件名格式：ing1_ing2_To_productID 或 ing1_ing2_ing3_To_productID
+            // 提取 productID（最后一个 "_To_" 后面的部分）
+            int toIndex = fileName.LastIndexOf("_To_");
+            if (toIndex >= 0)
+            {
+                string productID = fileName.Substring(toIndex + 4); // 跳过 "_To_"
+                if (!csvProductIDs.Contains(productID))
+                {
+                    orphaned.Add(fileName);
+                }
+            }
+            else
+            {
+                // 文件名不符合格式，也标记为待检查
+                orphaned.Add(fileName + "（格式异常）");
+            }
+        }
+
+        if (orphaned.Count > 0)
+        {
+            Debug.LogWarning($"以下配方资产在 CSV 中不存在，可能需要手动删除：\n{string.Join("\n", orphaned)}");
+        }
+
         AssetDatabase.Refresh();
         Debug.Log($"批量处理完成！新建 {createdCount} 个，更新 {updatedCount} 个 RecipeData 资产。");
     }

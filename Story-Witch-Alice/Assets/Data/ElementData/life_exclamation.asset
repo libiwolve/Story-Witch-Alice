@@ -10,26 +10,28 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 1e6b2da83f8212949baea08f1b817bc6, type: 3}
-  m_Name: alice_scientist
+  m_Name: life_exclamation
   m_EditorClassIdentifier: 
-  elementName: "\u79D1\u5B66\u5BB6\u7231\u4E3D\u4E1D"
-  elementID: alice_scientist
-  description: "\u5979\u7684\u5B9E\u9A8C\u5BA4\u706F\u706B\u901A\u660E\uFF0C\u771F\u7406\u662F\u5979\u552F\u4E00\u7684\u4FE1\u4EF0\u3002"
+  elementName: "\u751F\u547D\uFF01"
+  elementID: life_exclamation
+  elementIcon: {fileID: 0}
+  description: "\u751F\u547D\uFF01\u5982\u6B64\u7B80\u5355\uFF0C\u5982\u6B64\u60CA\u53F9\u3002\u4E00\u4E2A\u611F\u53F9\u53F7\u5C31\u662F\u5168\u90E8\u7684\u5B9A\u4E49\u3002"
   tags:
-  - alice
-  - science
-  - rational
-  - experiment
+  - reward
+  - life
+  - wonder
+  - exclamation
+  - accessory
   Properties:
   - key: order
-    value: 4
+    value: 0
   - key: creativity
-    value: 3
+    value: 0
   - key: empathy
-    value: -1
+    value: 0
   - key: desire
-    value: 2
+    value: 0
   - key: mystery
-    value: -3
+    value: 0
   - key: vitality
     value: 0

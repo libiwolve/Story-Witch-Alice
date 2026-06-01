@@ -14,25 +14,27 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   elementName: "\u6C34"
   elementID: water
+  elementIcon: {fileID: 21300000, guid: 32945be8577949841971d77ca7ba1967, type: 3}
   description: "\u751F\u547D\u4E4B\u6E90\uFF0C\u65E0\u5F62\u800C\u5305\u5BB9\u3002"
   tags:
+  - basic
   - natural
   - liquid
   - life
   - cold
   Properties:
   - key: order
-    value: 1
+    value: 0
   - key: creativity
-    value: 1
+    value: 0
   - key: empathy
-    value: 1
+    value: 0
   - key: desire
     value: 0
   - key: mystery
-    value: 1
+    value: 0
   - key: vitality
-    value: 1
+    value: 0
   - key: humidity
     value: 100
   - key: fluidity

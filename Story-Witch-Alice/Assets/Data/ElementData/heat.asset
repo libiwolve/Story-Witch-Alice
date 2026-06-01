@@ -14,24 +14,26 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   elementName: "\u70ED\u91CF"
   elementID: heat
+  elementIcon: {fileID: 0}
   description: "\u65E0\u5F62\u800C\u70BD\u70ED\u7684\u80FD\u91CF\uFF0C\u6539\u53D8\u7269\u8D28\u5F62\u6001\u7684\u63A8\u624B\u3002"
   tags:
+  - material
   - energy
   - hot
   - fundamental
   - transform
   Properties:
   - key: order
-    value: -1
+    value: 0
   - key: creativity
-    value: 2
+    value: 0
   - key: empathy
     value: 0
   - key: desire
-    value: 2
+    value: 0
   - key: mystery
     value: 0
   - key: vitality
-    value: 2
+    value: 0
   - key: temperature
     value: 100

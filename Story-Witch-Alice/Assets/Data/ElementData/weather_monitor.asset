@@ -10,26 +10,27 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 1e6b2da83f8212949baea08f1b817bc6, type: 3}
-  m_Name: alice_meteorologist
+  m_Name: weather_monitor
   m_EditorClassIdentifier: 
-  elementName: "\u5929\u6C14\u5B66\u5BB6\u7231\u4E3D\u4E1D"
-  elementID: alice_meteorologist
-  description: "\u5979\u62AC\u5934\u770B\u5929\uFF0C\u8BFB\u61C2\u98CE\u7684\u4F4E\u8BED\u548C\u4E91\u7684\u9884\u8A00\u3002"
+  elementName: "\u6C14\u8C61\u89C2\u6D4B\u4EEA"
+  elementID: weather_monitor
+  elementIcon: {fileID: 0}
+  description: "\u5929\u6C14\u5B66\u5BB6\u7684\u5DE5\u5177\uFF0C\u6355\u6349\u98CE\u4E91\u53D8\u5E7B\u7684\u77AC\u95F4\u3002"
   tags:
-  - alice
+  - relic
   - weather
   - sky
-  - observer
+  - tool
   Properties:
   - key: order
-    value: 2
+    value: 0
   - key: creativity
-    value: 2
+    value: 0
   - key: empathy
-    value: 1
+    value: 0
   - key: desire
-    value: 1
+    value: 0
   - key: mystery
-    value: 3
+    value: 0
   - key: vitality
-    value: 1
+    value: 0

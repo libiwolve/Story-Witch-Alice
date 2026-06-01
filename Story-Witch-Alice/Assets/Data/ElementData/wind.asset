@@ -14,25 +14,27 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   elementName: "\u98CE"
   elementID: wind
+  elementIcon: {fileID: 0}
   description: "\u770B\u4E0D\u89C1\u7684\u65C5\u4EBA\uFF0C\u96D5\u523B\u5730\u8C8C\u7684\u827A\u672F\u5BB6\u3002"
   tags:
+  - material
   - natural
   - movement
   - free
   - weather
   Properties:
   - key: order
-    value: -2
+    value: 0
   - key: creativity
-    value: 2
+    value: 0
   - key: empathy
     value: 0
   - key: desire
-    value: 2
+    value: 0
   - key: mystery
-    value: 2
+    value: 0
   - key: vitality
-    value: 1
+    value: 0
   - key: speed
     value: 100
   - key: density

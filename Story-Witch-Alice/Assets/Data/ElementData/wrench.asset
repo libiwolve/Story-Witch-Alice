@@ -14,22 +14,24 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   elementName: "\u6273\u624B"
   elementID: wrench
+  elementIcon: {fileID: 0}
   description: "\u4FEE\u8865\u4E0E\u521B\u9020\u7684\u8C61\u5F81\uFF0C\u5DE5\u5320\u4E4B\u624B\u7684\u5EF6\u4F38\u3002"
   tags:
+  - material
   - tool
   - metal
   - repair
   - craft
   Properties:
   - key: order
-    value: 3
+    value: 0
   - key: creativity
     value: 0
   - key: empathy
-    value: -1
+    value: 0
   - key: desire
-    value: 1
+    value: 0
   - key: mystery
-    value: -1
+    value: 0
   - key: vitality
-    value: -1
+    value: 0
