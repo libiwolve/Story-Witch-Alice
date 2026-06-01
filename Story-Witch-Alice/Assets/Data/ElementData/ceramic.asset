@@ -14,6 +14,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   elementName: "\u9676\u74F7"
   elementID: ceramic
+  elementIcon: {fileID: 0}
   description: "\u6CE5\u571F\u6D74\u706B\u540E\u7684\u65B0\u751F\uFF0C\u8106\u5F31\u5374\u6C38\u6052\u3002"
   tags:
   - material
@@ -22,9 +23,9 @@ MonoBehaviour:
   - craft
   Properties:
   - key: order
-    value: 3
+    value: 0
   - key: creativity
-    value: 1
+    value: 0
   - key: empathy
     value: 0
   - key: desire

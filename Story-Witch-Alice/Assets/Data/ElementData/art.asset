@@ -14,22 +14,24 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   elementName: "\u827A\u672F"
   elementID: art
+  elementIcon: {fileID: 0}
   description: "\u7075\u9B42\u7684\u8BED\u8A00\uFF0C\u7528\u7F8E\u5BF9\u6297\u865A\u65E0\u7684\u6C38\u6052\u5C1D\u8BD5\u3002"
   tags:
+  - material
   - culture
   - beauty
   - expression
   - emotion
   Properties:
   - key: order
-    value: -2
+    value: 0
   - key: creativity
-    value: 5
+    value: 0
   - key: empathy
-    value: 4
+    value: 0
   - key: desire
-    value: 1
+    value: 0
   - key: mystery
-    value: 3
+    value: 0
   - key: vitality
-    value: 1
+    value: 0

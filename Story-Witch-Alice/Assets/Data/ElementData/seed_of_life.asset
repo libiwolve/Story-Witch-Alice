@@ -10,27 +10,27 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 1e6b2da83f8212949baea08f1b817bc6, type: 3}
-  m_Name: alice_life
+  m_Name: seed_of_life
   m_EditorClassIdentifier: 
-  elementName: "\u751F\u547D\u7231\u4E3D\u4E1D"
-  elementID: alice_life
-  description: "\u5979\u7A7F\u68AD\u4E8E\u65F6\u95F4\u7684\u7F1D\u9699\uFF0C\u5BFB\u627E\u751F\u547D\u6700\u521D\u7684\u5FAE\u5149\u3002"
+  elementName: "\u751F\u547D\u4E4B\u79CD"
+  elementID: seed_of_life
+  elementIcon: {fileID: 0}
+  description: "\u4E00\u9897\u6C89\u7761\u7684\u751F\u547D\uFF0C\u7B49\u5F85\u7740\u5728\u7279\u5B9A\u7684\u65F6\u95F4\u91CC\u82CF\u9192\u3002"
   tags:
-  - alice
+  - material
   - life
-  - soul
   - origin
-  - seeker
+  - potential
   Properties:
   - key: order
-    value: -1
+    value: 0
   - key: creativity
-    value: 3
+    value: 0
   - key: empathy
-    value: 4
+    value: 0
   - key: desire
-    value: 2
+    value: 0
   - key: mystery
-    value: 4
+    value: 0
   - key: vitality
-    value: 5
+    value: 0

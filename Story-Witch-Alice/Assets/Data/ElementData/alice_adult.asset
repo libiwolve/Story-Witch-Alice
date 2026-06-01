@@ -10,17 +10,17 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 1e6b2da83f8212949baea08f1b817bc6, type: 3}
-  m_Name: alice_base
+  m_Name: alice_adult
   m_EditorClassIdentifier: 
-  elementName: "\u7231\u4E3D\u4E1D"
-  elementID: alice_base
+  elementName: "\u6210\u5E74\u7231\u4E3D\u4E1D"
+  elementID: alice_adult
   elementIcon: {fileID: 0}
-  description: "\u4E00\u5F20\u7A7A\u767D\u7684\u753B\u5E03\uFF0C\u7B49\u5F85\u4E16\u754C\u4E3A\u5979\u7740\u8272\u3002"
+  description: "\u5979\u957F\u5927\u4E86\uFF0C\u4F46\u5973\u4EBA\u6C38\u8FDC\u662F18\u5C81\u7684\uFF01\u5C81\u6708\u5728\u5979\u8EAB\u4E0A\u7559\u4E0B\u7684\u4E0D\u662F\u76B1\u7EB9\uFF0C\u800C\u662F\u6545\u4E8B\u3002\u5979\u7684\u6587\u5B57\u6C89\u7A33\u800C\u6DF1\u9083\uFF0C\u64C5\u957F\u7528\u65F6\u95F4\u7684\u610F\u8C61\u7F16\u7EC7\u5BF9\u751F\u547D\u7684\u548F\u53F9\u2014\u2014\u6C99\u6F0F\u3001\u6F6E\u6C50\u3001\u5E74\u8F6E\uFF0C\u90FD\u662F\u5979\u53D9\u4E8B\u4E2D\u7684\u5E38\u5BA2\u3002"
   tags:
   - alice
   - human
-  - pure
-  - potential
+  - mature
+  - timeless
   - initial
   Properties:
   - key: order

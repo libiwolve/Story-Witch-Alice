@@ -14,23 +14,25 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   elementName: "\u6C14"
   elementID: air
+  elementIcon: {fileID: 0}
   description: "\u65E0\u5F62\u65E0\u5F71\uFF0C\u5374\u627F\u8F7D\u7740\u4E07\u7269\u7684\u547C\u5438\u3002"
   tags:
+  - basic
   - natural
   - gas
   - invisible
   - freedom
   Properties:
   - key: order
-    value: -1
+    value: 0
   - key: creativity
-    value: 1
+    value: 0
   - key: empathy
     value: 0
   - key: desire
-    value: 1
+    value: 0
   - key: mystery
-    value: 1
+    value: 0
   - key: vitality
     value: 0
   - key: density

@@ -14,25 +14,27 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   elementName: "\u571F"
   elementID: soil
+  elementIcon: {fileID: 0}
   description: "\u4E07\u7269\u751F\u957F\u7684\u6E29\u5E8A\uFF0C\u6587\u660E\u6700\u521D\u7684\u753B\u5E03\u3002"
   tags:
+  - material
   - natural
   - solid
   - fertile
   - foundation
   Properties:
   - key: order
-    value: 2
+    value: 0
   - key: creativity
-    value: 1
+    value: 0
   - key: empathy
-    value: 2
+    value: 0
   - key: desire
     value: 0
   - key: mystery
     value: 0
   - key: vitality
-    value: 2
+    value: 0
   - key: density
     value: 60
   - key: fertility

@@ -14,8 +14,10 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   elementName: "\u6C99"
   elementID: sand
+  elementIcon: {fileID: 0}
   description: "\u65F6\u5149\u7814\u78E8\u7684\u788E\u5C51\uFF0C\u65E2\u67D4\u8F6F\u53C8\u8352\u829C\u3002"
   tags:
+  - material
   - natural
   - granular
   - dry

@@ -14,8 +14,10 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   elementName: "\u4E91"
   elementID: cloud
+  elementIcon: {fileID: 0}
   description: "\u5929\u7A7A\u7684\u601D\u7EEA\uFF0C\u805A\u6563\u65E0\u5E38\u3002"
   tags:
+  - material
   - natural
   - gas
   - soft
@@ -24,15 +26,15 @@ MonoBehaviour:
   - key: order
     value: 0
   - key: creativity
-    value: 2
+    value: 0
   - key: empathy
-    value: 1
+    value: 0
   - key: desire
     value: 0
   - key: mystery
-    value: 2
+    value: 0
   - key: vitality
-    value: 1
+    value: 0
   - key: density
     value: 10
   - key: humidity

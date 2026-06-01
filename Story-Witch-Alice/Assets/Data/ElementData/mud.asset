@@ -14,25 +14,27 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   elementName: "\u6CE5\u571F"
   elementID: mud
+  elementIcon: {fileID: 0}
   description: "\u6C34\u571F\u4EA4\u878D\u7684\u6DF7\u6C8C\uFF0C\u5B55\u80B2\u751F\u547D\u7684\u6447\u7BEE\u3002"
   tags:
+  - material
   - natural
   - wet
   - soft
   - fertile
   Properties:
   - key: order
-    value: 1
+    value: 0
   - key: creativity
-    value: 1
+    value: 0
   - key: empathy
-    value: 2
+    value: 0
   - key: desire
     value: 0
   - key: mystery
     value: 0
   - key: vitality
-    value: 2
+    value: 0
   - key: density
     value: 50
   - key: humidity

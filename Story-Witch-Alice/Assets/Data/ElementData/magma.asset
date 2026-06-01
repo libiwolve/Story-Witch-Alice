@@ -14,25 +14,27 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   elementName: "\u5CA9\u6D46"
   elementID: magma
+  elementIcon: {fileID: 0}
   description: "\u5927\u5730\u6CB8\u817E\u7684\u8840\u6DB2\uFF0C\u6BC1\u706D\u4E0E\u521B\u9020\u7684\u7194\u7089\u3002"
   tags:
+  - material
   - natural
   - liquid
   - destruction
   - earth
   Properties:
   - key: order
-    value: -2
+    value: 0
   - key: creativity
-    value: 1
+    value: 0
   - key: empathy
-    value: -2
+    value: 0
   - key: desire
-    value: 2
+    value: 0
   - key: mystery
-    value: 1
+    value: 0
   - key: vitality
-    value: 2
+    value: 0
   - key: temperature
     value: 200
   - key: density

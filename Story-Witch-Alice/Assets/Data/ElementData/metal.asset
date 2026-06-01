@@ -14,25 +14,27 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   elementName: "\u91D1\u5C5E"
   elementID: metal
+  elementIcon: {fileID: 0}
   description: "\u5927\u5730\u6DF1\u5904\u7684\u8109\u7EDC\uFF0C\u6587\u660E\u953B\u9020\u7684\u7B4B\u9AA8\u3002"
   tags:
+  - relic
   - material
   - solid
   - conductive
   - ore
   Properties:
   - key: order
-    value: 3
+    value: 0
   - key: creativity
     value: 0
   - key: empathy
-    value: -1
+    value: 0
   - key: desire
-    value: 2
+    value: 0
   - key: mystery
-    value: -1
+    value: 0
   - key: vitality
-    value: -1
+    value: 0
   - key: density
     value: 100
   - key: hardness

@@ -14,25 +14,27 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   elementName: "\u77F3"
   elementID: stone
+  elementIcon: {fileID: 0}
   description: "\u6C89\u9ED8\u7684\u89C1\u8BC1\u8005\uFF0C\u5927\u5730\u6700\u575A\u786C\u7684\u9AA8\u9ABC\u3002"
   tags:
+  - basic
   - natural
   - solid
   - hard
   - stable
   Properties:
   - key: order
-    value: 1
+    value: 0
   - key: creativity
-    value: -1
+    value: 0
   - key: empathy
-    value: -1
+    value: 0
   - key: desire
     value: 0
   - key: mystery
-    value: -1
+    value: 0
   - key: vitality
-    value: -1
+    value: 0
   - key: density
     value: 100
   - key: hardness

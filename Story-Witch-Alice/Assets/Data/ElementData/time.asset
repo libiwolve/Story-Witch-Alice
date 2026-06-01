@@ -14,15 +14,16 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   elementName: "\u65F6\u95F4"
   elementID: time
+  elementIcon: {fileID: 0}
   description: "\u4E07\u7269\u6700\u516C\u5E73\u7684\u5C3A\u5EA6\uFF0C\u4E0D\u53EF\u9006\u8F6C\u7684\u6D2A\u6D41\u3002"
   tags:
+  - basic
   - abstract
   - fundamental
   - irreversible
-  - catalyst
   Properties:
   - key: order
-    value: 1
+    value: 0
   - key: creativity
     value: 0
   - key: empathy
@@ -30,9 +31,9 @@ MonoBehaviour:
   - key: desire
     value: 0
   - key: mystery
-    value: 1
+    value: 0
   - key: vitality
-    value: -1
+    value: 0
   - key: duration
     value: 100
   - key: entropy
