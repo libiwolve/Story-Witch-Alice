@@ -21,7 +21,7 @@
 ## 🎯 当前进度
 - [x] 立项 & 概念设计
 - [x] MVP：可拖拽的合成表系统（物理拖拽、合成检测、合成树UI）
-- [ ] Phase 2：完善合成表 + 构建合成树 + 加入爱丽丝基础角色 ← **当前开发中**  详细设计文档见 [Docs/phase2-design.md](Docs/phase2-design.md)
+- [ ] Phase 2：完善合成表 + 构建合成树 + 加入爱丽丝基础角色 ← **当前开发中**  详细设计文档见 [Story-Witch-Alice/Docs/phase2-redesign.md](Story-Witch-Alice/Docs/phase2-redesign.md)
 - [ ] Phase 3：接入AI故事生成
 - [ ] Phase 4：离线推演系统、货币系统、开拓者订单
 
