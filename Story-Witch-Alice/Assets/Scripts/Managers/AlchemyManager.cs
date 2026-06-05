@@ -1,14 +1,18 @@
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
-
+using UnityEngine.UI;
 public class AlchemyManager : MonoBehaviour
 {
     public RecipeData[] allRecipes;
+    
 
     private Dictionary<string, ElementData> unlockedRecipeDictionary = new Dictionary<string, ElementData>();
     private Dictionary<string, List<RecipeData>> ingredientToRecipesDictionary = new Dictionary<string, List<RecipeData>>();
     private HashSet<string> unlockedElementIDs = new HashSet<string>();
+    public Text logText;              // Inspector 里拖入
+    private List<string> logLines = new List<string>();
+    private const int maxLogLines = 6; // 最多显示 6 行
 
     public static AlchemyManager Instance { get; private set; }
 
@@ -111,19 +115,19 @@ public class AlchemyManager : MonoBehaviour
     {
         if (currentIngredients.Count >= 3)
         {
-            Debug.Log("锅里已经满了，最多放3个原料");
+            AddLog("锅里已经满了，最多放3个原料");
             return;
         }
 
         currentIngredients.Add(element);
-        Debug.Log($"放入原料: {element.elementName}，当前锅里有 {currentIngredients.Count} 个原料");
+        AddLog($"放入原料: {element.elementName}，当前锅里有 {currentIngredients.Count} 个原料");
     }
 
     public void ManualCombine()
     {
         if (currentIngredients.Count < 2)
         {
-            Debug.Log("至少需要2个原料才能合成");
+            AddLog("至少需要2个原料才能合成");
             return;
         }
 
@@ -131,21 +135,30 @@ public class AlchemyManager : MonoBehaviour
 
         if (result != null)
         {
-            Debug.Log($"合成成功！产物: {result.elementName}");
+            AddLog($"合成成功！产物: {result.elementName}");
             OnElementCrafted(result);
             currentIngredients.Clear();
         }
         else
         {
-            Debug.Log("合成失败，原料不匹配任何配方");
+            AddLog("合成失败，原料不匹配任何配方");
             currentIngredients.Clear();
         }
+    }
+    void AddLog(string msg)
+    {
+        logLines.Add(msg);
+        if (logLines.Count > maxLogLines)
+            logLines.RemoveAt(0);
+
+        if (logText != null)
+            logText.text = string.Join("\n", logLines);
     }
 
     public void ClearPot()
     {
         currentIngredients.Clear();
-        Debug.Log("锅已清空");
+        AddLog("锅已清空");
     }
 
     string GetRecipeKey(List<ElementData> ingredients)
