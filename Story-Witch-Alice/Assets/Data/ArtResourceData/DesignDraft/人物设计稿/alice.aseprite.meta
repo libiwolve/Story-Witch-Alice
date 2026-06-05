@@ -123,7 +123,7 @@ ScriptedImporter:
   animatedSpriteImportData:
   - name: alice
     originalName: 
-    pivot: {x: 0.5, y: -0.01}
+    pivot: {x: 0.49999997, y: -0.01}
     alignment: 9
     border: {x: 0, y: 0, z: 0, w: 0}
     rect:
@@ -141,6 +141,66 @@ ScriptedImporter:
     edges: []
     tessellationDetail: 0
     uvTransform: {x: 4, y: 4}
+  - name: alice_Frame_1
+    originalName: 
+    pivot: {x: 0.509434, y: -0.01}
+    alignment: 9
+    border: {x: 0, y: 0, z: 0, w: 0}
+    rect:
+      serializedVersion: 2
+      x: 118
+      y: 4
+      width: 106
+      height: 300
+    spriteID: 75322142ab40bc84f9ef0ca7eef8af03
+    spriteBone: []
+    spriteOutline: []
+    vertices: []
+    spritePhysicsOutline: []
+    indices: 
+    edges: []
+    tessellationDetail: 0
+    uvTransform: {x: 118, y: 4}
+  - name: alice_Frame_2
+    originalName: 
+    pivot: {x: 0.49999997, y: -0.01}
+    alignment: 9
+    border: {x: 0, y: 0, z: 0, w: 0}
+    rect:
+      serializedVersion: 2
+      x: 232
+      y: 4
+      width: 106
+      height: 300
+    spriteID: 6ef17c52500b0e7488164721e89a2d36
+    spriteBone: []
+    spriteOutline: []
+    vertices: []
+    spritePhysicsOutline: []
+    indices: 
+    edges: []
+    tessellationDetail: 0
+    uvTransform: {x: 232, y: 4}
+  - name: alice_Frame_3
+    originalName: 
+    pivot: {x: 0.49999997, y: -0.0100334445}
+    alignment: 9
+    border: {x: 0, y: 0, z: 0, w: 0}
+    rect:
+      serializedVersion: 2
+      x: 346
+      y: 4
+      width: 106
+      height: 299
+    spriteID: dfd79827100b7104aabb9d0060a42303
+    spriteBone: []
+    spriteOutline: []
+    vertices: []
+    spritePhysicsOutline: []
+    indices: 
+    edges: []
+    tessellationDetail: 0
+    uvTransform: {x: 346, y: 4}
   spriteSheetImportData: []
   asepriteLayers:
   - layerIndex: 0
@@ -150,19 +210,46 @@ ScriptedImporter:
     layerType: 0
     blendMode: 0
     cells:
-    - name: alice
+    - name: alice_Frame_0
       frameIndex: 0
       additiveSortOrder: 0
       cellRect:
-        x: 3
+        x: 2
         y: 3
         width: 106
         height: 300
       spriteId: 57a9a76503df7f44499754ea24b738d9
+    - name: alice_Frame_1
+      frameIndex: 1
+      additiveSortOrder: 0
+      cellRect:
+        x: 1
+        y: 3
+        width: 106
+        height: 300
+      spriteId: 75322142ab40bc84f9ef0ca7eef8af03
+    - name: alice_Frame_2
+      frameIndex: 2
+      additiveSortOrder: 0
+      cellRect:
+        x: 2
+        y: 3
+        width: 106
+        height: 300
+      spriteId: 6ef17c52500b0e7488164721e89a2d36
+    - name: alice_Frame_3
+      frameIndex: 3
+      additiveSortOrder: 0
+      cellRect:
+        x: 2
+        y: 3
+        width: 106
+        height: 299
+      spriteId: dfd79827100b7104aabb9d0060a42303
     linkedCells: []
     parentIndex: -1
   platformSettings: []
   generatePhysicsShape: 0
   secondarySpriteTextures: []
   spritePackingTag: 
-  canvasSize: {x: 112, y: 308}
+  canvasSize: {x: 110, y: 303}
