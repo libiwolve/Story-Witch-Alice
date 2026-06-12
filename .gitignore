@@ -43,7 +43,7 @@ Thumbs.db
 *.ipa
 *.app
 
-# TextMesh Pro
-*.asset.meta
-*.prefab.meta
+# TextMesh Pro (only in TMP folder)
+**/TextMesh Pro/**/*.asset.meta
+**/TextMesh Pro/**/*.prefab.meta
 # But keep the ones you need!
