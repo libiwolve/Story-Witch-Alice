@@ -47,3 +47,5 @@ Thumbs.db
 **/TextMesh Pro/**/*.asset.meta
 **/TextMesh Pro/**/*.prefab.meta
 # But keep the ones you need!
+
+codewhale-tui-windows-x64.exe

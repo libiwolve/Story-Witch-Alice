@@ -1,4 +1,5 @@
 using UnityEngine;
+using System.Collections;
 using System.Collections.Generic;
 
 public class PhysicsElement : MonoBehaviour
@@ -13,16 +14,22 @@ public class PhysicsElement : MonoBehaviour
     private Rigidbody2D rb;
     private Camera mainCamera;
 
-    // 记录最近几帧的位置和时间
     private Queue<(Vector3 pos, float time)> recentPositions = new Queue<(Vector3, float)>();
 
     void Start()
     {
         rb = GetComponent<Rigidbody2D>();
         mainCamera = Camera.main;
+
+        // 有 icon → 覆盖 prefab 默认 sprite；无 icon → 保留 prefab 外观
+        if (elementData != null && elementData.elementIcon != null)
+        {
+            SpriteRenderer sr = GetComponent<SpriteRenderer>();
+            if (sr != null)
+                sr.sprite = elementData.elementIcon;
+        }
     }
 
-    // 掉进锅里
     void OnTriggerEnter2D(Collider2D other)
     {
         if (other.CompareTag("Pot"))
@@ -34,22 +41,27 @@ public class PhysicsElement : MonoBehaviour
         }
     }
 
-    // 碰到地面时飞回
     void OnCollisionEnter2D(Collision2D collision)
     {
         if (collision.gameObject.CompareTag("Ground"))
         {
             if (sourceSlot != null)
-                sourceSlot.OnElementMissedPot(gameObject);
+            {
+                // 物品栏拖出的元素落地 → 恢复槽位图标，元素留在场景
+                sourceSlot.RestoreIcon();
+                sourceSlot = null; // 切断关联，变成独立可拾取元素
+            }
+            else if (elementData != null)
+            {
+                // 合成产物落地 → 元素留在场景（可拖回锅继续合成）
+                AlchemyManager.Instance?.AddLog($"{elementData.elementName} 掉在了地上");
+            }
         }
     }
 
-    // 鼠标按下 → 临时关闭重力，抓起物体
     void OnMouseDown()
     {
         isBeingDragged = true;
-
-        // 清空惯性记录
         recentPositions.Clear();
 
         if (rb != null)
@@ -60,7 +72,6 @@ public class PhysicsElement : MonoBehaviour
         }
     }
 
-    // 鼠标拖拽中 → 跟随鼠标
     void OnMouseDrag()
     {
         if (!isBeingDragged) return;
@@ -68,18 +79,15 @@ public class PhysicsElement : MonoBehaviour
         Vector3 mouseWorld = GetMouseWorldPosition();
         transform.position = mouseWorld;
 
-        // 记录当前位置和时间，用于计算惯性
         recentPositions.Enqueue((mouseWorld, Time.time));
         if (recentPositions.Count > velocitySampleFrames)
             recentPositions.Dequeue();
     }
 
-    // 鼠标松开 → 恢复重力，丢出物体
     void OnMouseUp()
     {
         isBeingDragged = false;
 
-        // 计算惯性速度
         Vector3 velocity = Vector3.zero;
         if (recentPositions.Count >= 2)
         {
@@ -96,7 +104,6 @@ public class PhysicsElement : MonoBehaviour
             velocity = new Vector2(0, -1f);
         }
 
-        // 限速
         float maxSpeed = 30f;
         if (velocity.magnitude > maxSpeed)
             velocity = velocity.normalized * maxSpeed;

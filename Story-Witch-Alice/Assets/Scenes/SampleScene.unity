@@ -6935,8 +6935,8 @@ MonoBehaviour:
       m_Calls: []
   m_text: "synthesis \nRecord"
   m_isRightToLeft: 0
-  m_fontAsset: {fileID: 11400000, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
-  m_sharedMaterial: {fileID: 2180264, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
+  m_fontAsset: {fileID: 11400000, guid: 2571c9c6edf5b1e4dad7cff13433ed0c, type: 2}
+  m_sharedMaterial: {fileID: 2180264, guid: 2571c9c6edf5b1e4dad7cff13433ed0c, type: 2}
   m_fontSharedMaterials: []
   m_fontMaterial: {fileID: 0}
   m_fontMaterials: []
@@ -7219,6 +7219,15 @@ MonoBehaviour:
   - {fileID: 11400000, guid: ddefe3b1a8d97cf4ba530ecff1f1f958, type: 2}
   - {fileID: 11400000, guid: 49cf9f56344bc70469e7bda30a4ac89f, type: 2}
   logText: {fileID: 437548703}
+  physicsElementPrefab: {fileID: 1643010499333232419, guid: b7fd2ffdfb7afdc499da689c41d86bef, type: 3}
+  defaultElementPrefab: {fileID: 382495108944367726, guid: 594bf4fcfaf78654fadea1a242e3af80, type: 3}
+  potTransform: {fileID: 1348138792}
+  treePanelTransform: {fileID: 0}
+  audioSource: {fileID: 0}
+  synthesisSound: {fileID: 0}
+  newProductSound: {fileID: 0}
+  existingProductSound: {fileID: 0}
+  flyUpDuration: 0.5
 --- !u!4 &1595733543
 Transform:
   m_ObjectHideFlags: 0
@@ -7293,8 +7302,8 @@ MonoBehaviour:
       m_Calls: []
   m_text: synthesis
   m_isRightToLeft: 0
-  m_fontAsset: {fileID: 11400000, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
-  m_sharedMaterial: {fileID: 2180264, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
+  m_fontAsset: {fileID: 11400000, guid: 2571c9c6edf5b1e4dad7cff13433ed0c, type: 2}
+  m_sharedMaterial: {fileID: 2180264, guid: 2571c9c6edf5b1e4dad7cff13433ed0c, type: 2}
   m_fontSharedMaterials: []
   m_fontMaterial: {fileID: 0}
   m_fontMaterials: []
