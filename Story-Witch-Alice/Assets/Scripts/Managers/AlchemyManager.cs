@@ -29,8 +29,10 @@ public class AlchemyManager : MonoBehaviour
     [Header("Audio")]
     public AudioSource audioSource;
     public AudioClip synthesisSound;       // 合成瞬间音效
-    public AudioClip newProductSound;       // 新产物 "不灵不灵" 音效
+    public AudioClip newProductSound;       // 新产物音效
     public AudioClip existingProductSound;  // 已有产物普通音效
+    public AudioClip failSound;             // 合成失败音效
+    public AudioClip ingredientSound;       // 原料入锅音效
     
     [Header("Synthesis Animation")]
     public float flyUpDuration = 0.5f;  // 产物从锅内飞到悬停位置的时长
@@ -138,6 +140,7 @@ public class AlchemyManager : MonoBehaviour
         }
 
         currentIngredients.Add(element);
+        PlaySound(ingredientSound);
         AddLog($"放入原料: {element.elementName}，当前锅里有 {currentIngredients.Count} 个原料");
     }
 
@@ -162,8 +165,9 @@ public class AlchemyManager : MonoBehaviour
 
             AddLog($"合成成功！产物: {result.elementName}");
 
-            // 播放合成瞬间音效
+            // 播放合成瞬间音效 + 新/旧产物音效（在飞出前就播）
             PlaySound(synthesisSound);
+            PlaySound(isNew ? newProductSound : existingProductSound);
 
             // 智能选 prefab：icon → 通用 / 同名专属 → 专属 / 默认 → 马赛克
             GameObject prefabToUse = GetPrefabForElement(result);
@@ -201,6 +205,7 @@ public class AlchemyManager : MonoBehaviour
         }
         else
         {
+            PlaySound(failSound);
             AddLog("合成失败，原料不匹配任何配方");
             currentIngredients.Clear();
         }
@@ -238,19 +243,11 @@ public class AlchemyManager : MonoBehaviour
         foreach (var col in cols)
             col.enabled = true;
 
-        // 播放特殊音效 + 光效
+        // 播放光效（音效已经在合成瞬间播过了）
         if (isNew)
-        {
-            // 新产物：不灵不灵音效 + 金光
-            PlaySound(newProductSound);
             SynthesisGlow.AttachTo(product, goldGlowController);
-        }
         else
-        {
-            // 已有产物：普通音效 + 蓝光
-            PlaySound(existingProductSound);
             SynthesisGlow.AttachTo(product, blueGlowController);
-        }
     }
 
     public void AddLog(string msg)
