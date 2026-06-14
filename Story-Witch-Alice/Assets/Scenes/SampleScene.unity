@@ -7228,6 +7228,8 @@ MonoBehaviour:
   newProductSound: {fileID: 0}
   existingProductSound: {fileID: 0}
   flyUpDuration: 0.5
+  goldGlowController: {fileID: 9100000, guid: a51fada9ccde96d40bd10a66d26109d5, type: 2}
+  blueGlowController: {fileID: 9100000, guid: 63297e780311c1248857ece9853522c7, type: 2}
 --- !u!4 &1595733543
 Transform:
   m_ObjectHideFlags: 0

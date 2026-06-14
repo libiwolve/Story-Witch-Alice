@@ -34,6 +34,7 @@ public class PhysicsElement : MonoBehaviour
     {
         if (other.CompareTag("Pot"))
         {
+            DestroySynthesisGlow();
             AlchemyManager.Instance?.AddIngredient(elementData);
             if (sourceSlot != null)
                 sourceSlot.RestoreIcon();
@@ -43,6 +44,8 @@ public class PhysicsElement : MonoBehaviour
 
     void OnCollisionEnter2D(Collision2D collision)
     {
+        DestroySynthesisGlow();
+
         if (collision.gameObject.CompareTag("Ground"))
         {
             if (sourceSlot != null)
@@ -61,6 +64,8 @@ public class PhysicsElement : MonoBehaviour
 
     void OnMouseDown()
     {
+        DestroySynthesisGlow();
+
         isBeingDragged = true;
         recentPositions.Clear();
 
@@ -113,6 +118,15 @@ public class PhysicsElement : MonoBehaviour
             rb.gravityScale = 1f;
             rb.velocity = velocity;
         }
+    }
+
+    /// <summary>
+    /// 悬停状态结束 → 销毁光效
+    /// </summary>
+    void DestroySynthesisGlow()
+    {
+        SynthesisGlow glow = GetComponentInChildren<SynthesisGlow>();
+        if (glow != null) Destroy(glow.gameObject);
     }
 
     private Vector3 GetMouseWorldPosition()
