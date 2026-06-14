@@ -1,58 +1,61 @@
 using UnityEngine;
 
 /// <summary>
-/// 合成产物的光效：脉冲闪烁后自动消失。
-/// 由 AlchemyManager 在产物飞出到悬停位置时创建。
-/// 用法：SynthesisGlow.AttachTo(product, color, iconSprite);
+/// 合成产物的光晕效果。
+/// 用 Animator 播放序列帧动画（金色/蓝色），播放完自动销毁。
+/// 用法：SynthesisGlow.AttachTo(product, goldAnimController);
 /// </summary>
 public class SynthesisGlow : MonoBehaviour
 {
-    public float lifetime = 2.5f;
-    public float pulseSpeed = 4f;
-
-    private SpriteRenderer glowRenderer;
-    private float elapsed;
-
     /// <summary>
-    /// 在目标上挂载一个光晕子对象，返回 Glow 组件引用。
+    /// 在目标下创建一个子对象，挂载 SpriteRenderer + Animator 播放光晕动画。
+    /// 动画播放完后自动销毁子对象。
     /// </summary>
-    public static SynthesisGlow AttachTo(GameObject target, Color color, Sprite icon)
+    public static void AttachTo(GameObject target, RuntimeAnimatorController animController)
     {
+        if (animController == null) return;
+
         GameObject child = new GameObject("SynthesisGlow");
         child.transform.SetParent(target.transform);
         child.transform.localPosition = Vector3.zero;
-        child.transform.localScale = Vector3.one * 1.6f; // 比元素本身大一圈
+        child.transform.localScale = Vector3.one * 2f; // 比元素本身大两圈
 
         SpriteRenderer sr = child.AddComponent<SpriteRenderer>();
-        sr.sprite = icon;
         sr.sortingOrder = -1; // 渲染在元素后面
-        sr.color = color;
 
-        SynthesisGlow glow = child.AddComponent<SynthesisGlow>();
-        glow.glowRenderer = sr;
-        return glow;
+        Animator anim = child.AddComponent<Animator>();
+        anim.runtimeAnimatorController = animController;
+
+        // 获取动画长度 → 结束后自动销毁
+        child.AddComponent<SynthesisGlow>().Init(sr);
     }
 
-    void Update()
+    private SpriteRenderer glowSr;
+
+    void Init(SpriteRenderer sr)
     {
-        elapsed += Time.deltaTime;
-        if (elapsed >= lifetime)
+        glowSr = sr;
+        StartCoroutine(AutoDestroyAfterAnimation());
+    }
+
+    System.Collections.IEnumerator AutoDestroyAfterAnimation()
+    {
+        // 等一帧让 Animator 开始播放
+        yield return null;
+
+        Animator anim = GetComponent<Animator>();
+        if (anim != null && anim.runtimeAnimatorController != null)
         {
-            Destroy(gameObject);
-            return;
+            AnimatorStateInfo state = anim.GetCurrentAnimatorStateInfo(0);
+            float duration = state.length;
+            yield return new WaitForSeconds(duration);
+        }
+        else
+        {
+            // fallback：等 2 秒后销毁
+            yield return new WaitForSeconds(2f);
         }
 
-        // 脉冲：正弦波在 minAlpha ~ maxAlpha 之间
-        float pulse = Mathf.Sin(elapsed * pulseSpeed * Mathf.PI * 2f) * 0.5f + 0.5f;
-        float alpha = Mathf.Lerp(0.15f, 0.7f, pulse);
-
-        // 最后 30% 时间逐渐淡出
-        float t = elapsed / lifetime;
-        if (t > 0.7f)
-            alpha *= 1f - (t - 0.7f) / 0.3f;
-
-        Color c = glowRenderer.color;
-        c.a = alpha;
-        glowRenderer.color = c;
+        Destroy(gameObject);
     }
 }

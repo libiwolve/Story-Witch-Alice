@@ -35,6 +35,10 @@ public class AlchemyManager : MonoBehaviour
     [Header("Synthesis Animation")]
     public float flyUpDuration = 0.5f;  // 产物从锅内飞到悬停位置的时长
 
+    [Header("Glow Effects")]
+    public RuntimeAnimatorController goldGlowController;  // 新产物：金色光晕
+    public RuntimeAnimatorController blueGlowController;  // 已有产物：蓝色光晕
+
     void Awake()
     {
         if (Instance == null)
@@ -235,20 +239,17 @@ public class AlchemyManager : MonoBehaviour
             col.enabled = true;
 
         // 播放特殊音效 + 光效
-        SpriteRenderer sr = product.GetComponent<SpriteRenderer>();
         if (isNew)
         {
             // 新产物：不灵不灵音效 + 金光
             PlaySound(newProductSound);
-            if (sr != null)
-                SynthesisGlow.AttachTo(product, new Color(1f, 0.85f, 0.2f, 0.8f), sr.sprite);
+            SynthesisGlow.AttachTo(product, goldGlowController);
         }
         else
         {
             // 已有产物：普通音效 + 蓝光
             PlaySound(existingProductSound);
-            if (sr != null)
-                SynthesisGlow.AttachTo(product, new Color(0.3f, 0.5f, 1f, 0.8f), sr.sprite);
+            SynthesisGlow.AttachTo(product, blueGlowController);
         }
     }
 
