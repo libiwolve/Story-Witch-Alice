@@ -1,5 +1,5 @@
 fileFormatVersion: 2
-guid: 49cdd226f4c249c43b3966d9609b14cd
+guid: fc9abcb7a69f215449ba699aca33e5b8
 ScriptedImporter:
   internalIDToNameTable: []
   externalObjects: {}
@@ -8,7 +8,6 @@ ScriptedImporter:
   assetBundleName: 
   assetBundleVariant: 
   script: {fileID: 11500000, guid: 62a9f0aa5b59740cfbadc7e5f9823bb0, type: 3}
-  importerVersion: 2
   textureImporterSettings:
     alphaSource: 1
     mipMapMode: 0
@@ -133,7 +132,7 @@ ScriptedImporter:
       y: 4
       width: 106
       height: 104
-    spriteID: 52eb5637df430cc40886286d98e1bdbc
+    spriteID: 50c94c99e58f576479cb5e8ace3ae57f
     spriteBone: []
     spriteOutline: []
     vertices: []
@@ -145,12 +144,7 @@ ScriptedImporter:
   spriteSheetImportData: []
   asepriteLayers:
   - layerIndex: 0
-    uuid:
-      value0: 2551206749
-      value1: 0
-      value2: 0
-      value3: 0
-    guid: 0
+    guid: -783202503
     name: "\u7409\u7483\u7A97\u8BBE\u8BA1\u7A3F"
     layerFlags: 0
     layerType: 0
@@ -164,24 +158,11 @@ ScriptedImporter:
         y: 11
         width: 106
         height: 104
-      spriteId: 52eb5637df430cc40886286d98e1bdbc
+      spriteId: 50c94c99e58f576479cb5e8ace3ae57f
     linkedCells: []
     parentIndex: -1
-  platformSettings:
-  - name: Default
-    overridden: 0
-    ignorePlatformSupport: 0
-    maxTextureSize: 2048
-    resizeAlgorithm: 0
-    textureFormat: -1
-    textureCompression: 0
-    compressionQuality: 50
-    forceMaximumCompressionQuality_BC6H_BC7: 0
-    crunchedCompression: 0
-    allowsAlphaSplitting: 0
-    androidETC2FallbackOverride: 0
+  platformSettings: []
   generatePhysicsShape: 0
   secondarySpriteTextures: []
   spritePackingTag: 
   canvasSize: {x: 128, y: 128}
-  previousTextureSize: {x: 128, y: 128}
