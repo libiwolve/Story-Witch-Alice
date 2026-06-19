@@ -15,7 +15,7 @@ MonoBehaviour:
   elementName: "\u6C99"
   elementID: sand
   elementIcon: {fileID: 0}
-  description: "\u65F6\u5149\u7814\u78E8\u7684\u788E\u5C51\uFF0C\u65E2\u67D4\u8F6F\u53C8\u8352\u829C\u3002"
+  description: "\u6C14\u4E0E\u571F\u7684\u79BB\u6563\u2014\u2014\u8352\u829C\u7684\u5F00\u7AEF\uFF0C\u6D41\u901D\u4E0E\u6293\u4E0D\u4F4F\u3002"
   tags:
   - material
   - natural
@@ -24,7 +24,7 @@ MonoBehaviour:
   - shifting
   Properties:
   - key: order
-    value: 0
+    value: 1
   - key: creativity
     value: 0
   - key: empathy

@@ -15,7 +15,7 @@ MonoBehaviour:
   elementName: "\u98CE"
   elementID: wind
   elementIcon: {fileID: 0}
-  description: "\u770B\u4E0D\u89C1\u7684\u65C5\u4EBA\uFF0C\u96D5\u523B\u5730\u8C8C\u7684\u827A\u672F\u5BB6\u3002"
+  description: "\u6C14\u7684\u6D41\u52A8\u2014\u2014\u770B\u4E0D\u89C1\u7684\u65C5\u4EBA\uFF0C\u96D5\u523B\u5730\u8C8C\u7684\u827A\u672F\u5BB6\u3002"
   tags:
   - material
   - natural
@@ -24,7 +24,7 @@ MonoBehaviour:
   - weather
   Properties:
   - key: order
-    value: 0
+    value: 1
   - key: creativity
     value: 0
   - key: empathy

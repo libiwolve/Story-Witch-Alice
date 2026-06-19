@@ -14,7 +14,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   elementName: "\u6C34"
   elementID: water
-  elementIcon: {fileID: 21300000, guid: 32945be8577949841971d77ca7ba1967, type: 3}
+  elementIcon: {fileID: 270785996, guid: 32945be8577949841971d77ca7ba1967, type: 3}
   description: "\u751F\u547D\u4E4B\u6E90\uFF0C\u65E0\u5F62\u800C\u5305\u5BB9\u3002"
   tags:
   - basic

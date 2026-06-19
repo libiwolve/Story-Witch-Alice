@@ -51,7 +51,7 @@ public class ThoughtOrbit : MonoBehaviour
 
     void InitializeQueue()
     {
-        string[] initialIDs = { "air", "water", "fire", "stone" };
+        string[] initialIDs = { "fire", "air", "water", "soil" };
         foreach (string id in initialIDs)
         {
             ElementData data = FindElementByID(id);

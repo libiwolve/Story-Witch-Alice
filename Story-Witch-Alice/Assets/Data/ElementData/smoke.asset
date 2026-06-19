@@ -10,21 +10,21 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 1e6b2da83f8212949baea08f1b817bc6, type: 3}
-  m_Name: fire
+  m_Name: smoke
   m_EditorClassIdentifier: 
-  elementName: "\u706B"
-  elementID: fire
-  elementIcon: {fileID: -1023457732, guid: ce2ab5fe16be4b040b050818822209c8, type: 3}
-  description: "\u5E26\u6765\u5149\u660E\u4E0E\u6BC1\u706D\u7684\u539F\u59CB\u529B\u91CF\u3002"
+  elementName: "\u70DF"
+  elementID: smoke
+  elementIcon: {fileID: 0}
+  description: "\u706B\u4E0E\u6C14\u7684\u5171\u821E\u2014\u2014\u4FE1\u53F7\u3001\u906E\u853D\u3001\u6D88\u4EA1\u7684\u75D5\u8FF9\u3002"
   tags:
-  - basic
+  - material
   - natural
-  - hot
-  - energy
-  - destruction
+  - gas
+  - visible
+  - transient
   Properties:
   - key: order
-    value: 0
+    value: 1
   - key: creativity
     value: 0
   - key: empathy
@@ -35,7 +35,7 @@ MonoBehaviour:
     value: 0
   - key: vitality
     value: 0
+  - key: density
+    value: 3
   - key: temperature
-    value: 100
-  - key: brightness
-    value: 100
+    value: 30

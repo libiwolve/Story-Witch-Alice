@@ -3,42 +3,47 @@ using UnityEditor;
 using System.IO;
 using System.Collections.Generic;
 
-public class ElementDataBatchCreator : EditorWindow
+public class ElementDataBatchCreator
 {
-    // 图标存放路径
-    private const string iconFolder = "Assets/Data/IconData";
+    private const string csvPath = "Assets/Data/ElementData/Selectelement.csv";
+    private const string saveFolder = "Assets/Data/ElementData";
+    private const string iconFolder = "Assets/Data/ArtResourceData/Design/Icon";
 
     [MenuItem("Tools/Batch Create/Update ElementData from CSV")]
     public static void CreateFromCSV()
     {
-        string csvPath = EditorUtility.OpenFilePanel("Select elements.csv", "Assets/Data/ElementData", "csv");
-        if (string.IsNullOrEmpty(csvPath)) return;
-
-        string[] lines = File.ReadAllLines(csvPath);
-        if (lines.Length < 2)
+        if (!File.Exists(csvPath))
         {
-            Debug.LogError("CSV 文件为空或没有数据行");
+            Debug.LogError($"找不到 CSV 文件：{csvPath}");
             return;
         }
 
-        string saveFolder = "Assets/Data/ElementData";
         if (!AssetDatabase.IsValidFolder(saveFolder))
         {
             System.IO.Directory.CreateDirectory(saveFolder);
             AssetDatabase.Refresh();
         }
 
-        // 确保图标文件夹存在
-        if (!AssetDatabase.IsValidFolder(iconFolder))
+        // 用共享读取模式避免"文件被占用"错误
+        string[] lines;
+        using (var fs = new FileStream(csvPath, FileMode.Open, FileAccess.Read, FileShare.ReadWrite))
+        using (var sr = new StreamReader(fs))
         {
-            System.IO.Directory.CreateDirectory(iconFolder);
-            AssetDatabase.Refresh();
+            string content = sr.ReadToEnd();
+            lines = content.Split(new[] { '\r', '\n' }, System.StringSplitOptions.RemoveEmptyEntries);
+        }
+
+        if (lines.Length < 2)
+        {
+            Debug.LogError("CSV 文件为空或没有数据行");
+            return;
         }
 
         int createdCount = 0;
         int updatedCount = 0;
         int iconFoundCount = 0;
         int iconMissingCount = 0;
+        HashSet<string> csvIDs = new HashSet<string>();
 
         for (int i = 1; i < lines.Length; i++)
         {
@@ -48,7 +53,7 @@ public class ElementDataBatchCreator : EditorWindow
             string[] cols = ParseCSVLine(line);
             if (cols.Length < 11)
             {
-                Debug.LogWarning($"第{i + 1}行（{cols[0]}）列数不足，跳过");
+                Debug.LogWarning($"第{i + 1}行列数不足({cols.Length})，跳过：{line.Substring(0, Mathf.Min(50, line.Length))}");
                 continue;
             }
 
@@ -64,11 +69,12 @@ public class ElementDataBatchCreator : EditorWindow
             float vitality = float.Parse(cols[9]);
             string physStr = cols[10];
 
-            string assetPath = Path.Combine(saveFolder, eID + ".asset");
+            csvIDs.Add(eID);
+
+            string assetPath = Path.Combine(saveFolder, eID + ".asset").Replace("\\", "/");
             ElementData asset = AssetDatabase.LoadAssetAtPath<ElementData>(assetPath);
 
             bool isNew = (asset == null);
-
             if (isNew)
             {
                 asset = ScriptableObject.CreateInstance<ElementData>();
@@ -80,13 +86,12 @@ public class ElementDataBatchCreator : EditorWindow
                 updatedCount++;
             }
 
-            // 更新字段
             asset.elementName = eName;
             asset.elementID = eID;
             asset.description = desc;
             asset.tags = new List<string>(tagsStr.Split(';'));
 
-            // 自动加载图标（新增）
+            // 自动加载图标
             Sprite icon = LoadIcon(eID);
             if (icon != null)
             {
@@ -95,10 +100,11 @@ public class ElementDataBatchCreator : EditorWindow
             }
             else
             {
+                asset.elementIcon = null;
                 iconMissingCount++;
             }
 
-            // 重建属性列表
+            // 重建属性
             asset.Properties = new List<ElementProperty>();
             AddProperty(asset.Properties, "order", order);
             AddProperty(asset.Properties, "creativity", creativity);
@@ -114,9 +120,7 @@ public class ElementDataBatchCreator : EditorWindow
                 {
                     string[] kv = pair.Split(':');
                     if (kv.Length == 2 && float.TryParse(kv[1], out float val))
-                    {
                         AddProperty(asset.Properties, kv[0], val);
-                    }
                 }
             }
 
@@ -125,43 +129,56 @@ public class ElementDataBatchCreator : EditorWindow
 
         AssetDatabase.SaveAssets();
 
-        // 孤立资产检查
-        HashSet<string> csvIDs = new HashSet<string>();
-        for (int i = 1; i < lines.Length; i++)
+        // 清理孤立资产（CSV 中已不存在的旧 .asset 文件）
+        if (Directory.Exists(saveFolder))
         {
-            string[] cols = ParseCSVLine(lines[i].Trim());
-            if (cols.Length >= 2) csvIDs.Add(cols[1]);
-        }
-
-        string[] existingFiles = Directory.GetFiles(saveFolder, "*.asset");
-        List<string> orphaned = new List<string>();
-        foreach (string file in existingFiles)
-        {
-            string id = Path.GetFileNameWithoutExtension(file);
-            if (!csvIDs.Contains(id))
-                orphaned.Add(id);
-        }
-
-        if (orphaned.Count > 0)
-        {
-            Debug.LogWarning($"以下资产在 CSV 中不存在，可能需要手动删除：{string.Join(", ", orphaned)}");
+            string[] existingFiles = Directory.GetFiles(saveFolder, "*.asset");
+            int deletedCount = 0;
+            foreach (string file in existingFiles)
+            {
+                string id = Path.GetFileNameWithoutExtension(file);
+                if (!csvIDs.Contains(id))
+                {
+                    AssetDatabase.DeleteAsset(file.Replace("\\", "/"));
+                    deletedCount++;
+                }
+            }
+            if (deletedCount > 0)
+                Debug.Log($"已删除 {deletedCount} 个孤立资产（CSV 中不存在的旧元素）");
         }
 
         AssetDatabase.Refresh();
         Debug.Log($"批量处理完成！新建 {createdCount} 个，更新 {updatedCount} 个。图标匹配 {iconFoundCount} 个，缺失 {iconMissingCount} 个。");
     }
 
-    // 自动加载图标：根据 elementID 在 iconFolder 下查找同名图片
     private static Sprite LoadIcon(string elementID)
     {
-        string[] extensions = { ".png", ".jpg", ".jpeg", ".psd" };
-        foreach (string ext in extensions)
+        if (!AssetDatabase.IsValidFolder(iconFolder)) return null;
+
+        string[] names = { $"{elementID}.png", $"{elementID}UI.png" };
+        foreach (string name in names)
         {
-            string iconPath = Path.Combine(iconFolder, elementID + ext);
-            Sprite sprite = AssetDatabase.LoadAssetAtPath<Sprite>(iconPath);
-            if (sprite != null) return sprite;
+            string path = iconFolder + "/" + name;
+            // 确保 PNG 以 Sprite 形式导入
+            EnsureImportedAsSprite(path);
+            Sprite s = AssetDatabase.LoadAssetAtPath<Sprite>(path);
+            if (s != null) return s;
         }
         return null;
+    }
+
+    /// <summary>
+    /// 强制 PNG 以 Sprite(2D and UI) 模式导入，否则 LoadAssetAtPath&lt;Sprite&gt; 会返回 null
+    /// </summary>
+    private static void EnsureImportedAsSprite(string path)
+    {
+        TextureImporter imp = AssetImporter.GetAtPath(path) as TextureImporter;
+        if (imp != null && imp.textureType != TextureImporterType.Sprite)
+        {
+            imp.textureType = TextureImporterType.Sprite;
+            imp.spriteImportMode = SpriteImportMode.Single;
+            imp.SaveAndReimport();
+        }
     }
 
     private static void AddProperty(List<ElementProperty> list, string key, float value)
@@ -177,18 +194,14 @@ public class ElementDataBatchCreator : EditorWindow
         foreach (char c in line)
         {
             if (c == '"')
-            {
                 inQuotes = !inQuotes;
-            }
             else if (c == ',' && !inQuotes)
             {
                 fields.Add(field);
                 field = "";
             }
             else
-            {
                 field += c;
-            }
         }
         fields.Add(field);
         return fields.ToArray();

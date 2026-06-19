@@ -3,32 +3,45 @@ using UnityEditor;
 using System.IO;
 using System.Collections.Generic;
 
-public class RecipeDataBatchCreator : EditorWindow
+public class RecipeDataBatchCreator
 {
+    private const string csvPath = "Assets/Data/RecipeData/Recipes.csv";
+    private const string saveFolder = "Assets/Data/RecipeData";
+
     [MenuItem("Tools/Batch Create/Update RecipeData from CSV")]
     public static void CreateFromCSV()
     {
-        string csvPath = EditorUtility.OpenFilePanel("Recipes.csv", "Assets/Data/RecipeData", "csv");
-        if (string.IsNullOrEmpty(csvPath)) return;
-
-        string[] lines = File.ReadAllLines(csvPath);
-        if (lines.Length < 2)
+        if (!File.Exists(csvPath))
         {
-            Debug.LogError("CSV 文件为空或没有数据行");
+            Debug.LogError($"找不到 CSV 文件：{csvPath}");
             return;
         }
 
-        string saveFolder = "Assets/Data/RecipeData";
         if (!AssetDatabase.IsValidFolder(saveFolder))
         {
             System.IO.Directory.CreateDirectory(saveFolder);
             AssetDatabase.Refresh();
         }
 
+        // 共享读取模式
+        string[] lines;
+        using (var fs = new FileStream(csvPath, FileMode.Open, FileAccess.Read, FileShare.ReadWrite))
+        using (var sr = new StreamReader(fs))
+        {
+            string content = sr.ReadToEnd();
+            lines = content.Split(new[] { '\r', '\n' }, System.StringSplitOptions.RemoveEmptyEntries);
+        }
+
+        if (lines.Length < 2)
+        {
+            Debug.LogError("CSV 文件为空或没有数据行");
+            return;
+        }
+
         int createdCount = 0;
         int updatedCount = 0;
 
-        // 收集 CSV 中所有产物的 ID，用于后续孤儿检测
+        // 收集所有产物的 ID，用于孤儿清理
         HashSet<string> csvProductIDs = new HashSet<string>();
 
         for (int i = 1; i < lines.Length; i++)
@@ -39,7 +52,7 @@ public class RecipeDataBatchCreator : EditorWindow
             string[] cols = ParseCSVLine(line);
             if (cols.Length < 4)
             {
-                Debug.LogWarning($"第{i + 1}行列数不足，跳过");
+                Debug.LogWarning($"第{i + 1}行列数不足({cols.Length})，跳过");
                 continue;
             }
 
@@ -49,10 +62,9 @@ public class RecipeDataBatchCreator : EditorWindow
             string productID = cols[3];
             string condition = cols.Length > 4 ? cols[4] : "";
 
-            // 记录产物 ID
             csvProductIDs.Add(productID);
 
-            // 查找元素资产
+            // 加载元素
             ElementData ing1 = LoadElement(ing1ID);
             ElementData ing2 = LoadElement(ing2ID);
             ElementData ing3 = LoadElement(ing3ID);
@@ -60,7 +72,11 @@ public class RecipeDataBatchCreator : EditorWindow
 
             if (ing1 == null || ing2 == null || product == null)
             {
-                Debug.LogWarning($"配方跳过：找不到元素 ({ing1ID}, {ing2ID}, {ing3ID}, {productID})");
+                string missing = "";
+                if (ing1 == null) missing += ing1ID + " ";
+                if (ing2 == null) missing += ing2ID + " ";
+                if (product == null) missing += productID;
+                Debug.LogWarning($"配方跳过：找不到元素 ({missing})");
                 continue;
             }
 
@@ -69,11 +85,10 @@ public class RecipeDataBatchCreator : EditorWindow
             if (!string.IsNullOrEmpty(ing3ID)) fileName += "_" + ing3ID;
             fileName += "_To_" + productID;
 
-            string assetPath = Path.Combine(saveFolder, fileName + ".asset");
+            string assetPath = (saveFolder + "/" + fileName + ".asset").Replace("\\", "/");
             RecipeData asset = AssetDatabase.LoadAssetAtPath<RecipeData>(assetPath);
 
             bool isNew = (asset == null);
-
             if (isNew)
             {
                 asset = ScriptableObject.CreateInstance<RecipeData>();
@@ -85,7 +100,6 @@ public class RecipeDataBatchCreator : EditorWindow
                 updatedCount++;
             }
 
-            // 填充数据
             asset.ingredients = new List<ElementData> { ing1, ing2 };
             if (!string.IsNullOrEmpty(ing3ID)) asset.ingredients.Add(ing3);
             asset.product = product;
@@ -96,33 +110,27 @@ public class RecipeDataBatchCreator : EditorWindow
 
         AssetDatabase.SaveAssets();
 
-        // 检查是否存在 CSV 中没有的孤立配方资产
-        string[] existingFiles = Directory.GetFiles(saveFolder, "*.asset");
-        List<string> orphaned = new List<string>();
-        foreach (string file in existingFiles)
+        // 清理孤立资产
+        if (Directory.Exists(saveFolder))
         {
-            string fileName = Path.GetFileNameWithoutExtension(file);
-            // 文件名格式：ing1_ing2_To_productID 或 ing1_ing2_ing3_To_productID
-            // 提取 productID（最后一个 "_To_" 后面的部分）
-            int toIndex = fileName.LastIndexOf("_To_");
-            if (toIndex >= 0)
+            string[] existingFiles = Directory.GetFiles(saveFolder, "*.asset");
+            int deletedCount = 0;
+            foreach (string file in existingFiles)
             {
-                string productID = fileName.Substring(toIndex + 4); // 跳过 "_To_"
-                if (!csvProductIDs.Contains(productID))
+                string fileName = Path.GetFileNameWithoutExtension(file);
+                int toIndex = fileName.LastIndexOf("_To_");
+                if (toIndex >= 0)
                 {
-                    orphaned.Add(fileName);
+                    string pid = fileName.Substring(toIndex + 4);
+                    if (!csvProductIDs.Contains(pid))
+                    {
+                        AssetDatabase.DeleteAsset(file.Replace("\\", "/"));
+                        deletedCount++;
+                    }
                 }
             }
-            else
-            {
-                // 文件名不符合格式，也标记为待检查
-                orphaned.Add(fileName + "（格式异常）");
-            }
-        }
-
-        if (orphaned.Count > 0)
-        {
-            Debug.LogWarning($"以下配方资产在 CSV 中不存在，可能需要手动删除：\n{string.Join("\n", orphaned)}");
+            if (deletedCount > 0)
+                Debug.Log($"已删除 {deletedCount} 个孤立资产（CSV 中不存在的旧配方）");
         }
 
         AssetDatabase.Refresh();
@@ -144,18 +152,14 @@ public class RecipeDataBatchCreator : EditorWindow
         foreach (char c in line)
         {
             if (c == '"')
-            {
                 inQuotes = !inQuotes;
-            }
             else if (c == ',' && !inQuotes)
             {
                 fields.Add(field);
                 field = "";
             }
             else
-            {
                 field += c;
-            }
         }
         fields.Add(field);
         return fields.ToArray();

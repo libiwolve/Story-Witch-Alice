@@ -1,6 +1,9 @@
 using UnityEngine;
 using System.Collections;
 using System.Collections.Generic;
+#if UNITY_EDITOR
+using UnityEditor;
+#endif
 
 public class PhysicsElement : MonoBehaviour
 {
@@ -21,13 +24,84 @@ public class PhysicsElement : MonoBehaviour
         rb = GetComponent<Rigidbody2D>();
         mainCamera = Camera.main;
 
-        // 有 icon → 覆盖 prefab 默认 sprite；无 icon → 保留 prefab 外观
-        if (elementData != null && elementData.elementIcon != null)
+        if (elementData != null)
         {
             SpriteRenderer sr = GetComponent<SpriteRenderer>();
             if (sr != null)
-                sr.sprite = elementData.elementIcon;
+            {
+                // 强制设置正确贴图（不管用啥 prefab 做模板）
+                if (elementData.elementIcon != null)
+                    sr.sprite = elementData.elementIcon;
+                else
+                {
+                    Sprite fallback = ResolveFallbackSprite(elementData.elementID);
+                    if (fallback != null) sr.sprite = fallback;
+                }
+
+                // 统一缩放，不管 prefab 模板原始大小
+                transform.localScale = Vector3.one * 2.5f;
+
+                // 保留 prefab 自身的碰撞箱设置
+            }
+
+            // 动画：有专属 controller → 播；没有 → 删掉 prefab 自带的（否则岩浆动画覆盖贴图）
+            RuntimeAnimatorController ctrl = GetElementAnimController(elementData.elementID);
+            Animator anim = GetComponent<Animator>();
+            if (ctrl != null)
+            {
+                if (anim == null) anim = gameObject.AddComponent<Animator>();
+                anim.runtimeAnimatorController = ctrl;
+            }
+            else if (anim != null)
+            {
+                Destroy(anim);
+            }
         }
+    }
+
+    /// <summary>
+    /// 从 Physic{id}.prefab 读取默认 sprite，没有则返回粉紫色马赛克
+    /// </summary>
+    static Sprite ResolveFallbackSprite(string id)
+    {
+        if (string.IsNullOrEmpty(id)) return null;
+#if UNITY_EDITOR
+        string path = $"Assets/Prefabs/Physic{id}.prefab";
+        GameObject prefab = AssetDatabase.LoadAssetAtPath<GameObject>(path);
+        if (prefab != null)
+        {
+            SpriteRenderer psr = prefab.GetComponent<SpriteRenderer>();
+            if (psr != null && psr.sprite != null)
+                return psr.sprite;
+        }
+#endif
+        return GetFallbackMosaic();
+    }
+
+    static Sprite GetFallbackMosaic()
+    {
+        const int size = 2;
+        Texture2D tex = new Texture2D(size, size, TextureFormat.RGBA32, false);
+        tex.filterMode = FilterMode.Point;
+        Color f = new Color(0.93f, 0.20f, 0.78f);
+        for (int i = 0; i < size * size; i++)
+            tex.SetPixel(i % size, i / size, f);
+        tex.Apply();
+        return Sprite.Create(tex, new Rect(0, 0, size, size), new Vector2(0.5f, 0.5f), size);
+    }
+
+    /// <summary>
+    /// 从 Animations/PhysicElement Animation/ 查找帧动画
+    /// </summary>
+    static RuntimeAnimatorController GetElementAnimController(string id)
+    {
+        if (string.IsNullOrEmpty(id)) return null;
+#if UNITY_EDITOR
+        string path = $"Assets/Animations/PhysicElement Animation/Physic{id}.controller";
+        return AssetDatabase.LoadAssetAtPath<RuntimeAnimatorController>(path);
+#else
+        return null;
+#endif
     }
 
     void OnTriggerEnter2D(Collider2D other)

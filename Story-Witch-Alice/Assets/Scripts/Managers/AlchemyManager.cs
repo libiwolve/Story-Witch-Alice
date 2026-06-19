@@ -58,10 +58,16 @@ public class AlchemyManager : MonoBehaviour
             return;
         }
 
+#if UNITY_EDITOR
+        AutoLoadAssets();
+#endif
+
         foreach (var recipe in allRecipes)
         {
+            if (recipe == null || recipe.ingredients == null) continue;
             foreach (var ingredient in recipe.ingredients)
             {
+                if (ingredient == null) continue;
                 if (!ingredientToRecipesDictionary.ContainsKey(ingredient.elementID))
                 {
                     ingredientToRecipesDictionary[ingredient.elementID] = new List<RecipeData>();
@@ -70,20 +76,68 @@ public class AlchemyManager : MonoBehaviour
             }
         }
 
-        UnlockBaseElement("water");
         UnlockBaseElement("fire");
-        UnlockBaseElement("stone");
         UnlockBaseElement("air");
-        UnlockBaseElement("time");
-        UnlockBaseElement("alice_base");
+        UnlockBaseElement("water");
+        UnlockBaseElement("soil");
 
-        TryUnlockRecipent("water");
         TryUnlockRecipent("fire");
-        TryUnlockRecipent("stone");
         TryUnlockRecipent("air");
-        TryUnlockRecipent("time");
-        TryUnlockRecipent("alice_base");
+        TryUnlockRecipent("water");
+        TryUnlockRecipent("soil");
     }
+
+#if UNITY_EDITOR
+    /// <summary>
+    /// 自动从项目加载所有 RecipeData 和 ElementData，无需手动拖拽
+    /// </summary>
+    public void AutoLoadAssets()
+    {
+        // 强制重新加载，覆盖掉之前拖入的 Missing 引用
+        {
+            string[] guids = AssetDatabase.FindAssets("t:RecipeData");
+            List<RecipeData> valid = new List<RecipeData>();
+            for (int i = 0; i < guids.Length; i++)
+            {
+                string path = AssetDatabase.GUIDToAssetPath(guids[i]);
+                RecipeData r = AssetDatabase.LoadAssetAtPath<RecipeData>(path);
+                if (r != null && r.product != null && r.ingredients != null && r.ingredients.Count > 0)
+                    valid.Add(r);
+            }
+            allRecipes = valid.ToArray();
+        }
+
+        // 强制重新加载所有 ElementData
+        {
+            string[] guids = AssetDatabase.FindAssets("t:ElementData");
+            allElements = new ElementData[guids.Length];
+            for (int i = 0; i < guids.Length; i++)
+            {
+                string path = AssetDatabase.GUIDToAssetPath(guids[i]);
+                allElements[i] = AssetDatabase.LoadAssetAtPath<ElementData>(path);
+            }
+        }
+    }
+#endif
+
+#if UNITY_EDITOR
+    [MenuItem("Tools/Refresh AlchemyManager")]
+    public static void RefreshFromProject()
+    {
+        var mgr = FindFirstObjectByType<AlchemyManager>();
+        if (mgr != null)
+        {
+            mgr.AutoLoadAssets();
+            EditorUtility.SetDirty(mgr);
+            AssetDatabase.SaveAssets();
+            Debug.Log("AlchemyManager refreshed");
+        }
+        else
+        {
+            Debug.LogWarning("场景中找不到 AlchemyManager");
+        }
+    }
+#endif
 
     void UnlockBaseElement(string elementID)
     {
@@ -274,17 +328,13 @@ public class AlchemyManager : MonoBehaviour
 
     /// <summary>
     /// 按优先级选择产物 prefab：
-    /// 1. elementData 有 icon → physicsElementPrefab
-    /// 2. 存在 Physic{id}.prefab → 专属 prefab（如 magma → Physicmagma）
+    /// 1. 存在 Physic{id}.prefab → 专属 prefab（自带碰撞箱和贴图）
+    /// 2. elementData 有 icon → physicsElementPrefab（通用模板，Start 会设正确贴图）
     /// 3. 都没有 → defaultElementPrefab（粉紫色马赛克）
     /// </summary>
     public GameObject GetPrefabForElement(ElementData element)
     {
-        // 有 icon → 通用模板（Start() 里会覆盖 sprite 为 icon）
-        if (element.elementIcon != null && physicsElementPrefab != null)
-            return physicsElementPrefab;
-
-        // 按 elementID 自动查找同名专属 prefab
+        // 1. 有专属 prefab → 直接用，碰撞箱、贴图都是自己的
 #if UNITY_EDITOR
         if (!string.IsNullOrEmpty(element.elementID))
         {
@@ -294,11 +344,12 @@ public class AlchemyManager : MonoBehaviour
         }
 #endif
 
-        // 回退 → 默认粉紫色马赛克
-        if (defaultElementPrefab != null) return defaultElementPrefab;
+        // 2. 有 icon 但没专属 prefab → 通用模板（Start 会设正确贴图）
+        if (element.elementIcon != null && physicsElementPrefab != null)
+            return physicsElementPrefab;
 
-        // 最终 fallback
-        return physicsElementPrefab;
+        // 3. 回退 → 粉紫色马赛克
+        return defaultElementPrefab;
     }
 
     string GetRecipeKey(List<ElementData> ingredients)

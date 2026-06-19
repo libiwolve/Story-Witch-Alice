@@ -12,10 +12,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 1e6b2da83f8212949baea08f1b817bc6, type: 3}
   m_Name: mud
   m_EditorClassIdentifier: 
-  elementName: "\u6CE5\u571F"
+  elementName: "\u6CE5"
   elementID: mud
   elementIcon: {fileID: 0}
-  description: "\u6C34\u571F\u4EA4\u878D\u7684\u6DF7\u6C8C\uFF0C\u5B55\u80B2\u751F\u547D\u7684\u6447\u7BEE\u3002"
+  description: "\u6C34\u4E0E\u571F\u7684\u4EA4\u878D\u2014\u2014\u6D51\u6D4A\u3001\u56F0\u987F\u3001\u5B55\u80B2\u751F\u547D\u7684\u6447\u7BEE\u3002"
   tags:
   - material
   - natural
@@ -24,7 +24,7 @@ MonoBehaviour:
   - fertile
   Properties:
   - key: order
-    value: 0
+    value: 1
   - key: creativity
     value: 0
   - key: empathy

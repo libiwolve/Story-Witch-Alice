@@ -12,10 +12,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 1e6b2da83f8212949baea08f1b817bc6, type: 3}
   m_Name: heat
   m_EditorClassIdentifier: 
-  elementName: "\u70ED\u91CF"
+  elementName: "\u70ED\u80FD"
   elementID: heat
   elementIcon: {fileID: 0}
-  description: "\u65E0\u5F62\u800C\u70BD\u70ED\u7684\u80FD\u91CF\uFF0C\u6539\u53D8\u7269\u8D28\u5F62\u6001\u7684\u63A8\u624B\u3002"
+  description: "\u706B\u7684\u7EAF\u7CB9\u672C\u8D28\u2014\u2014\u65E0\u5F62\u800C\u70BD\u70ED\u7684\u80FD\u91CF\uFF0C\u6539\u53D8\u7269\u8D28\u5F62\u6001\u7684\u63A8\u624B\u3002"
   tags:
   - material
   - energy
@@ -24,7 +24,7 @@ MonoBehaviour:
   - transform
   Properties:
   - key: order
-    value: 0
+    value: 1
   - key: creativity
     value: 0
   - key: empathy

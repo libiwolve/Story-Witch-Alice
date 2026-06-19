@@ -10,21 +10,21 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 1e6b2da83f8212949baea08f1b817bc6, type: 3}
-  m_Name: fire
+  m_Name: fog
   m_EditorClassIdentifier: 
-  elementName: "\u706B"
-  elementID: fire
-  elementIcon: {fileID: -1023457732, guid: ce2ab5fe16be4b040b050818822209c8, type: 3}
-  description: "\u5E26\u6765\u5149\u660E\u4E0E\u6BC1\u706D\u7684\u539F\u59CB\u529B\u91CF\u3002"
+  elementName: "\u96FE"
+  elementID: fog
+  elementIcon: {fileID: 0}
+  description: "\u6C34\u4E0E\u6C14\u7684\u6700\u4EB2\u5BC6\u7ED3\u5408\u2014\u2014\u8FF7\u5931\u3001\u8FB9\u754C\u6D88\u878D\u3001\u672A\u77E5\u3002"
   tags:
-  - basic
+  - material
   - natural
-  - hot
-  - energy
-  - destruction
+  - gas
+  - soft
+  - obscuring
   Properties:
   - key: order
-    value: 0
+    value: 1
   - key: creativity
     value: 0
   - key: empathy
@@ -35,7 +35,9 @@ MonoBehaviour:
     value: 0
   - key: vitality
     value: 0
-  - key: temperature
-    value: 100
-  - key: brightness
-    value: 100
+  - key: density
+    value: 10
+  - key: humidity
+    value: 80
+  - key: visibility
+    value: 10

@@ -10,21 +10,21 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 1e6b2da83f8212949baea08f1b817bc6, type: 3}
-  m_Name: fire
+  m_Name: ice
   m_EditorClassIdentifier: 
-  elementName: "\u706B"
-  elementID: fire
-  elementIcon: {fileID: -1023457732, guid: ce2ab5fe16be4b040b050818822209c8, type: 3}
-  description: "\u5E26\u6765\u5149\u660E\u4E0E\u6BC1\u706D\u7684\u539F\u59CB\u529B\u91CF\u3002"
+  elementName: "\u51B0"
+  elementID: ice
+  elementIcon: {fileID: 0}
+  description: "\u6C34\u7684\u6781\u81F4\u9759\u6B62\u2014\u2014\u51DD\u56FA\u3001\u505C\u6EDE\u3001\u8106\u5F31\u7684\u6C38\u6052\u3002"
   tags:
-  - basic
+  - material
   - natural
-  - hot
-  - energy
-  - destruction
+  - solid
+  - cold
+  - preservation
   Properties:
   - key: order
-    value: 0
+    value: 1
   - key: creativity
     value: 0
   - key: empathy
@@ -36,6 +36,6 @@ MonoBehaviour:
   - key: vitality
     value: 0
   - key: temperature
-    value: 100
-  - key: brightness
-    value: 100
+    value: -50
+  - key: hardness
+    value: 60
