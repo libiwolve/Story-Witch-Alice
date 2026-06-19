@@ -5,6 +5,7 @@ public class BookPet : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler,
 {
     [Header("References")]
     public GameObject fullUIPanel;      // 展开后的完整 UI
+    public GameObject orbitCenter;      // 鱼缸轨道系统（替代合成树面板）
     public Animator animator;           // 书宠的 Animator
     public GameObject closeButton;      // UI 里的 X 按钮
 
@@ -14,19 +15,18 @@ public class BookPet : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler,
 
     private bool isUIOpen = false;
 
-
     void Start()
     {
         if (fullUIPanel != null)
             fullUIPanel.SetActive(false);
+        if (orbitCenter != null)
+            orbitCenter.SetActive(false);
     }
 
-    // 鼠标进入
-        public void OnPointerEnter(PointerEventData eventData)
+    public void OnPointerEnter(PointerEventData eventData)
     {
         if (isUIOpen) return;
-        
-        // 清掉可能残留的 Close Trigger，避免冲突
+
         animator.ResetTrigger(closeTrigger);
         animator.SetTrigger(hoverTrigger);
     }
@@ -35,7 +35,6 @@ public class BookPet : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler,
     {
         if (!isUIOpen)
         {
-            // 清掉可能残留的 Hover Trigger
             animator.ResetTrigger(hoverTrigger);
             animator.SetTrigger(closeTrigger);
         }
@@ -44,30 +43,28 @@ public class BookPet : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler,
     public void OnPointerClick(PointerEventData eventData)
     {
         if (!isUIOpen)
-        {
             OpenUI();
-        }
     }
 
-    // 打开 UI
     void OpenUI()
     {
         isUIOpen = true;
         GetComponent<Collider2D>().enabled = false;
         if (fullUIPanel != null)
             fullUIPanel.SetActive(true);
+        if (orbitCenter != null)
+            orbitCenter.SetActive(true);
     }
 
-    // 关闭 UI（由 X 按钮调用）
     public void CloseUI()
     {
         isUIOpen = false;
         GetComponent<Collider2D>().enabled = true;
         if (fullUIPanel != null)
             fullUIPanel.SetActive(false);
-        
+        if (orbitCenter != null)
+            orbitCenter.SetActive(false);
 
-        // 播放合书动画
         animator.SetTrigger(closeTrigger);
     }
 }
