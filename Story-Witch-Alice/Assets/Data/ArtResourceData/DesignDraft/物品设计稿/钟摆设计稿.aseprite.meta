@@ -8,7 +8,6 @@ ScriptedImporter:
   assetBundleName: 
   assetBundleVariant: 
   script: {fileID: 11500000, guid: 62a9f0aa5b59740cfbadc7e5f9823bb0, type: 3}
-  importerVersion: 2
   textureImporterSettings:
     alphaSource: 1
     mipMapMode: 0
@@ -133,7 +132,7 @@ ScriptedImporter:
       y: 4
       width: 120
       height: 120
-    spriteID: acd74c9892727264da35f47a6ca9546f
+    spriteID: 1c426bb3cf1ff6f4da48cc890cc2945a
     spriteBone: []
     spriteOutline: []
     vertices: []
@@ -145,12 +144,7 @@ ScriptedImporter:
   spriteSheetImportData: []
   asepriteLayers:
   - layerIndex: 0
-    uuid:
-      value0: 359059109
-      value1: 0
-      value2: 0
-      value3: 0
-    guid: 359059109
+    guid: 812545505
     name: "\u949F\u6446\u8BBE\u8BA1\u7A3F"
     layerFlags: 0
     layerType: 0
@@ -164,7 +158,7 @@ ScriptedImporter:
         y: 5
         width: 120
         height: 120
-      spriteId: acd74c9892727264da35f47a6ca9546f
+      spriteId: 1c426bb3cf1ff6f4da48cc890cc2945a
     linkedCells: []
     parentIndex: -1
   platformSettings:
@@ -184,4 +178,3 @@ ScriptedImporter:
   secondarySpriteTextures: []
   spritePackingTag: 
   canvasSize: {x: 128, y: 128}
-  previousTextureSize: {x: 128, y: 128}

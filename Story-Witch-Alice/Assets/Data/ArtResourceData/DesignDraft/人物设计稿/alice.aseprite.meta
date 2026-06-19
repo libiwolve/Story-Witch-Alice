@@ -8,7 +8,6 @@ ScriptedImporter:
   assetBundleName: 
   assetBundleVariant: 
   script: {fileID: 11500000, guid: 62a9f0aa5b59740cfbadc7e5f9823bb0, type: 3}
-  importerVersion: 2
   textureImporterSettings:
     alphaSource: 1
     mipMapMode: 0
@@ -133,7 +132,7 @@ ScriptedImporter:
       y: 4
       width: 106
       height: 300
-    spriteID: c2f46e6f94cfea045a21cfbc3cf137fe
+    spriteID: ee50f769a95a1174c90c0bcc2e2234a1
     spriteBone: []
     spriteOutline: []
     vertices: []
@@ -153,7 +152,7 @@ ScriptedImporter:
       y: 4
       width: 106
       height: 300
-    spriteID: 349863515de7891489326137196b1dcc
+    spriteID: 8866dc8da4a86b140936934d80bbb2de
     spriteBone: []
     spriteOutline: []
     vertices: []
@@ -173,7 +172,7 @@ ScriptedImporter:
       y: 4
       width: 106
       height: 300
-    spriteID: 1ec2921f7f8a43b4eaef2b0c455367c7
+    spriteID: 74bb0e0fee70c304d8679fe3b323f7a7
     spriteBone: []
     spriteOutline: []
     vertices: []
@@ -193,7 +192,7 @@ ScriptedImporter:
       y: 4
       width: 106
       height: 299
-    spriteID: 8db71c0771c413e459c268d9923abc39
+    spriteID: 1618a5547a1e56040b8ff31582413d70
     spriteBone: []
     spriteOutline: []
     vertices: []
@@ -205,18 +204,13 @@ ScriptedImporter:
   spriteSheetImportData: []
   asepriteLayers:
   - layerIndex: 0
-    uuid:
-      value0: 3745824282
-      value1: 0
-      value2: 0
-      value3: 0
-    guid: -549143014
+    guid: 1033555538
     name: alice
     layerFlags: 0
     layerType: 0
     blendMode: 0
     cells:
-    - name: Frame_0
+    - name: alice_Frame_0
       frameIndex: 0
       additiveSortOrder: 0
       cellRect:
@@ -224,8 +218,8 @@ ScriptedImporter:
         y: 3
         width: 106
         height: 300
-      spriteId: c2f46e6f94cfea045a21cfbc3cf137fe
-    - name: Frame_1
+      spriteId: ee50f769a95a1174c90c0bcc2e2234a1
+    - name: alice_Frame_1
       frameIndex: 1
       additiveSortOrder: 0
       cellRect:
@@ -233,8 +227,8 @@ ScriptedImporter:
         y: 3
         width: 106
         height: 300
-      spriteId: 349863515de7891489326137196b1dcc
-    - name: Frame_2
+      spriteId: 8866dc8da4a86b140936934d80bbb2de
+    - name: alice_Frame_2
       frameIndex: 2
       additiveSortOrder: 0
       cellRect:
@@ -242,8 +236,8 @@ ScriptedImporter:
         y: 3
         width: 106
         height: 300
-      spriteId: 1ec2921f7f8a43b4eaef2b0c455367c7
-    - name: Frame_3
+      spriteId: 74bb0e0fee70c304d8679fe3b323f7a7
+    - name: alice_Frame_3
       frameIndex: 3
       additiveSortOrder: 0
       cellRect:
@@ -251,7 +245,7 @@ ScriptedImporter:
         y: 3
         width: 106
         height: 299
-      spriteId: 8db71c0771c413e459c268d9923abc39
+      spriteId: 1618a5547a1e56040b8ff31582413d70
     linkedCells: []
     parentIndex: -1
   platformSettings: []
@@ -259,4 +253,3 @@ ScriptedImporter:
   secondarySpriteTextures: []
   spritePackingTag: 
   canvasSize: {x: 110, y: 303}
-  previousTextureSize: {x: 512, y: 512}
