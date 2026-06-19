@@ -57,6 +57,7 @@ public class DefaultElementPrefabCreator
         // SpriteRenderer
         SpriteRenderer sr = go.AddComponent<SpriteRenderer>();
         sr.sprite = defaultSprite;
+        sr.sortingLayerName = "Foreground";
 
         // Rigidbody2D
         Rigidbody2D rb = go.AddComponent<Rigidbody2D>();

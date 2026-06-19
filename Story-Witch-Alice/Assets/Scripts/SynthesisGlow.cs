@@ -21,7 +21,7 @@ public class SynthesisGlow : MonoBehaviour
         child.transform.localScale = Vector3.one * 0.6f;
 
         SpriteRenderer sr = child.AddComponent<SpriteRenderer>();
-        sr.sortingOrder = 1; // 高于元素本身，不会被场景遮挡
+        sr.sortingLayerName = "Foreground";
 
         Animator anim = child.AddComponent<Animator>();
         anim.runtimeAnimatorController = animController;

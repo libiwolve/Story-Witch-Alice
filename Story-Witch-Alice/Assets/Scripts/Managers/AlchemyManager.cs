@@ -10,6 +10,7 @@ using UnityEditor;
 public class AlchemyManager : MonoBehaviour
 {
     public RecipeData[] allRecipes;
+    public ElementData[] allElements;
     
     private Dictionary<string, ElementData> unlockedRecipeDictionary = new Dictionary<string, ElementData>();
     private Dictionary<string, List<RecipeData>> ingredientToRecipesDictionary = new Dictionary<string, List<RecipeData>>();
@@ -36,6 +37,9 @@ public class AlchemyManager : MonoBehaviour
     
     [Header("Synthesis Animation")]
     public float flyUpDuration = 0.5f;  // 产物从锅内飞到悬停位置的时长
+
+    [Header("Orbit System")]
+    public ThoughtOrbit thoughtOrbit;
 
     [Header("Glow Effects")]
     public RuntimeAnimatorController goldGlowController;  // 新产物：金色光晕
@@ -141,6 +145,7 @@ public class AlchemyManager : MonoBehaviour
 
         currentIngredients.Add(element);
         PlaySound(ingredientSound);
+        thoughtOrbit?.MoveToFront(element.elementID);
         AddLog($"放入原料: {element.elementName}，当前锅里有 {currentIngredients.Count} 个原料");
     }
 
@@ -161,6 +166,7 @@ public class AlchemyManager : MonoBehaviour
             if (isNew)
             {
                 OnElementCrafted(result);
+                thoughtOrbit?.AddToFront(result);
             }
 
             AddLog($"合成成功！产物: {result.elementName}");
@@ -272,7 +278,7 @@ public class AlchemyManager : MonoBehaviour
     /// 2. 存在 Physic{id}.prefab → 专属 prefab（如 magma → Physicmagma）
     /// 3. 都没有 → defaultElementPrefab（粉紫色马赛克）
     /// </summary>
-    GameObject GetPrefabForElement(ElementData element)
+    public GameObject GetPrefabForElement(ElementData element)
     {
         // 有 icon → 通用模板（Start() 里会覆盖 sprite 为 icon）
         if (element.elementIcon != null && physicsElementPrefab != null)
