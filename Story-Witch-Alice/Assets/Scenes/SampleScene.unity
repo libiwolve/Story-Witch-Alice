@@ -3630,10 +3630,10 @@ Camera:
   m_LensShift: {x: 0, y: 0}
   m_NormalizedViewPortRect:
     serializedVersion: 2
-    x: 0
-    y: 0.1192053
-    width: 0.662069
-    height: 0.71441996
+    x: 0.037241384
+    y: 0
+    width: 0.9261088
+    height: 0.9993378
   near clip plane: 0.3
   far clip plane: 1000
   field of view: 16.38239
@@ -14907,14 +14907,18 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   maxElements: 20
-  centerGravity: 0.2
-  baseRadius: 4
-  radiusStep: 2
-  baseTangentialSpeed: 3
+  orbitSpeed: 18
+  wobbleAmplitude: 0.3
+  wobbleSpeed: 1.5
+  parchmentRect: {fileID: 0}
+  edgePadding: 0.25
+  maxRadiusOverride: 3
+  minRadius: 1.2
   minAlpha: 0.2
   maxAlpha: 1
   fadeOutDuration: 0.6
   orbitElementPrefab: {fileID: 8643683878209805819, guid: 71144802a79f8704fb8c08f94ade80f9, type: 3}
+  orbitElementScale: 2.5
   orbitLayerName: Orbit
 --- !u!4 &761337172
 Transform:

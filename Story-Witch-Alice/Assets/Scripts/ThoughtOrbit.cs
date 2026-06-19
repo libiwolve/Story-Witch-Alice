@@ -7,41 +7,47 @@ using UnityEditor;
 
 /// <summary>
 /// 鱼缸轨道系统。
-/// 维护一个元素队列（上限20），元素绕中心做行星运动，
-/// 物理引擎处理碰撞弹开，点击元素可拖出到场景。
+/// 维护一个元素队列（上限20），元素绕中心做固定环绕运动，
+/// 带径向简谐波动效果，点击元素可拖出到场景。
 /// </summary>
 public class ThoughtOrbit : MonoBehaviour
 {
     [Header("Queue")]
     public int maxElements = 20;
 
-    [Header("Orbit Physics")]
-    public float centerGravity = 5f;         // 向心引力强度（越小越慢）
-    public float baseRadius = 4f;            // 最内圈半径
-    public float radiusStep = 0.35f;         // 每增加一个位置半径增量
-    public float baseTangentialSpeed = 1.2f; // 切向速度基数（越小越慢）
+    [Header("Orbit")]
+    public float orbitSpeed = 25f;              // 环绕速度（度/秒）
+    public float wobbleAmplitude = 0.3f;        // 径向波动幅度
+    public float wobbleSpeed = 1.5f;            // 波动频率
+    public RectTransform parchmentRect;         // Parchment 面板（用于计算轨道半径范围）
+    public float edgePadding = 0.85f;           // 半径边距系数（<1 留白边）
+    public float maxRadiusOverride = 0f;        // >0 时强制使用这个值，不自动计算
+    public float minRadius = 0.8f;              // 最内圈最小半径
 
     [Header("Visual")]
     public float minAlpha = 0.2f;
     public float maxAlpha = 1f;
-    public float fadeOutDuration = 0.6f;     // 被挤出队列时淡出时间
+    public float fadeOutDuration = 0.6f;        // 被挤出队列时淡出时间
 
     [Header("Prefab")]
-    public GameObject orbitElementPrefab;    // 轨道元素预制体
-    public float orbitElementScale = 2.5f;   // 图标放大倍数
+    public GameObject orbitElementPrefab;       // 轨道元素预制体
+    public float orbitElementScale = 2.5f;      // 图标放大倍数
 
     [Header("Layer")]
-    public string orbitLayerName = "Orbit";  // 轨道层名（需人工在 Project Settings 添加）
+    public string orbitLayerName = "Orbit";     // 轨道层名（需人工在 Project Settings 添加）
 
     private List<ElementData> queue = new List<ElementData>();
     private List<OrbitElement> orbitElements = new List<OrbitElement>();
+
+    // 计算出的轨道半径分布
+    private float maxRadius = 4f;
+
+    // =================== 初始化 ===================
 
     void Start()
     {
         InitializeQueue();
     }
-
-    // =================== 队列管理 ===================
 
     void InitializeQueue()
     {
@@ -54,25 +60,47 @@ public class ThoughtOrbit : MonoBehaviour
         RecalculateAllParameters();
     }
 
-    /// <summary>
-    /// 新元素合成 → 加入队首
-    /// </summary>
+    // =================== 固定轨道更新 ===================
+
+    void Update()
+    {
+        float time = Time.time;
+        for (int i = 0; i < orbitElements.Count; i++)
+        {
+            OrbitElement oe = orbitElements[i];
+            if (oe == null) continue;
+
+            // 角度匀速递增
+            oe.currentAngle += orbitSpeed * Mathf.Deg2Rad * Time.deltaTime;
+
+            // 径向简谐运动（在圆轨迹上小幅度波动）
+            float phase = time * wobbleSpeed + oe.currentAngle * 0.5f;
+            float wobble = Mathf.Sin(phase) * wobbleAmplitude;
+            float currentRadius = oe.targetRadius + wobble;
+
+            // 计算位置
+            Vector3 pos = transform.position + new Vector3(
+                Mathf.Cos(oe.currentAngle) * currentRadius,
+                Mathf.Sin(oe.currentAngle) * currentRadius,
+                0
+            );
+            oe.transform.position = pos;
+        }
+    }
+
+    // =================== 队列管理 ===================
+
     public void AddToFront(ElementData element)
     {
-        // 已在队列中 → 直接提到队首
         int idx = queue.FindIndex(e => e.elementID == element.elementID);
         if (idx >= 0)
         {
             MoveToFront(idx);
             return;
         }
-
         InternalAddToFront(element, true);
     }
 
-    /// <summary>
-    /// 元素入锅 → 提到队首
-    /// </summary>
     public void MoveToFront(string elementID)
     {
         int idx = queue.FindIndex(e => e.elementID == elementID);
@@ -80,9 +108,6 @@ public class ThoughtOrbit : MonoBehaviour
         MoveToFront(idx);
     }
 
-    /// <summary>
-    /// 更新单个元素的 alpha（由 OrbitElement 悬停恢复时调用）
-    /// </summary>
     public void UpdateElementAlpha(OrbitElement oe)
     {
         int idx = orbitElements.IndexOf(oe);
@@ -92,10 +117,6 @@ public class ThoughtOrbit : MonoBehaviour
         oe.SetAlpha(alpha);
     }
 
-    /// <summary>
-    /// 点击轨道元素时调用 → 生成物理元素供玩家拖拽
-    /// 复用 AlchemyManager 的智能 prefab 选择逻辑
-    /// </summary>
     public void SpawnPhysicalElement(ElementData data, Vector3 worldPos)
     {
         GameObject prefab = AlchemyManager.Instance?.GetPrefabForElement(data);
@@ -113,12 +134,11 @@ public class ThoughtOrbit : MonoBehaviour
             pe.sourceSlot = null;
         }
 
-        // 让元素自然下落（松开鼠标时已有惯性逻辑）
         Rigidbody2D rb = go.GetComponent<Rigidbody2D>();
         if (rb != null)
         {
             rb.gravityScale = 1f;
-            rb.velocity = Vector2.down * 2f; // 给一点向下的初速
+            rb.velocity = Vector2.down * 2f;
         }
     }
 
@@ -126,7 +146,6 @@ public class ThoughtOrbit : MonoBehaviour
 
     void InternalAddToFront(ElementData element, bool animate)
     {
-        // 队列满了 → 挤掉队尾
         if (queue.Count >= maxElements)
         {
             int lastIdx = queue.Count - 1;
@@ -136,12 +155,15 @@ public class ThoughtOrbit : MonoBehaviour
             orbitElements.RemoveAt(lastIdx);
         }
 
-        // 插入队首
         queue.Insert(0, element);
         OrbitElement oe = CreateOrbitElement(element);
         orbitElements.Insert(0, oe);
 
-        RecalculateAllParameters();
+        // 不重排已有轨道，只更新透明度
+        RecalculateAlphas();
+
+        if (animate)
+            StartCoroutine(AnimateElementEntry(oe));
     }
 
     void MoveToFront(int currentIndex)
@@ -156,24 +178,35 @@ public class ThoughtOrbit : MonoBehaviour
         orbitElements.RemoveAt(currentIndex);
         orbitElements.Insert(0, oe);
 
-        RecalculateAllParameters();
+        // 只更新透明度，不改变已有的轨道位置
+        RecalculateAlphas();
     }
 
     OrbitElement CreateOrbitElement(ElementData data)
     {
-        // 从队列索引计算该元素的轨道半径
-        float r = baseRadius + orbitElements.Count * radiusStep;
+        // 新元素渐进取半径，不重排已有轨道
+        float available = maxRadius - minRadius;
+        float step = available / Mathf.Max(maxElements - 1, 1);
+        float r = maxRadius - orbitElements.Count * step;
+        r = Mathf.Max(r, minRadius);
         float angle = Random.Range(0f, 2f * Mathf.PI);
 
-        // 直接生成在轨道位置上，而不是中心（避免中心引力过大吸住）
         Vector3 pos = transform.position + new Vector3(Mathf.Cos(angle), Mathf.Sin(angle), 0) * r;
         GameObject go = Instantiate(orbitElementPrefab, pos, Quaternion.identity);
         go.transform.SetParent(transform);
         go.name = "Orbit_" + data.elementID;
 
-        // 设置碰撞层（只与自身碰撞）
+        // 碰撞层
         int orbitLayer = LayerMask.NameToLayer(orbitLayerName);
         if (orbitLayer >= 0) go.layer = orbitLayer;
+
+        // Rigidbody2D 设为 kinematic，不参与物理但保留碰撞检测
+        Rigidbody2D rb = go.GetComponent<Rigidbody2D>();
+        if (rb != null)
+        {
+            rb.isKinematic = true;
+            rb.simulated = true;  // 保留 OnMouseDown 碰撞检测
+        }
 
         OrbitElement oe = go.GetComponent<OrbitElement>();
         if (oe == null) oe = go.AddComponent<OrbitElement>();
@@ -183,77 +216,122 @@ public class ThoughtOrbit : MonoBehaviour
         oe.currentAngle = angle;
         oe.targetRadius = r;
 
-        // 设置贴图
+        // 贴图
         SpriteRenderer sr = go.GetComponent<SpriteRenderer>();
         if (sr == null) sr = go.AddComponent<SpriteRenderer>();
         sr.sprite = ResolveElementSprite(data);
         sr.sortingLayerName = "Foreground";
         sr.sortingOrder = 10;
 
-        // 图标放大
         go.transform.localScale = Vector3.one * orbitElementScale;
 
-        // 加 Animator 播放帧动画
+        // 动画
         Animator anim = go.GetComponent<Animator>();
         if (anim == null) anim = go.AddComponent<Animator>();
         RuntimeAnimatorController animCtrl = GetElementAnimController(data.elementID);
         if (animCtrl != null) anim.runtimeAnimatorController = animCtrl;
-
-        // 设置切向初速度（维持圆轨道：v = sqrt(G / r)）
-        Rigidbody2D rb = go.GetComponent<Rigidbody2D>();
-        if (rb != null)
-        {
-            Vector2 radialDir = new Vector2(Mathf.Cos(angle), Mathf.Sin(angle));
-            Vector2 tangentDir = new Vector2(-radialDir.y, radialDir.x);
-            float orbitalSpeed = Mathf.Sqrt(centerGravity / r);
-            rb.velocity = tangentDir * orbitalSpeed;
-        }
 
         return oe;
     }
 
     void RecalculateAllParameters()
     {
-        for (int i = 0; i < orbitElements.Count; i++)
+        UpdateMaxRadiusFromParchment();
+
+        int count = orbitElements.Count;
+        for (int i = 0; i < count; i++)
         {
             OrbitElement oe = orbitElements[i];
             if (oe == null) continue;
 
-            float r = baseRadius + i * radiusStep;
+            // 从外到内均匀分布：队首（i=0）在最外圈，队尾在最内圈
+            float r;
+            if (count <= 1)
+                r = maxRadius;
+            else
+                r = Mathf.Lerp(maxRadius, minRadius, i / (float)(count - 1));
             oe.targetRadius = r;
 
-            // 更新透明度
-            float t = queue.Count > 1 ? i / (float)(queue.Count - 1) : 0f;
+            // 每个元素错开随机起始角度，防止初始堆叠
+            oe.currentAngle = (float)i / count * Mathf.PI * 2f;
+
+            float t = count > 1 ? i / (float)(count - 1) : 0f;
             float alpha = Mathf.Lerp(maxAlpha, minAlpha, t);
             oe.SetAlpha(alpha);
         }
     }
 
-    // =================== 物理 ===================
-
-    void FixedUpdate()
+    /// <summary>
+    /// 只更新透明度（队列重排时调用），不改轨道位置
+    /// </summary>
+    void RecalculateAlphas()
     {
-        foreach (var oe in orbitElements)
+        int count = orbitElements.Count;
+        for (int i = 0; i < count; i++)
         {
+            OrbitElement oe = orbitElements[i];
             if (oe == null) continue;
-
-            Rigidbody2D rb = oe.GetComponent<Rigidbody2D>();
-            if (rb == null) continue;
-
-            Vector2 dir = (transform.position - oe.transform.position);
-            float dist = dir.magnitude;
-            if (dist < 0.01f) continue;
-
-            // 万有引力：F = G / r²（单位质量）
-            float force = centerGravity / (dist * dist + 0.1f);
-            rb.AddForce(dir.normalized * force, ForceMode2D.Force);
-
-            // 软阻尼：防止飞太远
-            rb.velocity *= 0.9995f;
+            float t = count > 1 ? i / (float)(count - 1) : 0f;
+            float alpha = Mathf.Lerp(maxAlpha, minAlpha, t);
+            oe.SetAlpha(alpha);
         }
     }
 
-    // =================== 动画 ===================
+    void UpdateMaxRadiusFromParchment()
+    {
+        if (maxRadiusOverride > 0f)
+        {
+            maxRadius = maxRadiusOverride;
+            return;
+        }
+        if (parchmentRect == null) return;
+
+        Vector3[] corners = new Vector3[4];
+        parchmentRect.GetWorldCorners(corners);
+        float width = Vector3.Distance(corners[0], corners[3]);
+        float height = Vector3.Distance(corners[0], corners[1]);
+        float calculated = Mathf.Min(width, height) / 2f * edgePadding;
+        if (calculated > 0.5f) maxRadius = calculated;
+    }
+
+    // =================== 入场 / 淡出动画 ===================
+
+    IEnumerator AnimateElementEntry(OrbitElement oe)
+    {
+        if (oe == null) yield break;
+
+        Vector3 targetPos = oe.transform.position;
+        float targetScale = oe.transform.localScale.x;
+
+        // 从中心出发，缩放 + 位置一起飞入轨道
+        oe.transform.position = transform.position;
+        oe.transform.localScale = Vector3.zero;
+        oe.SetAlpha(0f);
+
+        float duration = 0.5f;
+        float elapsed = 0f;
+
+        while (elapsed < duration)
+        {
+            if (oe == null) yield break;
+            elapsed += Time.deltaTime;
+            float t = elapsed / duration;
+            t = 1f - Mathf.Pow(1f - t, 3f);
+
+            oe.transform.position = Vector3.Lerp(transform.position, targetPos, t);
+            float s = Mathf.Lerp(0f, targetScale, t);
+            oe.transform.localScale = Vector3.one * s;
+            oe.SetAlpha(Mathf.Lerp(0f, 1f, t));
+
+            yield return null;
+        }
+
+        if (oe != null)
+        {
+            oe.transform.position = targetPos;
+            oe.transform.localScale = Vector3.one * targetScale;
+        }
+    }
 
     IEnumerator FadeOutAndDestroy(OrbitElement oe)
     {
@@ -270,7 +348,6 @@ public class ThoughtOrbit : MonoBehaviour
             elapsed += Time.deltaTime;
             float t = elapsed / fadeOutDuration;
 
-            // 缩小 + 淡出
             oe.transform.localScale = Vector3.Lerp(startScale, Vector3.zero, t);
             if (sr != null)
             {
@@ -290,7 +367,6 @@ public class ThoughtOrbit : MonoBehaviour
     {
         if (AlchemyManager.Instance == null) return null;
 
-        // 1. 从 allElements 全量列表查找（包含基础元素和合成产物）
         if (AlchemyManager.Instance.allElements != null)
         {
             foreach (var elem in AlchemyManager.Instance.allElements)
@@ -300,7 +376,6 @@ public class ThoughtOrbit : MonoBehaviour
             }
         }
 
-        // 2. 从配方产物查找
         var recipes = AlchemyManager.Instance.allRecipes;
         if (recipes != null)
         {
@@ -311,7 +386,6 @@ public class ThoughtOrbit : MonoBehaviour
             }
         }
 
-        // 3. 备用：检查配方原料
         foreach (var recipe in recipes)
         {
             if (recipe.ingredients != null)
@@ -329,16 +403,8 @@ public class ThoughtOrbit : MonoBehaviour
 
     // =================== 贴图查找 ===================
 
-    /// <summary>
-    /// 按优先级找轨道元素的贴图：
-    /// 1. ElementData.elementIcon（用户手动在 Inspector 拖的）
-    /// 2. Assets/Data/ArtResourceData/Design/Icon/{id}.png
-    /// 3. Physic{id}.prefab 上 SpriteRenderer 的默认 sprite
-    /// 4. 粉紫色马赛克
-    /// </summary>
     Sprite ResolveElementSprite(ElementData data)
     {
-        // 第一优先：ElementData 上用户拖的贴图
         if (data.elementIcon != null)
             return data.elementIcon;
 
@@ -346,7 +412,6 @@ public class ThoughtOrbit : MonoBehaviour
         if (string.IsNullOrEmpty(id)) return OrbitElement.GetFallbackSpriteStatic();
 
 #if UNITY_EDITOR
-        // 第二优先：从 Icon 目录按命名查找
         string iconDir = "Assets/Data/ArtResourceData/Design/Icon/";
         string[] candidates = {
             $"{iconDir}{id}.png"
@@ -357,7 +422,6 @@ public class ThoughtOrbit : MonoBehaviour
             if (s != null) return s;
         }
 
-        // 第三优先：从同名 PhysicXXX.prefab 读取默认 sprite
         string prefabPath = $"Assets/Prefabs/Physic{id}.prefab";
         GameObject prefab = AssetDatabase.LoadAssetAtPath<GameObject>(prefabPath);
         if (prefab != null)
@@ -368,15 +432,9 @@ public class ThoughtOrbit : MonoBehaviour
         }
 #endif
 
-        // 最终 fallback：粉紫色 2×2 马赛克
         return OrbitElement.GetFallbackSpriteStatic();
     }
 
-    /// <summary>
-    /// 从 Animations/PhysicElement Animation/ 查找元素的帧动画控制器。
-    /// 有 .controller 文件 → 返回动画（如 fire、water）
-    /// 没有 → null（保持静态贴图，如 stone）
-    /// </summary>
     RuntimeAnimatorController GetElementAnimController(string id)
     {
         if (string.IsNullOrEmpty(id)) return null;
