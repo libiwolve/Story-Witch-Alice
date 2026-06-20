@@ -183,56 +183,109 @@ public class ThoughtOrbit : MonoBehaviour
     }
 
     OrbitElement CreateOrbitElement(ElementData data)
+{
+    // =================== 计算半径 ===================
+    float available = maxRadius - minRadius;
+    float step = available / Mathf.Max(maxElements - 1, 1);
+    float r = maxRadius - orbitElements.Count * step;
+    r = Mathf.Max(r, minRadius);
+
+    // =================== 计算初始角度（避免和已有元素重叠） ===================
+    float angle;
+    if (orbitElements.Count == 0)
     {
-        // 新元素渐进取半径，不重排已有轨道
-        float available = maxRadius - minRadius;
-        float step = available / Mathf.Max(maxElements - 1, 1);
-        float r = maxRadius - orbitElements.Count * step;
-        r = Mathf.Max(r, minRadius);
-        float angle = Random.Range(0f, 2f * Mathf.PI);
-
-        Vector3 pos = transform.position + new Vector3(Mathf.Cos(angle), Mathf.Sin(angle), 0) * r;
-        GameObject go = Instantiate(orbitElementPrefab, pos, Quaternion.identity);
-        go.transform.SetParent(transform);
-        go.name = "Orbit_" + data.elementID;
-
-        // 碰撞层
-        int orbitLayer = LayerMask.NameToLayer(orbitLayerName);
-        if (orbitLayer >= 0) go.layer = orbitLayer;
-
-        // Rigidbody2D 设为 kinematic，不参与物理但保留碰撞检测
-        Rigidbody2D rb = go.GetComponent<Rigidbody2D>();
-        if (rb != null)
-        {
-            rb.isKinematic = true;
-            rb.simulated = true;  // 保留 OnMouseDown 碰撞检测
-        }
-
-        OrbitElement oe = go.GetComponent<OrbitElement>();
-        if (oe == null) oe = go.AddComponent<OrbitElement>();
-
-        oe.elementData = data;
-        oe.orbitManager = this;
-        oe.currentAngle = angle;
-        oe.targetRadius = r;
-
-        // 贴图
-        SpriteRenderer sr = go.GetComponent<SpriteRenderer>();
-        if (sr == null) sr = go.AddComponent<SpriteRenderer>();
-        sr.sprite = ResolveElementSprite(data);
-        sr.sortingLayerName = "Foreground";
-        sr.sortingOrder = 10;
-
-        go.transform.localScale = Vector3.one * orbitElementScale;
-
-        // 动画
-        Animator anim = go.GetComponent<Animator>();
-        if (anim == null) anim = go.AddComponent<Animator>();
-        RuntimeAnimatorController animCtrl = GetElementAnimController(data.elementID);
-        if (animCtrl != null) anim.runtimeAnimatorController = animCtrl;
-
-        return oe;
+        // 第一个元素，随机角度
+        angle = Random.Range(0f, 2f * Mathf.PI);
     }
+    else
+    {
+        // 找到已有元素中角度间隔最大的空隙，把新元素放在空隙中间
+        float bestAngle = 0f;
+        float bestGap = -1f;
+        
+        // 收集所有已有元素的角度，排序
+        List<float> existingAngles = new List<float>();
+        foreach (var elem in orbitElements)
+        {
+            if (elem != null)
+                existingAngles.Add(elem.currentAngle);
+        }
+        existingAngles.Sort();
+        
+        // 检查相邻元素之间的空隙（包括首尾之间）
+        for (int i = 0; i < existingAngles.Count; i++)
+        {
+            int next = (i + 1) % existingAngles.Count;
+            float gap;
+            if (next == 0)
+                // 首尾之间的空隙：最后一个到 2π，加上 0 到第一个
+                gap = (2f * Mathf.PI - existingAngles[i]) + existingAngles[next];
+            else
+                gap = existingAngles[next] - existingAngles[i];
+            
+            if (gap > bestGap)
+            {
+                bestGap = gap;
+                // 新元素放在空隙中间
+                float midAngle = existingAngles[i] + gap / 2f;
+                if (midAngle > 2f * Mathf.PI) midAngle -= 2f * Mathf.PI;
+                bestAngle = midAngle;
+            }
+        }
+        
+        // 如果只有一个元素，放在它对面
+        if (orbitElements.Count == 1)
+        {
+            bestAngle = existingAngles[0] + Mathf.PI;
+            if (bestAngle > 2f * Mathf.PI) bestAngle -= 2f * Mathf.PI;
+        }
+        
+        angle = bestAngle;
+    }
+
+    // =================== 生成物体 ===================
+    Vector3 pos = transform.position + new Vector3(Mathf.Cos(angle), Mathf.Sin(angle), 0) * r;
+    GameObject go = Instantiate(orbitElementPrefab, pos, Quaternion.identity);
+    go.transform.SetParent(transform);
+    go.name = "Orbit_" + data.elementID;
+
+    // 碰撞层
+    int orbitLayer = LayerMask.NameToLayer(orbitLayerName);
+    if (orbitLayer >= 0) go.layer = orbitLayer;
+
+    // Rigidbody2D 设为 kinematic，不参与物理但保留碰撞检测
+    Rigidbody2D rb = go.GetComponent<Rigidbody2D>();
+    if (rb != null)
+    {
+        rb.isKinematic = true;
+        rb.simulated = true;
+    }
+
+    OrbitElement oe = go.GetComponent<OrbitElement>();
+    if (oe == null) oe = go.AddComponent<OrbitElement>();
+
+    oe.elementData = data;
+    oe.orbitManager = this;
+    oe.currentAngle = angle;
+    oe.targetRadius = r;
+
+    // 贴图
+    SpriteRenderer sr = go.GetComponent<SpriteRenderer>();
+    if (sr == null) sr = go.AddComponent<SpriteRenderer>();
+    sr.sprite = ResolveElementSprite(data);
+    sr.sortingLayerName = "Foreground";
+    sr.sortingOrder = 10;
+
+    go.transform.localScale = Vector3.one * orbitElementScale;
+
+    // 动画
+    Animator anim = go.GetComponent<Animator>();
+    if (anim == null) anim = go.AddComponent<Animator>();
+    RuntimeAnimatorController animCtrl = GetElementAnimController(data.elementID);
+    if (animCtrl != null) anim.runtimeAnimatorController = animCtrl;
+
+    return oe;
+}
 
     void RecalculateAllParameters()
     {
@@ -252,9 +305,8 @@ public class ThoughtOrbit : MonoBehaviour
                 r = Mathf.Lerp(maxRadius, minRadius, i / (float)(count - 1));
             oe.targetRadius = r;
 
-            // 每个元素错开随机起始角度，防止初始堆叠
-            oe.currentAngle = (float)i / count * Mathf.PI * 2f;
-
+            
+           
             float t = count > 1 ? i / (float)(count - 1) : 0f;
             float alpha = Mathf.Lerp(maxAlpha, minAlpha, t);
             oe.SetAlpha(alpha);

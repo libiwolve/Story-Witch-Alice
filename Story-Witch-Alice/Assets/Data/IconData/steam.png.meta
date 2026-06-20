@@ -1,5 +1,5 @@
 fileFormatVersion: 2
-guid: 8a940ba86f446c5438d60bc09a4ab0cb
+guid: 9b52897c0369c394e8a5409c8045af00
 TextureImporter:
   internalIDToNameTable: []
   externalObjects: {}
@@ -97,7 +97,7 @@ TextureImporter:
     serializedVersion: 2
     sprites:
     - serializedVersion: 2
-      name: wind_0
+      name: steam_0
       rect:
         serializedVersion: 2
         x: 0
@@ -111,14 +111,14 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: 0
       bones: []
-      spriteID: 69ffa00a9052a9f40a880896f09fa2eb
-      internalID: 643643008
+      spriteID: c4165f5bfb46a41439efc54a56f5fbea
+      internalID: 1152465761
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: wind_1
+      name: steam_1
       rect:
         serializedVersion: 2
         x: 32
@@ -132,14 +132,14 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: 0
       bones: []
-      spriteID: 2e297e9c2d2424a428d12ceb8ae49bbc
-      internalID: -800088022
+      spriteID: 13bbaf6ad5a515c4187e4c7c1296e109
+      internalID: 475116940
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: wind_2
+      name: steam_2
       rect:
         serializedVersion: 2
         x: 64
@@ -153,14 +153,14 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: 0
       bones: []
-      spriteID: d9b9d027d2c7cb143aa048382865e2ac
-      internalID: -882227527
+      spriteID: 8005ed76c217aa6418f6e61e9b9eb950
+      internalID: -396714680
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: wind_3
+      name: steam_3
       rect:
         serializedVersion: 2
         x: 96
@@ -174,14 +174,14 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: 0
       bones: []
-      spriteID: 7746bde3fc5cac446ba043af4e9d9b5c
-      internalID: 901556542
+      spriteID: b09b6c5c94c1e0944a3f644c7b475967
+      internalID: -566677867
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: wind_4
+      name: steam_4
       rect:
         serializedVersion: 2
         x: 128
@@ -195,14 +195,14 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: 0
       bones: []
-      spriteID: ed8db77d829ef434e8957aa3ce7ccd9f
-      internalID: -432487212
+      spriteID: a909fe09aed6251468a20436ed5dd0d5
+      internalID: 747559192
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: wind_5
+      name: steam_5
       rect:
         serializedVersion: 2
         x: 160
@@ -216,14 +216,14 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: 0
       bones: []
-      spriteID: 77dcdac1fde89f24086ebf84d8e0f5e9
-      internalID: -1689298823
+      spriteID: d7bcc00714ff8ad49871a4bcec84c9fb
+      internalID: 1687509043
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: wind_6
+      name: steam_6
       rect:
         serializedVersion: 2
         x: 192
@@ -237,29 +237,8 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: 0
       bones: []
-      spriteID: 824b0532cba92de489a758563cac5758
-      internalID: 1461960271
-      vertices: []
-      indices: 
-      edges: []
-      weights: []
-    - serializedVersion: 2
-      name: wind_7
-      rect:
-        serializedVersion: 2
-        x: 224
-        y: 0
-        width: 32
-        height: 32
-      alignment: 0
-      pivot: {x: 0, y: 0}
-      border: {x: 0, y: 0, z: 0, w: 0}
-      outline: []
-      physicsShape: []
-      tessellationDetail: 0
-      bones: []
-      spriteID: 503669d1a78e5e34390bf82a5f7e2def
-      internalID: 793312649
+      spriteID: 8b507c85eec032141a30e33ed0548d7f
+      internalID: -283781986
       vertices: []
       indices: 
       edges: []
@@ -275,14 +254,13 @@ TextureImporter:
     weights: []
     secondaryTextures: []
     nameFileIdTable:
-      wind_0: 643643008
-      wind_1: -800088022
-      wind_2: -882227527
-      wind_3: 901556542
-      wind_4: -432487212
-      wind_5: -1689298823
-      wind_6: 1461960271
-      wind_7: 793312649
+      steam_0: 1152465761
+      steam_1: 475116940
+      steam_2: -396714680
+      steam_3: -566677867
+      steam_4: 747559192
+      steam_5: 1687509043
+      steam_6: -283781986
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 

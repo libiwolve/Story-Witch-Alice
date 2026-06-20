@@ -124,7 +124,7 @@ ScriptedImporter:
   animatedSpriteImportData:
   - name: "\u5CA9\u6D46\u8BBE\u8BA1\u7A3F_Frame_0"
     originalName: 
-    pivot: {x: 0.48387095, y: -0.0625}
+    pivot: {x: 0.48387095, y: 0}
     alignment: 9
     border: {x: 0, y: 0, z: 0, w: 0}
     rect:
@@ -144,7 +144,7 @@ ScriptedImporter:
     uvTransform: {x: 4, y: 4}
   - name: "\u5CA9\u6D46\u8BBE\u8BA1\u7A3F_Frame_1"
     originalName: 
-    pivot: {x: 0.48387095, y: -0.0625}
+    pivot: {x: 0.48387095, y: 0}
     alignment: 9
     border: {x: 0, y: 0, z: 0, w: 0}
     rect:
@@ -164,7 +164,7 @@ ScriptedImporter:
     uvTransform: {x: 4, y: 44}
   - name: "\u5CA9\u6D46\u8BBE\u8BA1\u7A3F_Frame_2"
     originalName: 
-    pivot: {x: 0.48387095, y: -0.0625}
+    pivot: {x: 0.48387095, y: 0}
     alignment: 9
     border: {x: 0, y: 0, z: 0, w: 0}
     rect:
@@ -184,7 +184,7 @@ ScriptedImporter:
     uvTransform: {x: 4, y: 84}
   - name: "\u5CA9\u6D46\u8BBE\u8BA1\u7A3F_Frame_3"
     originalName: 
-    pivot: {x: 0.48387095, y: -0.0625}
+    pivot: {x: 0.48387095, y: 0}
     alignment: 9
     border: {x: 0, y: 0, z: 0, w: 0}
     rect:
@@ -204,7 +204,7 @@ ScriptedImporter:
     uvTransform: {x: 4, y: 124}
   - name: "\u5CA9\u6D46\u8BBE\u8BA1\u7A3F_Frame_4"
     originalName: 
-    pivot: {x: 0.48387095, y: -0.0625}
+    pivot: {x: 0.48387095, y: 0}
     alignment: 9
     border: {x: 0, y: 0, z: 0, w: 0}
     rect:
@@ -224,7 +224,7 @@ ScriptedImporter:
     uvTransform: {x: 4, y: 164}
   - name: "\u5CA9\u6D46\u8BBE\u8BA1\u7A3F_Frame_5"
     originalName: 
-    pivot: {x: 0.48387095, y: -0.0625}
+    pivot: {x: 0.48387095, y: 0}
     alignment: 9
     border: {x: 0, y: 0, z: 0, w: 0}
     rect:
@@ -244,7 +244,7 @@ ScriptedImporter:
     uvTransform: {x: 4, y: 204}
   - name: "\u5CA9\u6D46\u8BBE\u8BA1\u7A3F_Frame_6"
     originalName: 
-    pivot: {x: 0.48387095, y: -0.0625}
+    pivot: {x: 0.48387095, y: 0}
     alignment: 9
     border: {x: 0, y: 0, z: 0, w: 0}
     rect:
@@ -264,7 +264,7 @@ ScriptedImporter:
     uvTransform: {x: 43, y: 4}
   - name: "\u5CA9\u6D46\u8BBE\u8BA1\u7A3F_Frame_7"
     originalName: 
-    pivot: {x: 0.48387095, y: -0.0625}
+    pivot: {x: 0.48387095, y: 0}
     alignment: 9
     border: {x: 0, y: 0, z: 0, w: 0}
     rect:
@@ -284,7 +284,7 @@ ScriptedImporter:
     uvTransform: {x: 43, y: 44}
   - name: "\u5CA9\u6D46\u8BBE\u8BA1\u7A3F_Frame_8"
     originalName: 
-    pivot: {x: 0.48387095, y: -0.0625}
+    pivot: {x: 0.48387095, y: 0}
     alignment: 9
     border: {x: 0, y: 0, z: 0, w: 0}
     rect:
@@ -304,7 +304,7 @@ ScriptedImporter:
     uvTransform: {x: 43, y: 84}
   - name: "\u5CA9\u6D46\u8BBE\u8BA1\u7A3F_Frame_9"
     originalName: 
-    pivot: {x: 0.48387095, y: -0.0625}
+    pivot: {x: 0.48387095, y: 0}
     alignment: 9
     border: {x: 0, y: 0, z: 0, w: 0}
     rect:
@@ -324,7 +324,7 @@ ScriptedImporter:
     uvTransform: {x: 43, y: 124}
   - name: "\u5CA9\u6D46\u8BBE\u8BA1\u7A3F_Frame_10"
     originalName: 
-    pivot: {x: 0.48387095, y: -0.0625}
+    pivot: {x: 0.48387095, y: 0}
     alignment: 9
     border: {x: 0, y: 0, z: 0, w: 0}
     rect:
@@ -344,7 +344,7 @@ ScriptedImporter:
     uvTransform: {x: 43, y: 164}
   - name: "\u5CA9\u6D46\u8BBE\u8BA1\u7A3F_Frame_11"
     originalName: 
-    pivot: {x: 0.48387095, y: -0.0625}
+    pivot: {x: 0.48387095, y: 0}
     alignment: 9
     border: {x: 0, y: 0, z: 0, w: 0}
     rect:
@@ -364,7 +364,7 @@ ScriptedImporter:
     uvTransform: {x: 43, y: 204}
   - name: "\u5CA9\u6D46\u8BBE\u8BA1\u7A3F_Frame_12"
     originalName: 
-    pivot: {x: 0.48387095, y: -0.0625}
+    pivot: {x: 0.48387095, y: 0}
     alignment: 9
     border: {x: 0, y: 0, z: 0, w: 0}
     rect:
@@ -384,7 +384,7 @@ ScriptedImporter:
     uvTransform: {x: 82, y: 4}
   - name: "\u5CA9\u6D46\u8BBE\u8BA1\u7A3F_Frame_13"
     originalName: 
-    pivot: {x: 0.48387095, y: -0.0625}
+    pivot: {x: 0.48387095, y: 0}
     alignment: 9
     border: {x: 0, y: 0, z: 0, w: 0}
     rect:
@@ -404,7 +404,7 @@ ScriptedImporter:
     uvTransform: {x: 82, y: 44}
   - name: "\u5CA9\u6D46\u8BBE\u8BA1\u7A3F_Frame_14"
     originalName: 
-    pivot: {x: 0.48387095, y: -0.0625}
+    pivot: {x: 0.48387095, y: 0}
     alignment: 9
     border: {x: 0, y: 0, z: 0, w: 0}
     rect:
@@ -424,7 +424,7 @@ ScriptedImporter:
     uvTransform: {x: 82, y: 84}
   - name: "\u5CA9\u6D46\u8BBE\u8BA1\u7A3F_Frame_15"
     originalName: 
-    pivot: {x: 0.48387095, y: -0.0625}
+    pivot: {x: 0.48387095, y: 0}
     alignment: 9
     border: {x: 0, y: 0, z: 0, w: 0}
     rect:
@@ -444,7 +444,7 @@ ScriptedImporter:
     uvTransform: {x: 82, y: 124}
   - name: "\u5CA9\u6D46\u8BBE\u8BA1\u7A3F_Frame_16"
     originalName: 
-    pivot: {x: 0.48387095, y: -0.0625}
+    pivot: {x: 0.48387095, y: 0}
     alignment: 9
     border: {x: 0, y: 0, z: 0, w: 0}
     rect:
@@ -480,8 +480,8 @@ ScriptedImporter:
       frameIndex: 0
       additiveSortOrder: 0
       cellRect:
-        x: 3
-        y: 2
+        x: 1
+        y: 0
         width: 31
         height: 32
       spriteId: a2008d5cbd1c27240a35dbaec9c19ba6
@@ -489,8 +489,8 @@ ScriptedImporter:
       frameIndex: 1
       additiveSortOrder: 0
       cellRect:
-        x: 3
-        y: 2
+        x: 1
+        y: 0
         width: 31
         height: 32
       spriteId: ad96c516a1cb3a24ab3d55013bc85724
@@ -498,8 +498,8 @@ ScriptedImporter:
       frameIndex: 2
       additiveSortOrder: 0
       cellRect:
-        x: 3
-        y: 2
+        x: 1
+        y: 0
         width: 31
         height: 32
       spriteId: c79028aa246b17440b3240e0554c1410
@@ -507,8 +507,8 @@ ScriptedImporter:
       frameIndex: 3
       additiveSortOrder: 0
       cellRect:
-        x: 3
-        y: 2
+        x: 1
+        y: 0
         width: 31
         height: 32
       spriteId: a4159b1c62bf2fd4480c0b1995b75fb9
@@ -516,8 +516,8 @@ ScriptedImporter:
       frameIndex: 4
       additiveSortOrder: 0
       cellRect:
-        x: 3
-        y: 2
+        x: 1
+        y: 0
         width: 31
         height: 32
       spriteId: 6ee2bf8e6cfb8c048b3472a10df55b1b
@@ -525,8 +525,8 @@ ScriptedImporter:
       frameIndex: 5
       additiveSortOrder: 0
       cellRect:
-        x: 3
-        y: 2
+        x: 1
+        y: 0
         width: 31
         height: 32
       spriteId: 910d74d1695164848bf4c19ebf8e66a8
@@ -534,8 +534,8 @@ ScriptedImporter:
       frameIndex: 6
       additiveSortOrder: 0
       cellRect:
-        x: 3
-        y: 2
+        x: 1
+        y: 0
         width: 31
         height: 32
       spriteId: 1b86c4262baa45c4f85576ba30042696
@@ -543,8 +543,8 @@ ScriptedImporter:
       frameIndex: 7
       additiveSortOrder: 0
       cellRect:
-        x: 3
-        y: 2
+        x: 1
+        y: 0
         width: 31
         height: 32
       spriteId: 1abb5df88ab7788409110f8cff341531
@@ -552,8 +552,8 @@ ScriptedImporter:
       frameIndex: 8
       additiveSortOrder: 0
       cellRect:
-        x: 3
-        y: 2
+        x: 1
+        y: 0
         width: 31
         height: 32
       spriteId: 98455b1598bde404e803986b75efb796
@@ -561,8 +561,8 @@ ScriptedImporter:
       frameIndex: 9
       additiveSortOrder: 0
       cellRect:
-        x: 3
-        y: 2
+        x: 1
+        y: 0
         width: 31
         height: 32
       spriteId: 558fd56ef64a9ce4892c3e29a402993c
@@ -570,8 +570,8 @@ ScriptedImporter:
       frameIndex: 10
       additiveSortOrder: 0
       cellRect:
-        x: 3
-        y: 2
+        x: 1
+        y: 0
         width: 31
         height: 32
       spriteId: 90d636f5cadd14c4f8330f7054895f9a
@@ -579,8 +579,8 @@ ScriptedImporter:
       frameIndex: 11
       additiveSortOrder: 0
       cellRect:
-        x: 3
-        y: 2
+        x: 1
+        y: 0
         width: 31
         height: 32
       spriteId: 052421d1c50158a47b18c8bab3e28157
@@ -588,8 +588,8 @@ ScriptedImporter:
       frameIndex: 12
       additiveSortOrder: 0
       cellRect:
-        x: 3
-        y: 2
+        x: 1
+        y: 0
         width: 31
         height: 32
       spriteId: 4105cb729a7d2ae43b4563136b2809c5
@@ -597,8 +597,8 @@ ScriptedImporter:
       frameIndex: 13
       additiveSortOrder: 0
       cellRect:
-        x: 3
-        y: 2
+        x: 1
+        y: 0
         width: 31
         height: 32
       spriteId: 1f810d764ab6e2d49a5020c791fb0569
@@ -606,8 +606,8 @@ ScriptedImporter:
       frameIndex: 14
       additiveSortOrder: 0
       cellRect:
-        x: 3
-        y: 2
+        x: 1
+        y: 0
         width: 31
         height: 32
       spriteId: 80d7c083afac4e043bf089513fec6b5a
@@ -615,8 +615,8 @@ ScriptedImporter:
       frameIndex: 15
       additiveSortOrder: 0
       cellRect:
-        x: 3
-        y: 2
+        x: 1
+        y: 0
         width: 31
         height: 32
       spriteId: 7c89a8c549f9b924889881fce84fcf74
@@ -624,8 +624,8 @@ ScriptedImporter:
       frameIndex: 16
       additiveSortOrder: 0
       cellRect:
-        x: 3
-        y: 2
+        x: 1
+        y: 0
         width: 31
         height: 32
       spriteId: cd55cbcab81c5ae46b97fcd040e396f5
@@ -635,5 +635,5 @@ ScriptedImporter:
   generatePhysicsShape: 0
   secondarySpriteTextures: []
   spritePackingTag: 
-  canvasSize: {x: 36, y: 36}
+  canvasSize: {x: 32, y: 32}
   previousTextureSize: {x: 128, y: 256}
