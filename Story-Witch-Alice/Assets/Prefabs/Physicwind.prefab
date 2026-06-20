@@ -82,7 +82,7 @@ SpriteRenderer:
   m_FlipX: 0
   m_FlipY: 0
   m_DrawMode: 0
-  m_Size: {x: 0.64, y: 0.64}
+  m_Size: {x: 0.32, y: 0.32}
   m_AdaptiveModeThreshold: 0.5
   m_SpriteTileMode: 0
   m_WasSpriteAssigned: 1
@@ -103,6 +103,7 @@ MonoBehaviour:
   elementData: {fileID: 11400000, guid: 3a4f8159fff82ca4c81728befccc5f5a, type: 2}
   sourceSlot: {fileID: 0}
   velocitySampleFrames: 5
+  dirtTrail: {fileID: 0}
 --- !u!60 &6314273204002422385
 PolygonCollider2D:
   m_ObjectHideFlags: 0
@@ -139,8 +140,8 @@ PolygonCollider2D:
   m_SpriteTilingProperty:
     border: {x: 0, y: 0, z: 0, w: 0}
     pivot: {x: 0.5, y: 0.5}
-    oldSize: {x: 0.64, y: 0.64}
-    newSize: {x: 0.64, y: 0.64}
+    oldSize: {x: 0.32, y: 0.32}
+    newSize: {x: 0.32, y: 0.32}
     adaptiveTilingThreshold: 0.5
     drawMode: 0
     adaptiveTiling: 0

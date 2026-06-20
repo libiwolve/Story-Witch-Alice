@@ -14,6 +14,8 @@ public class PhysicsElement : MonoBehaviour
     public int velocitySampleFrames = 5;
 
     private bool isBeingDragged = false;
+    public ParticleSystem dirtTrail;
+
     private Rigidbody2D rb;
     private Camera mainCamera;
 
@@ -23,6 +25,7 @@ public class PhysicsElement : MonoBehaviour
     {
         rb = GetComponent<Rigidbody2D>();
         mainCamera = Camera.main;
+        if (dirtTrail != null) dirtTrail.Play();
 
         if (elementData != null)
         {
@@ -138,10 +141,13 @@ public class PhysicsElement : MonoBehaviour
 
     void OnMouseDown()
     {
+        Debug.Log($"dirtTrail 是否为空: {dirtTrail == null}");
         DestroySynthesisGlow();
+       
 
         isBeingDragged = true;
         recentPositions.Clear();
+        
 
         if (rb != null)
         {
@@ -154,6 +160,7 @@ public class PhysicsElement : MonoBehaviour
     void OnMouseDrag()
     {
         if (!isBeingDragged) return;
+        
 
         Vector3 mouseWorld = GetMouseWorldPosition();
         transform.position = mouseWorld;
@@ -166,6 +173,7 @@ public class PhysicsElement : MonoBehaviour
     void OnMouseUp()
     {
         isBeingDragged = false;
+        
 
         Vector3 velocity = Vector3.zero;
         if (recentPositions.Count >= 2)
