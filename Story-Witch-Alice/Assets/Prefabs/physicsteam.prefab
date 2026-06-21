@@ -4846,7 +4846,7 @@ GameObject:
   - component: {fileID: 8184609296195852966}
   - component: {fileID: 3200136050030921511}
   m_Layer: 0
-  m_Name: physicsteam
+  m_Name: Physicsteam
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0

@@ -52,7 +52,7 @@ public class PhysicsElement : MonoBehaviour
                 Destroy(anim);
             }
 
-            // ★ 删除了 UpdateScaleAndCollider() 调用 ★
+            // 删除 UpdateScaleAndCollider()
         }
     }
 
@@ -87,6 +87,8 @@ public class PhysicsElement : MonoBehaviour
         tex.Apply();
         return Sprite.Create(tex, new Rect(0, 0, size, size), new Vector2(0.5f, 0.5f), size);
     }
+
+    
 
     private static RuntimeAnimatorController GetElementAnimController(string id)
     {
