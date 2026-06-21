@@ -31,7 +31,7 @@ Transform:
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: -0.94, y: 3.52, z: 0}
-  m_LocalScale: {x: 4.6043177, y: 4.412802, z: 4.412802}
+  m_LocalScale: {x: 2.234245, y: 2.1413124, z: 2.1413124}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 0}
@@ -160,6 +160,7 @@ MonoBehaviour:
   elementData: {fileID: 11400000, guid: bfaa2ac9f3db15f46b09deb8d12624ae, type: 2}
   sourceSlot: {fileID: 0}
   velocitySampleFrames: 5
+  dirtTrail: {fileID: 0}
 --- !u!50 &117946756910831751
 Rigidbody2D:
   serializedVersion: 4

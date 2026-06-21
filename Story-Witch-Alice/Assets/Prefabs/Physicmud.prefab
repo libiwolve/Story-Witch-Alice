@@ -30,7 +30,7 @@ Transform:
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: -0.50887567, y: -3.1036794, z: 0}
-  m_LocalScale: {x: 2.5, y: 2.5, z: 2.5}
+  m_LocalScale: {x: 2.5462499, y: 2.5462499, z: 2.5462499}
   m_ConstrainProportionsScale: 1
   m_Children:
   - {fileID: 4535632653383478730}
@@ -103,9 +103,6 @@ MonoBehaviour:
   elementData: {fileID: 11400000, guid: 8513f8fd45dd75e448ec3ffffd0ebabb, type: 2}
   sourceSlot: {fileID: 0}
   velocitySampleFrames: 5
-  targetWorldSize: 1.5
-  maxScale: 3
-  minScale: 0.3
   dirtTrail: {fileID: 3516201645244514175}
 --- !u!60 &5734848905270274541
 PolygonCollider2D:
