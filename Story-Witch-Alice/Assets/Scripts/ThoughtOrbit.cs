@@ -184,11 +184,8 @@ public class ThoughtOrbit : MonoBehaviour
 
     OrbitElement CreateOrbitElement(ElementData data)
 {
-    // =================== 计算半径 ===================
-    float available = maxRadius - minRadius;
-    float step = available / Mathf.Max(maxElements - 1, 1);
-    float r = maxRadius - orbitElements.Count * step;
-    r = Mathf.Max(r, minRadius);
+    // =================== 计算半径（找最大空隙插入，避免全挤同一轨道） ===================
+    float r = FindBestRadius();
 
     // =================== 计算初始角度（避免和已有元素重叠） ===================
     float angle;
@@ -495,6 +492,55 @@ public class ThoughtOrbit : MonoBehaviour
         return AssetDatabase.LoadAssetAtPath<RuntimeAnimatorController>(path);
 #endif
         return null;
+    }
+
+    /// <summary>
+    /// 在已有元素的半径之间找最大空隙插入，避免新元素全部挤在同一轨道
+    /// </summary>
+    float FindBestRadius()
+    {
+        if (orbitElements.Count == 0) return maxRadius;
+
+        // 收集所有已有元素的半径
+        List<float> existingRadii = new List<float>();
+        foreach (var oe in orbitElements)
+        {
+            if (oe != null)
+                existingRadii.Add(oe.targetRadius);
+        }
+        existingRadii.Sort();
+
+        // 检查每个空隙（包括边缘空隙：minRadius~第一个元素，最后一个元素~maxRadius）
+        float bestRadius = maxRadius;
+        float bestGap = -1f;
+
+        // 下边缘空隙：minRadius ~ 第一个元素
+        float lowerGap = existingRadii[0] - minRadius;
+        if (lowerGap > bestGap)
+        {
+            bestGap = lowerGap;
+            bestRadius = minRadius + lowerGap / 2f;
+        }
+
+        // 元素之间的空隙
+        for (int i = 0; i < existingRadii.Count - 1; i++)
+        {
+            float gap = existingRadii[i + 1] - existingRadii[i];
+            if (gap > bestGap)
+            {
+                bestGap = gap;
+                bestRadius = existingRadii[i] + gap / 2f;
+            }
+        }
+
+        // 上边缘空隙：最后一个元素 ~ maxRadius
+        float upperGap = maxRadius - existingRadii[existingRadii.Count - 1];
+        if (upperGap > bestGap)
+        {
+            bestRadius = existingRadii[existingRadii.Count - 1] + upperGap / 2f;
+        }
+
+        return Mathf.Clamp(bestRadius, minRadius, maxRadius);
     }
 
     public List<ElementData> GetQueue() => queue;
