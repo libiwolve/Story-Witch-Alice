@@ -283,7 +283,7 @@ public class ThoughtOrbit : MonoBehaviour
     if (anim == null) anim = go.AddComponent<Animator>();
     RuntimeAnimatorController animCtrl = GetElementAnimController(data.elementID);
     if (animCtrl != null) anim.runtimeAnimatorController = animCtrl;
-
+    ApplyElementEffect(go, data);
     return oe;
 }
 
@@ -495,6 +495,28 @@ public class ThoughtOrbit : MonoBehaviour
         return AssetDatabase.LoadAssetAtPath<RuntimeAnimatorController>(path);
 #endif
         return null;
+    }
+    //这个是给orbitelement挂上粒子用的
+    void ApplyElementEffect(GameObject go, ElementData data)
+    {
+        switch (data.elementID)
+        {
+            case "steam":
+                SteamController steamCtrl = go.GetComponent<SteamController>();
+                if (steamCtrl == null) steamCtrl = go.AddComponent<SteamController>();
+
+                Transform steamPsTransform = go.transform.Find("steam");
+                if (steamPsTransform != null)
+                {
+                    ParticleSystem ps = steamPsTransform.GetComponent<ParticleSystem>();
+                    if (ps != null)
+                        steamCtrl.steamParticles = ps;
+                }
+                break;
+
+            default:
+                break;
+        }
     }
 
     public List<ElementData> GetQueue() => queue;
