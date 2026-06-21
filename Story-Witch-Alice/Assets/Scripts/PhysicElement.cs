@@ -332,6 +332,10 @@ public class PhysicsElement : MonoBehaviour
         mouseScreen.z = -mainCamera.transform.position.z;
         return mainCamera.ScreenToWorldPoint(mouseScreen);
     }
+<<<<<<< HEAD
+    
+}
+=======
 
 #if UNITY_EDITOR
     void OnDrawGizmosSelected()
@@ -346,3 +350,4 @@ public class PhysicsElement : MonoBehaviour
     }
 #endif
 }
+>>>>>>> 2e25513d40661c649757a07a214758994a4bd183
