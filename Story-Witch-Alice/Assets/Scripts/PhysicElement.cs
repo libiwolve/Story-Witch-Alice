@@ -1,5 +1,4 @@
 using UnityEngine;
-using System.Collections;
 using System.Collections.Generic;
 #if UNITY_EDITOR
 using UnityEditor;
@@ -10,44 +9,52 @@ public class PhysicsElement : MonoBehaviour
     public ElementData elementData;
     public UIDraggableElement sourceSlot;
 
-    [Header("inertia settings")]
+    [Header("Inertia Settings")]
     public int velocitySampleFrames = 5;
+
+    [Header("Size Settings")]
+    [Tooltip("所有元素统一的世界空间大小（Unity单位）")]
+    public float targetWorldSize = 1.5f;
+    
+    [Tooltip("允许的最大缩放倍数，防止某些贴图尺寸异常导致物体巨大")]
+    public float maxScale = 3f;
+    
+    [Tooltip("允许的最小缩放倍数")]
+    public float minScale = 0.3f;
 
     private bool isBeingDragged = false;
     public ParticleSystem dirtTrail;
 
     private Rigidbody2D rb;
     private Camera mainCamera;
+    private SpriteRenderer spriteRenderer;
+    private Sprite lastRebuiltSprite;
+    private float currentScale = 1f;
 
     private Queue<(Vector3 pos, float time)> recentPositions = new Queue<(Vector3, float)>();
 
     void Start()
     {
         rb = GetComponent<Rigidbody2D>();
+        spriteRenderer = GetComponent<SpriteRenderer>();
         mainCamera = Camera.main;
         if (dirtTrail != null) dirtTrail.Play();
 
         if (elementData != null)
         {
-            SpriteRenderer sr = GetComponent<SpriteRenderer>();
-            if (sr != null)
+            // 第一步：设置正确的 Sprite
+            if (spriteRenderer != null)
             {
-                // 强制设置正确贴图（不管用啥 prefab 做模板）
                 if (elementData.elementIcon != null)
-                    sr.sprite = elementData.elementIcon;
+                    spriteRenderer.sprite = elementData.elementIcon;
                 else
                 {
                     Sprite fallback = ResolveFallbackSprite(elementData.elementID);
-                    if (fallback != null) sr.sprite = fallback;
+                    if (fallback != null) spriteRenderer.sprite = fallback;
                 }
-
-                // 统一缩放，不管 prefab 模板原始大小
-                transform.localScale = Vector3.one * 2.5f;
-
-                // 保留 prefab 自身的碰撞箱设置
             }
 
-            // 动画：有专属 controller → 播；没有 → 删掉 prefab 自带的（否则岩浆动画覆盖贴图）
+            // 第二步：处理动画
             RuntimeAnimatorController ctrl = GetElementAnimController(elementData.elementID);
             Animator anim = GetComponent<Animator>();
             if (ctrl != null)
@@ -59,13 +66,132 @@ public class PhysicsElement : MonoBehaviour
             {
                 Destroy(anim);
             }
+
+            // 第三步：统一缩放并重建碰撞体
+            if (spriteRenderer != null && spriteRenderer.sprite != null)
+            {
+                UpdateScaleAndCollider();
+                lastRebuiltSprite = spriteRenderer.sprite;
+            }
+        }
+        else
+        {
+            // elementData 为空，保持原样
+            Debug.LogWarning($"[PhysicsElement] {gameObject.name} 的 elementData 为空，跳过缩放处理");
+        }
+    }
+
+    void LateUpdate()
+    {
+        if (spriteRenderer == null || spriteRenderer.sprite == null) return;
+
+        if (spriteRenderer.sprite != lastRebuiltSprite)
+        {
+            UpdateScaleAndCollider();
+            lastRebuiltSprite = spriteRenderer.sprite;
         }
     }
 
     /// <summary>
-    /// 从 Physic{id}.prefab 读取默认 sprite，没有则返回粉紫色马赛克
+    /// 根据当前 Sprite 的实际尺寸，计算缩放倍数并重建碰撞体
     /// </summary>
-    static Sprite ResolveFallbackSprite(string id)
+    private void UpdateScaleAndCollider()
+    {
+        if (spriteRenderer == null || spriteRenderer.sprite == null) return;
+
+        Sprite sp = spriteRenderer.sprite;
+        float spriteWidth = sp.bounds.size.x;
+        float spriteHeight = sp.bounds.size.y;
+
+        // 取 Sprite 的最大边
+        float maxSpriteSize = Mathf.Max(spriteWidth, spriteHeight);
+        
+        // 如果 Sprite 尺寸异常小或为 0，跳过
+        if (maxSpriteSize <= 0.0001f)
+        {
+            Debug.LogError($"[PhysicsElement] {elementData?.elementName ?? gameObject.name} " +
+                          $"的 Sprite 尺寸异常: {spriteWidth}x{spriteHeight}，使用默认缩放 1");
+            currentScale = 1f;
+            transform.localScale = Vector3.one;
+            RebuildCollider2D(spriteRenderer);
+            return;
+        }
+
+        // 计算缩放比例
+        float rawScale = targetWorldSize / maxSpriteSize;
+
+        // ★ 限制缩放范围，防止异常 ★
+        currentScale = Mathf.Clamp(rawScale, minScale, maxScale);
+
+        transform.localScale = Vector3.one * currentScale;
+
+        // 重建碰撞体
+        RebuildCollider2D(spriteRenderer);
+
+        Debug.Log($"[{elementData?.elementName ?? gameObject.name}] " +
+                  $"Sprite原始尺寸={spriteWidth:F3}x{spriteHeight:F3}, " +
+                  $"原始缩放计算={rawScale:F2}, " +
+                  $"限制后缩放={currentScale:F2}, " +
+                  $"最终世界尺寸≈{maxSpriteSize * currentScale:F2}");
+    }
+
+    /// <summary>
+    /// 根据当前 Sprite 重建 2D 碰撞体
+    /// </summary>
+    private void RebuildCollider2D(SpriteRenderer sr)
+    {
+        if (sr == null || sr.sprite == null) return;
+
+        PolygonCollider2D poly = GetComponent<PolygonCollider2D>();
+        if (poly != null)
+        {
+            int shapeCount = sr.sprite.GetPhysicsShapeCount();
+
+            if (shapeCount > 0)
+            {
+                poly.pathCount = shapeCount;
+                List<Vector2> shape = new List<Vector2>();
+                for (int i = 0; i < shapeCount; i++)
+                {
+                    shape.Clear();
+                    sr.sprite.GetPhysicsShape(i, shape);
+                    poly.SetPath(i, shape.ToArray());
+                }
+            }
+            else
+            {
+                poly.pathCount = 1;
+                Bounds b = sr.sprite.bounds;
+                Vector2[] rectShape = new Vector2[4]
+                {
+                    new Vector2(b.min.x, b.min.y),
+                    new Vector2(b.min.x, b.max.y),
+                    new Vector2(b.max.x, b.max.y),
+                    new Vector2(b.max.x, b.min.y)
+                };
+                poly.SetPath(0, rectShape);
+            }
+        }
+
+        BoxCollider2D box = GetComponent<BoxCollider2D>();
+        if (box != null)
+        {
+            Bounds b = sr.sprite.bounds;
+            box.size = b.size;
+            box.offset = b.center;
+        }
+
+        CircleCollider2D circle = GetComponent<CircleCollider2D>();
+        if (circle != null)
+        {
+            Bounds b = sr.sprite.bounds;
+            float radius = Mathf.Max(b.extents.x, b.extents.y);
+            circle.radius = radius;
+            circle.offset = b.center;
+        }
+    }
+
+    private static Sprite ResolveFallbackSprite(string id)
     {
         if (string.IsNullOrEmpty(id)) return null;
 #if UNITY_EDITOR
@@ -81,7 +207,7 @@ public class PhysicsElement : MonoBehaviour
         return GetFallbackMosaic();
     }
 
-    static Sprite GetFallbackMosaic()
+    private static Sprite GetFallbackMosaic()
     {
         const int size = 2;
         Texture2D tex = new Texture2D(size, size, TextureFormat.RGBA32, false);
@@ -93,10 +219,7 @@ public class PhysicsElement : MonoBehaviour
         return Sprite.Create(tex, new Rect(0, 0, size, size), new Vector2(0.5f, 0.5f), size);
     }
 
-    /// <summary>
-    /// 从 Animations/PhysicElement Animation/ 查找帧动画
-    /// </summary>
-    static RuntimeAnimatorController GetElementAnimController(string id)
+    private static RuntimeAnimatorController GetElementAnimController(string id)
     {
         if (string.IsNullOrEmpty(id)) return null;
 #if UNITY_EDITOR
@@ -106,6 +229,8 @@ public class PhysicsElement : MonoBehaviour
         return null;
 #endif
     }
+
+    // ==================== 交互逻辑 ====================
 
     void OnTriggerEnter2D(Collider2D other)
     {
@@ -127,13 +252,11 @@ public class PhysicsElement : MonoBehaviour
         {
             if (sourceSlot != null)
             {
-                // 物品栏拖出的元素落地 → 恢复槽位图标，元素留在场景
                 sourceSlot.RestoreIcon();
-                sourceSlot = null; // 切断关联，变成独立可拾取元素
+                sourceSlot = null;
             }
             else if (elementData != null)
             {
-                // 合成产物落地 → 元素留在场景（可拖回锅继续合成）
                 AlchemyManager.Instance?.AddLog($"{elementData.elementName} 掉在了地上");
             }
         }
@@ -141,13 +264,10 @@ public class PhysicsElement : MonoBehaviour
 
     void OnMouseDown()
     {
-        Debug.Log($"dirtTrail 是否为空: {dirtTrail == null}");
         DestroySynthesisGlow();
-       
 
         isBeingDragged = true;
         recentPositions.Clear();
-        
 
         if (rb != null)
         {
@@ -160,7 +280,6 @@ public class PhysicsElement : MonoBehaviour
     void OnMouseDrag()
     {
         if (!isBeingDragged) return;
-        
 
         Vector3 mouseWorld = GetMouseWorldPosition();
         transform.position = mouseWorld;
@@ -173,7 +292,6 @@ public class PhysicsElement : MonoBehaviour
     void OnMouseUp()
     {
         isBeingDragged = false;
-        
 
         Vector3 velocity = Vector3.zero;
         if (recentPositions.Count >= 2)
@@ -202,10 +320,7 @@ public class PhysicsElement : MonoBehaviour
         }
     }
 
-    /// <summary>
-    /// 悬停状态结束 → 销毁光效
-    /// </summary>
-    void DestroySynthesisGlow()
+    private void DestroySynthesisGlow()
     {
         SynthesisGlow glow = GetComponentInChildren<SynthesisGlow>();
         if (glow != null) Destroy(glow.gameObject);
@@ -217,4 +332,17 @@ public class PhysicsElement : MonoBehaviour
         mouseScreen.z = -mainCamera.transform.position.z;
         return mainCamera.ScreenToWorldPoint(mouseScreen);
     }
+
+#if UNITY_EDITOR
+    void OnDrawGizmosSelected()
+    {
+        if (spriteRenderer == null || spriteRenderer.sprite == null) return;
+
+        Gizmos.color = Color.green;
+        Bounds b = spriteRenderer.sprite.bounds;
+        Vector3 center = transform.position + (Vector3)b.center * currentScale;
+        Vector3 size = b.size * currentScale;
+        Gizmos.DrawWireCube(center, size);
+    }
+#endif
 }
