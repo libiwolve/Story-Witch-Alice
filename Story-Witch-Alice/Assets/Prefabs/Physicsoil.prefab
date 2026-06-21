@@ -11,7 +11,7 @@ GameObject:
   - component: {fileID: 2409547344050832326}
   - component: {fileID: 8599187524542646365}
   - component: {fileID: 2266433532016374161}
-  m_Layer: 9
+  m_Layer: 0
   m_Name: DirtTrail
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -4843,7 +4843,7 @@ GameObject:
   - component: {fileID: 7920188095951776204}
   - component: {fileID: 9097152360126323733}
   - component: {fileID: 6567659431182360602}
-  m_Layer: 9
+  m_Layer: 0
   m_Name: Physicsoil
   m_TagString: Untagged
   m_Icon: {fileID: 0}

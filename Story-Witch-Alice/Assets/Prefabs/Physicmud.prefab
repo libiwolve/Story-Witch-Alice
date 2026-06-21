@@ -103,7 +103,10 @@ MonoBehaviour:
   elementData: {fileID: 11400000, guid: 8513f8fd45dd75e448ec3ffffd0ebabb, type: 2}
   sourceSlot: {fileID: 0}
   velocitySampleFrames: 5
-  dirtTrail: {fileID: 0}
+  targetWorldSize: 1.5
+  maxScale: 3
+  minScale: 0.3
+  dirtTrail: {fileID: 3516201645244514175}
 --- !u!60 &5734848905270274541
 PolygonCollider2D:
   m_ObjectHideFlags: 0
