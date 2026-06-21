@@ -124,15 +124,15 @@ ScriptedImporter:
   animatedSpriteImportData:
   - name: "\u573A\u666F\u8BBE\u8BA1\u7A3F"
     originalName: 
-    pivot: {x: 0.69659865, y: -0.07692308}
+    pivot: {x: 0.41633728, y: 0}
     alignment: 9
     border: {x: 0, y: 0, z: 0, w: 0}
     rect:
       serializedVersion: 2
       x: 4
       y: 4
-      width: 735
-      height: 429
+      width: 759
+      height: 571
     spriteID: bb48f06cb200b904498e1ccaef3ee169
     spriteBone: []
     spriteOutline: []
@@ -160,10 +160,10 @@ ScriptedImporter:
       frameIndex: 0
       additiveSortOrder: 0
       cellRect:
-        x: 0
-        y: 33
-        width: 735
-        height: 429
+        x: 196
+        y: 0
+        width: 759
+        height: 571
       spriteId: bb48f06cb200b904498e1ccaef3ee169
     linkedCells: []
     parentIndex: -1
@@ -172,4 +172,4 @@ ScriptedImporter:
   secondarySpriteTextures: []
   spritePackingTag: 
   canvasSize: {x: 1024, y: 576}
-  previousTextureSize: {x: 1024, y: 512}
+  previousTextureSize: {x: 1024, y: 1024}
