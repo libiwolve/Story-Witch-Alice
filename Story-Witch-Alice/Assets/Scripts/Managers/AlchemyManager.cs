@@ -43,7 +43,10 @@ public class AlchemyManager : MonoBehaviour
 
     [Header("Glow Effects")]
     public RuntimeAnimatorController goldGlowController;  // 新产物：金色光晕
-    public RuntimeAnimatorController blueGlowController;  // 已有产物：蓝色光晕
+    public RuntimeAnimatorController blueGlowController; 
+    
+    [Header("Pot Animation")]
+    public PotGemController potGemController; // 已有产物：蓝色光晕
 
     void Awake()
     {
@@ -201,6 +204,9 @@ public class AlchemyManager : MonoBehaviour
         PlaySound(ingredientSound);
         thoughtOrbit?.MoveToFront(element.elementID);
         AddLog($"放入原料: {element.elementName}，当前锅里有 {currentIngredients.Count} 个原料");
+
+        if (potGemController != null)
+        potGemController.OnIngredientAdded(currentIngredients.Count);
     }
 
     public void ManualCombine()
@@ -262,12 +268,20 @@ public class AlchemyManager : MonoBehaviour
             }
 
             currentIngredients.Clear();
+            if (potGemController != null)
+            {    
+                potGemController.OnPotCleared();
+            }
         }
         else
         {
             PlaySound(failSound);
             AddLog("合成失败，原料不匹配任何配方");
             currentIngredients.Clear();
+            if (potGemController != null)  
+            {
+                potGemController.OnPotCleared();
+            }
         }
     }
 
@@ -304,10 +318,39 @@ public class AlchemyManager : MonoBehaviour
             col.enabled = true;
 
         // 播放光效（音效已经在合成瞬间播过了）
-        if (isNew)
-            SynthesisGlow.AttachTo(product, goldGlowController);
-        else
-            SynthesisGlow.AttachTo(product, blueGlowController);
+                // 新产物挂金色光效子物体
+        if (isNew && goldGlowController != null)
+        {
+            GameObject glowObj = new GameObject("GoldenGlow");
+            glowObj.transform.SetParent(product.transform);
+            glowObj.transform.localPosition = Vector3.zero;
+            glowObj.transform.localScale = Vector3.one * 0.6f;
+
+            SpriteRenderer sr = glowObj.AddComponent<SpriteRenderer>();
+            sr.sortingLayerName = "Foreground";
+
+            Animator anim = glowObj.AddComponent<Animator>();
+            anim.runtimeAnimatorController = goldGlowController;
+
+            Destroy(glowObj, 3f);  // 3 秒后自动销毁
+        }
+        // 旧产物挂蓝色光效子物体
+        else if (!isNew && blueGlowController != null)
+        {
+            GameObject glowObj = new GameObject("BlueGlow");
+            glowObj.transform.SetParent(product.transform);
+            glowObj.transform.localPosition = Vector3.zero;
+            glowObj.transform.localScale = Vector3.one * 0.6f;
+
+            SpriteRenderer sr = glowObj.AddComponent<SpriteRenderer>();
+            sr.sortingLayerName = "Foreground";
+
+            Animator anim = glowObj.AddComponent<Animator>();
+            anim.runtimeAnimatorController = blueGlowController;
+
+            Destroy(glowObj, 3f);
+        }
+    
     }
 
     public void AddLog(string msg)
@@ -324,6 +367,8 @@ public class AlchemyManager : MonoBehaviour
     {
         currentIngredients.Clear();
         AddLog("锅已清空");
+        if (potGemController != null)
+            potGemController.OnPotCleared();
     }
 
     /// <summary>

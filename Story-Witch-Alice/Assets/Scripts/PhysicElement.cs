@@ -51,14 +51,8 @@ public class PhysicsElement : MonoBehaviour
             {
                 Destroy(anim);
             }
-
-            // 删除 UpdateScaleAndCollider()
         }
     }
-
-    // ★ 删除了整个 LateUpdate() ★
-
-    // ==================== 保留辅助方法 ====================
 
     private static Sprite ResolveFallbackSprite(string id)
     {
@@ -88,8 +82,6 @@ public class PhysicsElement : MonoBehaviour
         return Sprite.Create(tex, new Rect(0, 0, size, size), new Vector2(0.5f, 0.5f), size);
     }
 
-    
-
     private static RuntimeAnimatorController GetElementAnimController(string id)
     {
         if (string.IsNullOrEmpty(id)) return null;
@@ -101,13 +93,10 @@ public class PhysicsElement : MonoBehaviour
 #endif
     }
 
-    // ==================== 交互逻辑（完全保留） ====================
-
     void OnTriggerEnter2D(Collider2D other)
     {
         if (other.CompareTag("Pot"))
         {
-            DestroySynthesisGlow();
             AlchemyManager.Instance?.AddIngredient(elementData);
             if (sourceSlot != null)
                 sourceSlot.RestoreIcon();
@@ -117,8 +106,6 @@ public class PhysicsElement : MonoBehaviour
 
     void OnCollisionEnter2D(Collision2D collision)
     {
-        DestroySynthesisGlow();
-
         if (collision.gameObject.CompareTag("Ground"))
         {
             if (sourceSlot != null)
@@ -135,8 +122,6 @@ public class PhysicsElement : MonoBehaviour
 
     void OnMouseDown()
     {
-        DestroySynthesisGlow();
-
         isBeingDragged = true;
         recentPositions.Clear();
 
@@ -189,12 +174,6 @@ public class PhysicsElement : MonoBehaviour
             rb.gravityScale = 1f;
             rb.velocity = velocity;
         }
-    }
-
-    private void DestroySynthesisGlow()
-    {
-        SynthesisGlow glow = GetComponentInChildren<SynthesisGlow>();
-        if (glow != null) Destroy(glow.gameObject);
     }
 
     private Vector3 GetMouseWorldPosition()
