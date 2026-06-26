@@ -5,100 +5,87 @@ public class NodeDragHandler : MonoBehaviour
     public SynthesisGraph graph;
     public SynthesisNodeData nodeData;
 
-    private bool isDraggingInGraph = false;
-    private bool isDraggingOutElement = false;
-    private GameObject spawnedElement;
+    private bool isDragging = false;
+    private bool isHovering = false;
+    private Vector3 originalScale;
     private Camera mainCamera;
 
     void Start()
     {
         mainCamera = Camera.main;
+        originalScale = transform.localScale;
+    }
+
+    void OnMouseOver()
+    {
+        if (!isHovering && !isDragging)
+        {
+            isHovering = true;
+            // 只放大自己
+            transform.localScale = originalScale * 1.5f;
+            // 高亮自己和相关节点
+            graph.OnNodeHoverStart(nodeData);
+        }
+    }
+
+    void OnMouseExit()
+    {
+        if (isHovering)
+        {
+            isHovering = false;
+            transform.localScale = originalScale;
+            graph.OnNodeHoverEnd();
+        }
     }
 
     void OnMouseDown()
     {
         if (Input.GetMouseButton(0))
         {
-            isDraggingInGraph = true;
+            isDragging = true;
+            // 拖拽时恢复原始大小
+            transform.localScale = originalScale;
             graph.OnNodeDragStart(nodeData);
         }
         else if (Input.GetMouseButton(1))
         {
-            isDraggingOutElement = true;
-            SpawnPhysicalElement();
+            // 右键拖出元素逻辑
         }
     }
 
     void OnMouseDrag()
     {
-        if (isDraggingInGraph)
-        {
-            Vector3 mouseWorld = mainCamera.ScreenToWorldPoint(Input.mousePosition);
-            mouseWorld.z = 0;
-            nodeData.position = mouseWorld;
-            transform.position = mouseWorld;
-        }
-        else if (isDraggingOutElement && spawnedElement != null)
-        {
-            Vector3 mouseWorld = mainCamera.ScreenToWorldPoint(Input.mousePosition);
-            mouseWorld.z = 0;
-            spawnedElement.transform.position = mouseWorld;
-        }
+        if (!isDragging) return;
+        Vector3 mouseWorld = mainCamera.ScreenToWorldPoint(Input.mousePosition);
+        mouseWorld.z = 0;
+        transform.position = mouseWorld;
+        nodeData.position = mouseWorld;
     }
 
     void OnMouseUp()
     {
-        if (isDraggingInGraph)
+        if (isDragging)
         {
-            isDraggingInGraph = false;
+            isDragging = false;
             graph.OnNodeDragEnd();
-        }
-        else if (isDraggingOutElement)
-        {
-            isDraggingOutElement = false;
-            if (spawnedElement != null)
+            // 如果鼠标还在节点上，重新放大
+            if (IsMouseOver())
             {
-                Rigidbody2D rb = spawnedElement.GetComponent<Rigidbody2D>();
-                if (rb != null)
-                {
-                    rb.gravityScale = 1f;
-                    rb.velocity = new Vector2(0, -2f);
-                }
-                // 启用碰撞
-                Collider2D[] cols = spawnedElement.GetComponents<Collider2D>();
-                foreach (var col in cols) col.enabled = true;
+                isHovering = true;
+                transform.localScale = originalScale * 1.5f;
+                graph.OnNodeHoverStart(nodeData);
             }
-            spawnedElement = null;
+            else
+            {
+                transform.localScale = originalScale;
+            }
         }
     }
 
-    void SpawnPhysicalElement()
+    bool IsMouseOver()
     {
-        ElementData data = graph.GetElementDataByID(nodeData.elementID);
-        if (data == null) return;
-        GameObject prefab = AlchemyManager.Instance?.GetPrefabForElement(data);
-        if (prefab == null) return;
-
-        Vector3 spawnPos = mainCamera.ScreenToWorldPoint(Input.mousePosition);
-        spawnPos.z = 0;
-        spawnedElement = Instantiate(prefab, spawnPos, Quaternion.identity);
-
-        PhysicsElement pe = spawnedElement.GetComponent<PhysicsElement>();
-        if (pe != null)
-        {
-            pe.elementData = data;
-            pe.sourceSlot = null;
-        }
-
-        Rigidbody2D rb = spawnedElement.GetComponent<Rigidbody2D>();
-        if (rb != null)
-        {
-            rb.gravityScale = 0f;
-            rb.velocity = Vector2.zero;
-        }
-
-        // 拖拽中禁用碰撞
-        Collider2D[] cols = spawnedElement.GetComponents<Collider2D>();
-        foreach (var col in cols) col.enabled = false;
+        Ray ray = mainCamera.ScreenPointToRay(Input.mousePosition);
+        RaycastHit2D hit = Physics2D.GetRayIntersection(ray);
+        return hit.collider != null && hit.collider.gameObject == gameObject;
     }
 }
