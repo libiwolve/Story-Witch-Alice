@@ -1,6 +1,7 @@
 using UnityEngine;
 using System.Collections.Generic;
 using System.Linq;
+using System.Collections;
 
 public class SynthesisGraph : MonoBehaviour
 {
@@ -427,22 +428,70 @@ public class SynthesisGraph : MonoBehaviour
         var node = allNodes.Find(n => n.elementID == elementID);
         if (node == null) return;
 
+        // 高亮相关节点
         var related = GetAllRelated(node);
         foreach (var n in allNodes)
         {
             var sr = n.nodeObject?.GetComponent<SpriteRenderer>();
-            if (sr == null) continue;
-            // 改成 material.SetColor
-            sr.material.SetColor("_Color", related.Contains(n) ? highlightColor : dimColor);
+            if (sr != null)
+                sr.material.SetColor("_Color", related.Contains(n) ? highlightColor : dimColor);
         }
 
-        Vector3 targetWorldPos = node.nodeObject.transform.position;
-        Vector3 screenCenter = mainCamera.ScreenToWorldPoint(new Vector3(Screen.width / 2f, Screen.height / 2f, 0));
-        screenCenter.z = 0;
-        Vector3 newPos = transform.position + screenCenter - targetWorldPos;
-        transform.position = newPos;
-        transform.localScale = Vector3.one * 1.2f;
+        // 启动飞行动画
+        StartCoroutine(FlyToCenter(node));
     }
+    System.Collections.IEnumerator FlyToCenter(SynthesisNodeData targetNode)
+    {
+        Vector2 center = new Vector2(mapCenter.x, mapCenter.y);
+        Vector2 totalOffset = center - targetNode.position;
+
+        // 记录所有节点的初始位置
+        var startPositions = new Dictionary<SynthesisNodeData, Vector2>();
+        foreach (var n in allNodes)
+        {
+            if (n.nodeObject != null)
+                startPositions[n] = n.position;
+        }
+
+        float duration = 0.6f;
+        float elapsed = 0f;
+        Vector2 currentOffset = Vector2.zero;
+
+        while (elapsed < duration)
+        {
+            elapsed += Time.deltaTime;
+            float t = elapsed / duration;
+
+            // ease-out cubic：先快后慢，带点"冲过头再回来"的感觉
+            t = 1f - Mathf.Pow(1f - t, 3f);
+
+            // 当前偏移量
+            Vector2 targetOffset = totalOffset * t;
+
+            // SmoothDamp 制造惯性刹车感
+            currentOffset = Vector2.Lerp(currentOffset, targetOffset, 0.3f);
+
+            // 所有节点整体移动
+            foreach (var n in allNodes)
+            {
+                if (n.nodeObject == null || !startPositions.ContainsKey(n)) continue;
+                n.position = startPositions[n] + currentOffset;
+                n.nodeObject.transform.position = n.position;
+            }
+
+            yield return null;
+        }
+
+        // 最后精确到位
+        foreach (var n in allNodes)
+        {
+            if (n.nodeObject == null || !startPositions.ContainsKey(n)) continue;
+            n.position = startPositions[n] + totalOffset;
+            n.nodeObject.transform.position = n.position;
+        }
+
+        dragVelocity = Vector2.zero;
+    }    
     bool IsProduct(string id)
     {
         return AlchemyManager.Instance.allRecipes.Any(r => r.product != null && r.product.elementID == id);

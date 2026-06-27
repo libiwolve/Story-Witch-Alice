@@ -14,7 +14,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   elementName: "\u70DF"
   elementID: smoke
-  elementIcon: {fileID: 0}
+  elementIcon: {fileID: 21300000, guid: 842d8c1809605694483cf7b5ffd2fd2d, type: 3}
   description: "\u706B\u4E0E\u6C14\u7684\u5171\u821E\u2014\u2014\u4FE1\u53F7\u3001\u906E\u853D\u3001\u6D88\u4EA1\u7684\u75D5\u8FF9\u3002"
   tags:
   - material

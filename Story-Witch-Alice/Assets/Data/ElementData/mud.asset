@@ -14,7 +14,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   elementName: "\u6CE5"
   elementID: mud
-  elementIcon: {fileID: 0}
+  elementIcon: {fileID: 21300000, guid: 37b761d51a4258b469d197014f5dc2da, type: 3}
   description: "\u6C34\u4E0E\u571F\u7684\u4EA4\u878D\u2014\u2014\u6D51\u6D4A\u3001\u56F0\u987F\u3001\u5B55\u80B2\u751F\u547D\u7684\u6447\u7BEE\u3002"
   tags:
   - material

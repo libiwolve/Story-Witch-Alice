@@ -14,7 +14,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   elementName: "\u706B"
   elementID: fire
-  elementIcon: {fileID: -1023457732, guid: ce2ab5fe16be4b040b050818822209c8, type: 3}
+  elementIcon: {fileID: -403417135, guid: 9fb9798bf056d7642ae83d4ff41189e2, type: 3}
   description: "\u5E26\u6765\u5149\u660E\u4E0E\u6BC1\u706D\u7684\u539F\u59CB\u529B\u91CF\u3002"
   tags:
   - basic
