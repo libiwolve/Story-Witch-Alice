@@ -67,8 +67,8 @@ MonoBehaviour:
       m_Calls: []
   m_text: water+soild=mud
   m_isRightToLeft: 0
-  m_fontAsset: {fileID: 11400000, guid: b2b723d23b5629a4da82271cde045af3, type: 2}
-  m_sharedMaterial: {fileID: -6441538231825877647, guid: b2b723d23b5629a4da82271cde045af3, type: 2}
+  m_fontAsset: {fileID: 11400000, guid: 546fd0ff6262bda4b9f2abe215d28d88, type: 2}
+  m_sharedMaterial: {fileID: -6441538231825877647, guid: 546fd0ff6262bda4b9f2abe215d28d88, type: 2}
   m_fontSharedMaterials: []
   m_fontMaterial: {fileID: 0}
   m_fontMaterials: []
