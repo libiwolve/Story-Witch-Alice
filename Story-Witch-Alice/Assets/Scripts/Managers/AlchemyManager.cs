@@ -48,6 +48,9 @@ public class AlchemyManager : MonoBehaviour
     [Header("Pot Animation")]
     public PotGemController potGemController; // 已有产物：蓝色光晕
 
+    [Header("Star Chart")]
+    public SynthesisGraph synthesisGraph;
+
     void Awake()
     {
         if (Instance == null)
@@ -206,7 +209,7 @@ public class AlchemyManager : MonoBehaviour
         AddLog($"放入原料: {element.elementName}，当前锅里有 {currentIngredients.Count} 个原料");
 
         if (potGemController != null)
-        potGemController.OnIngredientAdded(currentIngredients.Count);
+            potGemController.OnIngredientAdded(currentIngredients.Count);
     }
 
     public void ManualCombine()
@@ -267,6 +270,10 @@ public class AlchemyManager : MonoBehaviour
                 StartCoroutine(FlyProductUp(product, spawnPos, targetPos, isNew));
             }
 
+            // 通知星盘添加新节点（后台更新，不自动打开界面）
+            if (synthesisGraph != null)
+                synthesisGraph.AddNode(result.elementID);
+
             currentIngredients.Clear();
             if (potGemController != null)
             {    
@@ -318,7 +325,6 @@ public class AlchemyManager : MonoBehaviour
             col.enabled = true;
 
         // 播放光效（音效已经在合成瞬间播过了）
-                // 新产物挂金色光效子物体
         if (isNew && goldGlowController != null)
         {
             GameObject glowObj = new GameObject("GoldenGlow");
@@ -334,7 +340,6 @@ public class AlchemyManager : MonoBehaviour
 
             Destroy(glowObj, 3f);  // 3 秒后自动销毁
         }
-        // 旧产物挂蓝色光效子物体
         else if (!isNew && blueGlowController != null)
         {
             GameObject glowObj = new GameObject("BlueGlow");
@@ -350,7 +355,6 @@ public class AlchemyManager : MonoBehaviour
 
             Destroy(glowObj, 3f);
         }
-    
     }
 
     public void AddLog(string msg)
@@ -361,6 +365,11 @@ public class AlchemyManager : MonoBehaviour
 
         if (logText != null)
             logText.text = string.Join("\n", logLines);
+    }
+
+    public bool IsElementUnlocked(string elementID)
+    {
+        return unlockedElementIDs.Contains(elementID);
     }
 
     public void ClearPot()

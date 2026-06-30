@@ -11,8 +11,8 @@ public class SynthesisGraph : MonoBehaviour
     [Header("节点视觉")]
     public float nodeBaseScale = 1f;
     public float productScaleMultiplier = 1.5f;
-    public Color normalColor = Color.white;
-    public Color dimColor = new Color(1, 1, 1, 0.3f);
+    public Color normalColor = new Color(1f, 0.95f, 0.7f, 1f);   // 暖金白星光色
+    public Color dimColor = new Color(1f, 1f, 1f, 0.3f);
     public Color highlightColor = Color.yellow;
 
     [Header("力导向参数")]
@@ -39,15 +39,16 @@ public class SynthesisGraph : MonoBehaviour
     [Header("星图边界（固定，硬边界）")]
     public Vector2 mapSize = new Vector2(16f, 12f);
     public Vector2 mapCenter = Vector2.zero;
+
     [Header("漂浮动画")]
-    public float driftAmplitude = 0.3f;   // 漂浮幅度
-    public float driftFrequency = 0.5f;  // 漂浮频率
+    public float driftAmplitude = 0.3f;
+    public float driftFrequency = 0.5f;
 
     [Header("拖拽惯性")]
     public float inertiaDamping = 0.95f;
 
     [Header("橡皮筋边界")]
-    public float maxOverdrag = 1.5f;    // 允许超出的最大距离
+    public float maxOverdrag = 1.5f;
     public float rubberBandForce = 8f;
 
     private List<SynthesisNodeData> allNodes = new List<SynthesisNodeData>();
@@ -98,60 +99,101 @@ public class SynthesisGraph : MonoBehaviour
 
     void CreateNodes()
     {
-        HashSet<string> allIDs = new HashSet<string>();
-        foreach (var recipe in AlchemyManager.Instance.allRecipes)
+        HashSet<string> unlockedIDs = new HashSet<string>();
+
+        if (AlchemyManager.Instance != null)
         {
-            foreach (var ing in recipe.ingredients)
-                if (ing != null) allIDs.Add(ing.elementID);
-            if (recipe.product != null) allIDs.Add(recipe.product.elementID);
-        }
-
-        foreach (string id in allIDs)
-        {
-            var node = new SynthesisNodeData();
-            node.elementID = id;
-            node.position = new Vector2(
-                Random.Range(-spawnArea.x / 2f, spawnArea.x / 2f),
-                Random.Range(-spawnArea.y / 2f, spawnArea.y / 2f)
-            );
-            node.nodeObject = Instantiate(nodePrefab, node.position, Quaternion.identity, transform);
-            node.nodeObject.name = id;
-
-            var drag = node.nodeObject.GetComponent<NodeDragHandler>();
-            if (drag == null) drag = node.nodeObject.AddComponent<NodeDragHandler>();
-            drag.graph = this;
-            drag.nodeData = node;
-
-            SpriteRenderer sr = node.nodeObject.GetComponent<SpriteRenderer>();
-            if (sr != null)
+            foreach (var recipe in AlchemyManager.Instance.allRecipes)
             {
-                sr.color = normalColor;
-                bool isProduct = IsProduct(id);
-                float scale = nodeBaseScale * (isProduct ? productScaleMultiplier : 1f);
-                node.nodeObject.transform.localScale = Vector3.one * scale;
+                foreach (var ing in recipe.ingredients)
+                {
+                    if (ing != null && AlchemyManager.Instance.IsElementUnlocked(ing.elementID))
+                        unlockedIDs.Add(ing.elementID);
+                }
+                if (recipe.product != null && AlchemyManager.Instance.IsElementUnlocked(recipe.product.elementID))
+                    unlockedIDs.Add(recipe.product.elementID);
             }
-
-            allNodes.Add(node);
         }
 
+        foreach (string id in unlockedIDs)
+        {
+            CreateSingleNode(id);
+        }
+
+        // 建立连接关系
         foreach (var node in allNodes)
         {
             if (synthesisMap.ContainsKey(node.elementID))
             {
                 foreach (string neighborID in synthesisMap[node.elementID])
                 {
-                    if (!node.connectedNodeIDs.Contains(neighborID))
+                    var neighbor = allNodes.Find(n => n.elementID == neighborID);
+                    if (neighbor != null && !node.connectedNodeIDs.Contains(neighborID))
                         node.connectedNodeIDs.Add(neighborID);
                 }
             }
         }
     }
 
+    public void AddNode(string elementID)
+    {
+        if (allNodes.Any(n => n.elementID == elementID)) return;
+        CreateSingleNode(elementID);
+
+        var node = allNodes.Find(n => n.elementID == elementID);
+        if (node != null && synthesisMap.ContainsKey(elementID))
+        {
+            foreach (string neighborID in synthesisMap[elementID])
+            {
+                var neighbor = allNodes.Find(n => n.elementID == neighborID);
+                if (neighbor != null && !node.connectedNodeIDs.Contains(neighborID))
+                    node.connectedNodeIDs.Add(neighborID);
+                if (neighbor != null && !neighbor.connectedNodeIDs.Contains(elementID))
+                    neighbor.connectedNodeIDs.Add(elementID);
+            }
+        }
+    }
+
+    void CreateSingleNode(string id)
+    {
+        if (allNodes.Any(n => n.elementID == id)) return;
+
+        var node = new SynthesisNodeData();
+        node.elementID = id;
+        node.position = new Vector2(
+            Random.Range(-spawnArea.x / 2f, spawnArea.x / 2f),
+            Random.Range(-spawnArea.y / 2f, spawnArea.y / 2f)
+        );
+        node.nodeObject = Instantiate(nodePrefab, node.position, Quaternion.identity, transform);
+        node.nodeObject.name = id;
+
+        var drag = node.nodeObject.GetComponent<NodeDragHandler>();
+        if (drag == null) drag = node.nodeObject.AddComponent<NodeDragHandler>();
+        drag.graph = this;
+        drag.nodeData = node;
+
+        SpriteRenderer sr = node.nodeObject.GetComponent<SpriteRenderer>();
+        if (sr != null)
+        {
+            var elemData = GetElementData(id);
+            if (elemData != null && elemData.elementIcon != null)
+                sr.sprite = elemData.elementIcon;
+
+            // 直接设置为基础星光色，不再有过渡动画
+            sr.material.SetColor("_Color", normalColor);
+
+            float scale = nodeBaseScale * (IsProduct(id) ? productScaleMultiplier : 1f);
+            node.nodeObject.transform.localScale = Vector3.one * scale;
+        }
+
+        allNodes.Add(node);
+    }
+
     void Update()
     {
         ApplyForces();
         HandleDrag();
-        ApplyInertia();   // 在 HandleDrag 之后
+        ApplyInertia();
         HandlePan();
         HandleZoom();
         UpdateLines();
@@ -187,7 +229,7 @@ public class SynthesisGraph : MonoBehaviour
                 force += dir * displacement * springForce;
             }
 
-            // ★ 漂浮力（Perlin 噪声）
+            // 漂浮力
             float noiseX = Mathf.PerlinNoise(node.elementID.GetHashCode() * 0.1f, Time.time * driftFrequency) * 2f - 1f;
             float noiseY = Mathf.PerlinNoise(node.elementID.GetHashCode() * 0.1f + 100f, Time.time * driftFrequency) * 2f - 1f;
             force += new Vector2(noiseX, noiseY) * driftAmplitude;
@@ -201,7 +243,7 @@ public class SynthesisGraph : MonoBehaviour
 
     void ApplyInertia()
     {
-        if (draggedNode != null) return;  // 正在拖拽时不处理惯性
+        if (draggedNode != null) return;
 
         if (dragVelocity.magnitude < 0.01f)
         {
@@ -209,14 +251,12 @@ public class SynthesisGraph : MonoBehaviour
             return;
         }
 
-        // 对正在拖拽的节点施加惯性位移
         foreach (var node in allNodes)
         {
             node.position += dragVelocity * Time.deltaTime;
             node.nodeObject.transform.position = node.position;
         }
 
-        // 衰减
         dragVelocity *= inertiaDamping;
     }
 
@@ -227,7 +267,6 @@ public class SynthesisGraph : MonoBehaviour
         Vector3 mouseWorld = mainCamera.ScreenToWorldPoint(Input.mousePosition);
         mouseWorld.z = 0;
 
-        // 记录拖拽速度（本帧位移 / 时间）
         Vector2 previousPos = draggedNode.position;
         draggedNode.position = mouseWorld;
         draggedNode.nodeObject.transform.position = mouseWorld;
@@ -316,10 +355,6 @@ public class SynthesisGraph : MonoBehaviour
         starChartMesh.UpdateLines(lines);
     }
 
-    /// <summary>
-    /// 确保所有节点的包围盒不超出固定的星图边界。
-    /// 如果超出，整体平移所有节点回到边界内。
-    /// </summary>
     void ClampNodesToMap()
     {
         if (allNodes.Count == 0) return;
@@ -362,7 +397,6 @@ public class SynthesisGraph : MonoBehaviour
                 node.velocity -= new Vector2(0, force * Time.deltaTime);
             }
 
-            // 硬限制：绝对不能超出 maxOverdrag
             pos.x = Mathf.Clamp(pos.x, mapMinX - maxOverdrag, mapMaxX + maxOverdrag);
             pos.y = Mathf.Clamp(pos.y, mapMinY - maxOverdrag, mapMaxY + maxOverdrag);
 
@@ -370,6 +404,7 @@ public class SynthesisGraph : MonoBehaviour
             node.nodeObject.transform.position = pos;
         }
     }
+
     public void OnNodeHoverStart(SynthesisNodeData node)
     {
         var related = GetAllRelated(node);
@@ -415,6 +450,7 @@ public class SynthesisGraph : MonoBehaviour
                 sr.material.SetColor("_Color", normalColor);
         }
     }
+
     HashSet<SynthesisNodeData> GetAllRelated(SynthesisNodeData start)
     {
         var result = new HashSet<SynthesisNodeData> { start };
@@ -428,7 +464,6 @@ public class SynthesisGraph : MonoBehaviour
         var node = allNodes.Find(n => n.elementID == elementID);
         if (node == null) return;
 
-        // 高亮相关节点
         var related = GetAllRelated(node);
         foreach (var n in allNodes)
         {
@@ -437,15 +472,14 @@ public class SynthesisGraph : MonoBehaviour
                 sr.material.SetColor("_Color", related.Contains(n) ? highlightColor : dimColor);
         }
 
-        // 启动飞行动画
         StartCoroutine(FlyToCenter(node));
     }
+
     System.Collections.IEnumerator FlyToCenter(SynthesisNodeData targetNode)
     {
         Vector2 center = new Vector2(mapCenter.x, mapCenter.y);
         Vector2 totalOffset = center - targetNode.position;
 
-        // 记录所有节点的初始位置
         var startPositions = new Dictionary<SynthesisNodeData, Vector2>();
         foreach (var n in allNodes)
         {
@@ -461,17 +495,11 @@ public class SynthesisGraph : MonoBehaviour
         {
             elapsed += Time.deltaTime;
             float t = elapsed / duration;
-
-            // ease-out cubic：先快后慢，带点"冲过头再回来"的感觉
             t = 1f - Mathf.Pow(1f - t, 3f);
 
-            // 当前偏移量
             Vector2 targetOffset = totalOffset * t;
-
-            // SmoothDamp 制造惯性刹车感
             currentOffset = Vector2.Lerp(currentOffset, targetOffset, 0.3f);
 
-            // 所有节点整体移动
             foreach (var n in allNodes)
             {
                 if (n.nodeObject == null || !startPositions.ContainsKey(n)) continue;
@@ -482,7 +510,6 @@ public class SynthesisGraph : MonoBehaviour
             yield return null;
         }
 
-        // 最后精确到位
         foreach (var n in allNodes)
         {
             if (n.nodeObject == null || !startPositions.ContainsKey(n)) continue;
@@ -491,7 +518,8 @@ public class SynthesisGraph : MonoBehaviour
         }
 
         dragVelocity = Vector2.zero;
-    }    
+    }
+
     bool IsProduct(string id)
     {
         return AlchemyManager.Instance.allRecipes.Any(r => r.product != null && r.product.elementID == id);
