@@ -1,22 +1,23 @@
 using UnityEngine;
 using UnityEngine.EventSystems;
 
-public class DraggableWindow : MonoBehaviour, IDragHandler, IBeginDragHandler
+public class DraggableWindow : MonoBehaviour, IBeginDragHandler, IDragHandler
 {
-    public RectTransform windowRect;   // 窗口的 RectTransform
-    public RectTransform dragHandle;   // 标题栏（只有拖这里才会移动窗口）
+    public RectTransform windowRect;   // StarChartCanvas 的 RectTransform
+    public RectTransform dragHandle;   // TitleBar 的 RectTransform
 
     public void OnBeginDrag(PointerEventData eventData)
     {
-        // 检查鼠标是否在 dragHandle 范围内
         if (!RectTransformUtility.RectangleContainsScreenPoint(dragHandle, eventData.position, eventData.pressEventCamera))
         {
-            eventData.pointerDrag = null; // 取消拖拽
+            eventData.pointerDrag = null;
         }
     }
 
     public void OnDrag(PointerEventData eventData)
     {
-        windowRect.anchoredPosition += eventData.delta;
+        // 用世界坐标移动，绕过 RectTransform 锚点限制
+        Vector3 screenDelta = new Vector3(eventData.delta.x, eventData.delta.y, 0);
+        windowRect.transform.position += screenDelta;
     }
 }

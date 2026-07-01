@@ -7,6 +7,7 @@ public class NodeDragHandler : MonoBehaviour
 
     private bool isDragging = false;
     private bool isDraggingOut = false;
+    private bool isHovering = false;
     private GameObject spawnedElement;
     private Vector3 originalScale;
     private Camera mainCamera;
@@ -17,43 +18,16 @@ public class NodeDragHandler : MonoBehaviour
         originalScale = transform.localScale;
     }
 
-    void OnMouseOver()
+    void Update()
     {
-        if (!isDragging)
+        // 右键检测（放在 Update 里更可靠）
+        if (isHovering && Input.GetMouseButtonDown(1))
         {
-            transform.localScale = originalScale * 1.5f;
-            graph.OnNodeHoverStart(nodeData);
-        }
-    }
-
-    void OnMouseExit()
-    {
-        if (!isDragging)
-        {
-            transform.localScale = originalScale;
-            graph.OnNodeHoverEnd();
-        }
-    }
-
-    void OnMouseDown()
-    {
-        if (Input.GetMouseButton(0))
-        {
-            // 左键拖拽节点
-            isDragging = true;
-            transform.localScale = originalScale;
-            graph.OnNodeDragStart(nodeData);
-        }
-        else if (Input.GetMouseButton(1))
-        {
-            // 右键拖出物理元素
             isDraggingOut = true;
             SpawnPhysicalElement();
         }
-    }
 
-    void OnMouseDrag()
-    {
+        // 拖拽中
         if (isDragging)
         {
             Vector3 mouseWorld = mainCamera.ScreenToWorldPoint(Input.mousePosition);
@@ -67,26 +41,9 @@ public class NodeDragHandler : MonoBehaviour
             mouseWorld.z = 0;
             spawnedElement.transform.position = mouseWorld;
         }
-    }
 
-    void OnMouseUp()
-    {
-        if (isDragging)
-        {
-            isDragging = false;
-            graph.OnNodeDragEnd();
-            if (IsMouseOver())
-            {
-                transform.localScale = originalScale * 1.5f;
-                graph.OnNodeHoverStart(nodeData);
-            }
-            else
-            {
-                transform.localScale = originalScale;
-                graph.OnNodeHoverEnd();
-            }
-        }
-        else if (isDraggingOut)
+        // 右键松手
+        if (isDraggingOut && Input.GetMouseButtonUp(1))
         {
             isDraggingOut = false;
             if (spawnedElement != null)
@@ -104,13 +61,80 @@ public class NodeDragHandler : MonoBehaviour
         }
     }
 
+    void OnMouseOver()
+    {
+        if (!isHovering && !isDragging)
+        {
+            isHovering = true;
+            transform.localScale = originalScale * 1.5f;
+            graph.OnNodeHoverStart(nodeData);
+        }
+    }
+
+    void OnMouseExit()
+    {
+        isHovering = false;
+        if (!isDragging)
+        {
+            transform.localScale = originalScale;
+            graph.OnNodeHoverEnd();
+        }
+    }
+
+    void OnMouseDown()
+    {
+        if (Input.GetMouseButton(0))
+        {
+            isDragging = true;
+            transform.localScale = originalScale;
+            graph.OnNodeDragStart(nodeData);
+        }
+    }
+
+    void OnMouseDrag()
+    {
+        // 左键拖拽逻辑保留为空，因为 Update 里已经处理了
+    }
+
+    void OnMouseUp()
+    {
+        if (isDragging)
+        {
+            isDragging = false;
+            graph.OnNodeDragEnd();
+            // 检查鼠标是否还在节点上
+            if (IsMouseOver())
+            {
+                isHovering = true;
+                transform.localScale = originalScale * 1.5f;
+                graph.OnNodeHoverStart(nodeData);
+            }
+            else
+            {
+                isHovering = false;
+                transform.localScale = originalScale;
+                graph.OnNodeHoverEnd();
+            }
+        }
+    }
+
     void SpawnPhysicalElement()
     {
+        Debug.Log($"右键拖出元素: {nodeData.elementID}");
+
         ElementData data = graph.GetElementDataByID(nodeData.elementID);
-        if (data == null) return;
+        if (data == null)
+        {
+            Debug.LogError($"找不到 ElementData: {nodeData.elementID}");
+            return;
+        }
 
         GameObject prefab = AlchemyManager.Instance?.GetPrefabForElement(data);
-        if (prefab == null) return;
+        if (prefab == null)
+        {
+            Debug.LogError($"找不到物理预制体: {data.elementID}");
+            return;
+        }
 
         Vector3 spawnPos = mainCamera.ScreenToWorldPoint(Input.mousePosition);
         spawnPos.z = 0;
