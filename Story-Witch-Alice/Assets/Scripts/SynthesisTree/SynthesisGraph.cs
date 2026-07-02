@@ -172,18 +172,18 @@ public class SynthesisGraph : MonoBehaviour
         drag.graph = this;
         drag.nodeData = node;
 
-        SpriteRenderer sr = node.nodeObject.GetComponent<SpriteRenderer>();
+       SpriteRenderer sr = node.nodeObject.GetComponent<SpriteRenderer>();
         if (sr != null)
         {
             var elemData = GetElementData(id);
             if (elemData != null && elemData.elementIcon != null)
                 sr.sprite = elemData.elementIcon;
 
-            // 直接设置为基础星光色，不再有过渡动画
-            sr.material.SetColor("_Color", normalColor);
-
+            // 和 CreateNodes 保持完全一致的缩放
             float scale = nodeBaseScale * (IsProduct(id) ? productScaleMultiplier : 1f);
             node.nodeObject.transform.localScale = Vector3.one * scale;
+
+            sr.material.SetColor("_Color", normalColor);
         }
 
         allNodes.Add(node);
@@ -251,12 +251,7 @@ public class SynthesisGraph : MonoBehaviour
             return;
         }
 
-        foreach (var node in allNodes)
-        {
-            node.position += dragVelocity * Time.deltaTime;
-            node.nodeObject.transform.position = node.position;
-        }
-
+        // 只衰减速度，不移动任何节点
         dragVelocity *= inertiaDamping;
     }
 
@@ -267,6 +262,7 @@ public class SynthesisGraph : MonoBehaviour
         Vector3 mouseWorld = mainCamera.ScreenToWorldPoint(Input.mousePosition);
         mouseWorld.z = 0;
 
+        // 记录拖拽速度（只用于被拖拽的节点）
         Vector2 previousPos = draggedNode.position;
         draggedNode.position = mouseWorld;
         draggedNode.nodeObject.transform.position = mouseWorld;
@@ -369,34 +365,39 @@ public class SynthesisGraph : MonoBehaviour
             if (node.nodeObject == null) continue;
             Vector2 pos = node.position;
 
-            // X 轴橡皮筋
-            if (pos.x < mapMinX)
+            // 只有被拖拽的节点才有橡皮筋效果
+            if (node == draggedNode)
             {
-                float overshoot = mapMinX - pos.x;
-                float force = Mathf.Min(overshoot, maxOverdrag) * rubberBandForce;
-                node.velocity += new Vector2(force * Time.deltaTime, 0);
-            }
-            else if (pos.x > mapMaxX)
-            {
-                float overshoot = pos.x - mapMaxX;
-                float force = Mathf.Min(overshoot, maxOverdrag) * rubberBandForce;
-                node.velocity -= new Vector2(force * Time.deltaTime, 0);
+                // X 轴橡皮筋
+                if (pos.x < mapMinX)
+                {
+                    float overshoot = mapMinX - pos.x;
+                    float force = Mathf.Min(overshoot, maxOverdrag) * rubberBandForce;
+                    node.velocity += new Vector2(force * Time.deltaTime, 0);
+                }
+                else if (pos.x > mapMaxX)
+                {
+                    float overshoot = pos.x - mapMaxX;
+                    float force = Mathf.Min(overshoot, maxOverdrag) * rubberBandForce;
+                    node.velocity -= new Vector2(force * Time.deltaTime, 0);
+                }
+
+                // Y 轴橡皮筋
+                if (pos.y < mapMinY)
+                {
+                    float overshoot = mapMinY - pos.y;
+                    float force = Mathf.Min(overshoot, maxOverdrag) * rubberBandForce;
+                    node.velocity += new Vector2(0, force * Time.deltaTime);
+                }
+                else if (pos.y > mapMaxY)
+                {
+                    float overshoot = pos.y - mapMaxY;
+                    float force = Mathf.Min(overshoot, maxOverdrag) * rubberBandForce;
+                    node.velocity -= new Vector2(0, force * Time.deltaTime);
+                }
             }
 
-            // Y 轴橡皮筋
-            if (pos.y < mapMinY)
-            {
-                float overshoot = mapMinY - pos.y;
-                float force = Mathf.Min(overshoot, maxOverdrag) * rubberBandForce;
-                node.velocity += new Vector2(0, force * Time.deltaTime);
-            }
-            else if (pos.y > mapMaxY)
-            {
-                float overshoot = pos.y - mapMaxY;
-                float force = Mathf.Min(overshoot, maxOverdrag) * rubberBandForce;
-                node.velocity -= new Vector2(0, force * Time.deltaTime);
-            }
-
+            // 硬限制：所有节点都不能超出 maxOverdrag
             pos.x = Mathf.Clamp(pos.x, mapMinX - maxOverdrag, mapMaxX + maxOverdrag);
             pos.y = Mathf.Clamp(pos.y, mapMinY - maxOverdrag, mapMaxY + maxOverdrag);
 
@@ -538,6 +539,18 @@ public class SynthesisGraph : MonoBehaviour
             .Select(id => allNodes.Find(n => n.elementID == id))
             .Where(found => found != null)
             .ToList();
+    }
+    /// <summary>
+/// 窗口拖拽后，同步所有节点的 position 数据
+/// </summary>
+    public void SyncNodePositionsAfterDrag(Vector3 delta)
+    {
+        Vector2 delta2D = delta;
+        foreach (var node in allNodes)
+        {
+            node.position += delta2D;
+        }
+        mapCenter += delta2D;
     }
 
     void OnDrawGizmos()

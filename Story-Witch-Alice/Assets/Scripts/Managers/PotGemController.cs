@@ -15,14 +15,13 @@ public class PotGemController : MonoBehaviour
         if (animator == null) return;
         Debug.Log($"OnIngredientAdded 被调用, totalCount={totalCount}, animator是否为空={animator == null}");
         animator.SetInteger("GemCount", totalCount);     // 1, 2, 3 → 对应动画
-        animator.SetInteger("Action", 0);                // 无操作
+                    // 无操作
     }
 
     public void OnPotCleared()
     {
        if (animator == null) return;
-        animator.SetInteger("Action", 1);                // 合成清除（暂时）
-        animator.SetInteger("GemCount", 0); 
+            animator.SetInteger("GemCount", 0); 
     }
 
     void UpdateGemAnimation()

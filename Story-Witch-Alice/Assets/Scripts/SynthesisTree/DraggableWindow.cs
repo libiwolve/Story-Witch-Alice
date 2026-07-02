@@ -3,8 +3,13 @@ using UnityEngine.EventSystems;
 
 public class DraggableWindow : MonoBehaviour, IBeginDragHandler, IDragHandler
 {
-    public RectTransform windowRect;   // StarChartCanvas 的 RectTransform
-    public RectTransform dragHandle;   // TitleBar 的 RectTransform
+    [Header("拖拽手柄")]
+    public RectTransform dragHandle;          // TitleBar 的 RectTransform
+
+    [Header("需要一起移动的物体")]
+    public RectTransform titleBarRect;         // TitleBar 的 RectTransform
+    public RectTransform backgroundRect;       // StarChartBackground 的 RectTransform
+    public Transform starChartTransform;       // StarChart 的 Transform（世界空间）
 
     public void OnBeginDrag(PointerEventData eventData)
     {
@@ -16,8 +21,22 @@ public class DraggableWindow : MonoBehaviour, IBeginDragHandler, IDragHandler
 
     public void OnDrag(PointerEventData eventData)
     {
-        // 用世界坐标移动，绕过 RectTransform 锚点限制
-        Vector3 screenDelta = new Vector3(eventData.delta.x, eventData.delta.y, 0);
-        windowRect.transform.position += screenDelta;
+        Vector2 delta = eventData.delta;
+
+        // 移动 UI 物体
+        if (titleBarRect != null) titleBarRect.anchoredPosition += delta;
+        if (backgroundRect != null) backgroundRect.anchoredPosition += delta;
+
+        // 移动 StarChart（世界空间）
+        if (starChartTransform != null)
+        {
+            float worldPerPixel = Camera.main.orthographicSize * 2f / Screen.height;
+            Vector3 worldDelta = new Vector3(delta.x * worldPerPixel, delta.y * worldPerPixel, 0);
+            starChartTransform.position += worldDelta;
+
+            var graph = starChartTransform.GetComponent<SynthesisGraph>();
+            if (graph != null)
+                graph.SyncNodePositionsAfterDrag(worldDelta);
+        }
     }
 }

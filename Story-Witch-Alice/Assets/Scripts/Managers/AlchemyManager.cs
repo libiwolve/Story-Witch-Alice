@@ -15,6 +15,7 @@ public class AlchemyManager : MonoBehaviour
     private Dictionary<string, ElementData> unlockedRecipeDictionary = new Dictionary<string, ElementData>();
     private Dictionary<string, List<RecipeData>> ingredientToRecipesDictionary = new Dictionary<string, List<RecipeData>>();
     private HashSet<string> unlockedElementIDs = new HashSet<string>();
+    private HashSet<string> synthesizedProductIDs = new HashSet<string>();
     public Text logText;
     private List<string> logLines = new List<string>();
     private const int maxLogLines = 6;
@@ -50,6 +51,9 @@ public class AlchemyManager : MonoBehaviour
 
     [Header("Star Chart")]
     public SynthesisGraph synthesisGraph;
+
+    [Header("Recipe Panel")]
+    public RecipeListUI recipeListUI;
 
     void Awake()
     {
@@ -233,6 +237,15 @@ public class AlchemyManager : MonoBehaviour
             }
 
             AddLog($"合成成功！产物: {result.elementName}");
+            synthesizedProductIDs.Add(result.elementID);
+            // 通知星盘添加新节点（后台更新，不自动打开界面）
+            if (synthesisGraph != null)
+                synthesisGraph.AddNode(result.elementID);
+            if (recipeListUI != null)
+            {
+                recipeListUI.OnNewElementUnlocked();
+                Debug.Log($"已通知合成书刷新，当前已合成产物数: {synthesizedProductIDs.Count}");
+            }
 
             // 播放合成瞬间音效 + 新/旧产物音效（在飞出前就播）
             PlaySound(synthesisSound);
@@ -269,10 +282,8 @@ public class AlchemyManager : MonoBehaviour
 
                 StartCoroutine(FlyProductUp(product, spawnPos, targetPos, isNew));
             }
-
-            // 通知星盘添加新节点（后台更新，不自动打开界面）
-            if (synthesisGraph != null)
-                synthesisGraph.AddNode(result.elementID);
+            
+            
 
             currentIngredients.Clear();
             if (potGemController != null)
@@ -411,5 +422,10 @@ public class AlchemyManager : MonoBehaviour
         List<string> ids = ingredients.Select(x => x.elementID).ToList();
         ids.Sort();
         return string.Join("_", ids);
+    }
+
+    public bool IsRecipeUnlocked(string productID)
+    {
+        return synthesizedProductIDs.Contains(productID);
     }
 }
