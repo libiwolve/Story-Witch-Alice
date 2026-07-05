@@ -210,3 +210,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 674dd67423503174d8c7d88974c4fd72, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  particleColor: {r: 0.1, g: 0.08, b: 0.15, a: 0.3}
+  particleSize: 0.5
+  particleSizeVariation: 0.3
+  emissionRate: 15
+  emissionRadius: 0.8
+  floatSpeed: 0.3
+  rotationSpeed: 20
+  minLifetime: 2
+  maxLifetime: 4

@@ -13,7 +13,7 @@ GameObject:
   - component: {fileID: 4429262714761098424}
   - component: {fileID: 1003244441056237407}
   - component: {fileID: 4732020898970069746}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: StarNode
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -135,9 +135,9 @@ SpriteRenderer:
   m_AutoUVMaxDistance: 0.5
   m_AutoUVMaxAngle: 89
   m_LightmapParameters: {fileID: 0}
-  m_SortingLayerID: 1766564327
-  m_SortingLayer: 5
-  m_SortingOrder: 1
+  m_SortingLayerID: -1638354951
+  m_SortingLayer: 4
+  m_SortingOrder: 4
   m_Sprite: {fileID: 10913, guid: 0000000000000000f000000000000000, type: 0}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_FlipX: 0

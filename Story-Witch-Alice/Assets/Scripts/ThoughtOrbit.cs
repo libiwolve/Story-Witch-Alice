@@ -108,8 +108,11 @@ public class ThoughtOrbit : MonoBehaviour
         oe.SetAlpha(alpha);
     }
 
-    public void SpawnPhysicalElement(ElementData data, Vector3 worldPos)
+    public void SpawnPhysicalElement(ElementData data)
     {
+        Vector3 worldPos = CameraUtility.MouseToWorld();
+        Debug.Log($"[ThoughtOrbit] SpawnPhysicalElement - worldPos: {worldPos}");
+        
         GameObject prefab = AlchemyManager.Instance?.GetPrefabForElement(data);
         if (prefab == null) return;
 

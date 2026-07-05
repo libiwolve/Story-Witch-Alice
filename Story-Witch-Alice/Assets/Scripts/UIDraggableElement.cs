@@ -43,24 +43,25 @@ public class UIDraggableElement : MonoBehaviour, IBeginDragHandler, IDragHandler
         mainCamera = Camera.main;
     }
 
-    public void OnBeginDrag(PointerEventData eventData)
+        public void OnBeginDrag(PointerEventData eventData)
     {
-        if (physicsPrefab == null) return;
-        if (spawnedElement != null) return;
+        if (physicsPrefab == null || spawnedElement != null) return;
 
         recentPositions.Clear();
-
-        currentMouseWorld = ScreenToWorld(eventData.position);
+        currentMouseWorld = CameraUtility.MouseToWorld();
+        
         spawnedElement = Instantiate(physicsPrefab, currentMouseWorld, Quaternion.identity);
+        // 或者用 PhysicsElementSpawner，但需要传入 prefab
+        // 但这里的 prefab 是外部指定的，所以保持原样
 
-        PhysicsElement pe = spawnedElement.GetComponent<PhysicsElement>();
+        var pe = spawnedElement.GetComponent<PhysicsElement>();
         if (pe != null)
         {
             pe.elementData = elementData;
             pe.sourceSlot = this;
         }
 
-        Rigidbody2D rb = spawnedElement.GetComponent<Rigidbody2D>();
+        var rb = spawnedElement.GetComponent<Rigidbody2D>();
         if (rb != null)
         {
             rb.gravityScale = 0f;
@@ -74,10 +75,9 @@ public class UIDraggableElement : MonoBehaviour, IBeginDragHandler, IDragHandler
     public void OnDrag(PointerEventData eventData)
     {
         if (spawnedElement == null) return;
-
-        currentMouseWorld = ScreenToWorld(eventData.position);
+        currentMouseWorld = CameraUtility.MouseToWorld();
         spawnedElement.transform.position = currentMouseWorld;
-
+        
         recentPositions.Enqueue((currentMouseWorld, Time.time));
         if (recentPositions.Count > velocitySampleFrames)
             recentPositions.Dequeue();
@@ -163,10 +163,5 @@ public class UIDraggableElement : MonoBehaviour, IBeginDragHandler, IDragHandler
         RestoreIcon();
     }
 
-    private Vector3 ScreenToWorld(Vector2 screenPos)
-    {
-        Vector3 screen = screenPos;
-        screen.z = -mainCamera.transform.position.z;
-        return mainCamera.ScreenToWorldPoint(screen);
-    }
+    
 }

@@ -1,10 +1,11 @@
 using UnityEngine;
+using UnityEngine.EventSystems;
 using System.Collections.Generic;
 #if UNITY_EDITOR
 using UnityEditor;
 #endif
 
-public class PhysicsElement : MonoBehaviour
+public class PhysicsElement : MonoBehaviour, IBeginDragHandler, IDragHandler, IEndDragHandler
 {
     public ElementData elementData;
     public UIDraggableElement sourceSlot;
@@ -12,14 +13,19 @@ public class PhysicsElement : MonoBehaviour
     [Header("Inertia Settings")]
     public int velocitySampleFrames = 5;
 
-    private bool isBeingDragged = false;
+    [Header("Particle")]
     public ParticleSystem dirtTrail;
 
+    // ===== 外部控制标志 =====
+    [HideInInspector] public bool isControlledByNodeDrag = false;
+    [HideInInspector] public bool isDraggedByOrbit = false;
+
+    private bool isBeingDragged = false;
     private Rigidbody2D rb;
     private Camera mainCamera;
 
     private Queue<(Vector3 pos, float time)> recentPositions = new Queue<(Vector3, float)>();
-
+    
     void Start()
     {
         rb = GetComponent<Rigidbody2D>();
@@ -53,6 +59,107 @@ public class PhysicsElement : MonoBehaviour
             }
         }
     }
+
+    // ========== EventSystem 拖拽接口 ==========
+
+    public void OnBeginDrag(PointerEventData eventData)
+    {
+        Debug.Log($"[PhysicsElement] OnBeginDrag - 被拖拽的元素: {gameObject.name}");
+        if (isControlledByNodeDrag || isDraggedByOrbit) return;
+        if (eventData.button != PointerEventData.InputButton.Left) return;
+
+        isBeingDragged = true;
+        recentPositions.Clear();
+
+        if (rb != null)
+        {
+            rb.gravityScale = 0f;
+            rb.velocity = Vector2.zero;
+            rb.angularVelocity = 0f;
+        }
+    }
+
+    public void OnDrag(PointerEventData eventData)
+    {
+        if (isControlledByNodeDrag || isDraggedByOrbit) return;
+        if (!isBeingDragged) return;
+
+        transform.position = CameraUtility.MouseToWorld();
+
+        recentPositions.Enqueue((transform.position, Time.time));
+        if (recentPositions.Count > velocitySampleFrames)
+            recentPositions.Dequeue();
+    }
+
+
+    public void OnEndDrag(PointerEventData eventData)
+    {
+        // 如果被外部系统托管，忽略
+        if (isControlledByNodeDrag || isDraggedByOrbit) return;
+        if (!isBeingDragged) return;
+
+        isBeingDragged = false;
+
+        // 计算惯性速度
+        Vector3 velocity = Vector3.zero;
+        if (recentPositions.Count >= 2)
+        {
+            var oldest = recentPositions.Peek();
+            var newest = transform.position;
+            float timeSpan = Time.time - oldest.time;
+            if (timeSpan > 0.001f)
+                velocity = (newest - oldest.pos) / timeSpan;
+            else
+                velocity = new Vector2(0, -1f);
+        }
+        else
+        {
+            velocity = new Vector2(0, -1f);
+        }
+
+        float maxSpeed = 30f;
+        if (velocity.magnitude > maxSpeed)
+            velocity = velocity.normalized * maxSpeed;
+
+        if (rb != null)
+        {
+            rb.gravityScale = 1f;
+            rb.velocity = velocity;
+        }
+    }
+
+    // ========== 物理交互 ==========
+
+    void OnTriggerEnter2D(Collider2D other)
+    {
+        if (other.CompareTag("Pot"))
+        {
+            AlchemyManager.Instance?.AddIngredient(elementData);
+            if (sourceSlot != null)
+                sourceSlot.RestoreIcon();
+            Destroy(gameObject);
+        }
+    }
+
+    void OnCollisionEnter2D(Collision2D collision)
+    {
+        if (collision.gameObject.CompareTag("Ground"))
+        {
+            if (sourceSlot != null)
+            {
+                sourceSlot.RestoreIcon();
+                sourceSlot = null;
+            }
+            else if (elementData != null)
+            {
+                AlchemyManager.Instance?.AddLog($"{elementData.elementName} 掉在了地上");
+            }
+        }
+    }
+
+    // ========== 工具方法 ==========
+
+    
 
     private static Sprite ResolveFallbackSprite(string id)
     {
@@ -91,95 +198,5 @@ public class PhysicsElement : MonoBehaviour
 #else
         return null;
 #endif
-    }
-
-    void OnTriggerEnter2D(Collider2D other)
-    {
-        if (other.CompareTag("Pot"))
-        {
-            AlchemyManager.Instance?.AddIngredient(elementData);
-            if (sourceSlot != null)
-                sourceSlot.RestoreIcon();
-            Destroy(gameObject);
-        }
-    }
-
-    void OnCollisionEnter2D(Collision2D collision)
-    {
-        if (collision.gameObject.CompareTag("Ground"))
-        {
-            if (sourceSlot != null)
-            {
-                sourceSlot.RestoreIcon();
-                sourceSlot = null;
-            }
-            else if (elementData != null)
-            {
-                AlchemyManager.Instance?.AddLog($"{elementData.elementName} 掉在了地上");
-            }
-        }
-    }
-
-    void OnMouseDown()
-    {
-        isBeingDragged = true;
-        recentPositions.Clear();
-
-        if (rb != null)
-        {
-            rb.gravityScale = 0f;
-            rb.velocity = Vector2.zero;
-            rb.angularVelocity = 0f;
-        }
-    }
-
-    void OnMouseDrag()
-    {
-        if (!isBeingDragged) return;
-
-        Vector3 mouseWorld = GetMouseWorldPosition();
-        transform.position = mouseWorld;
-
-        recentPositions.Enqueue((mouseWorld, Time.time));
-        if (recentPositions.Count > velocitySampleFrames)
-            recentPositions.Dequeue();
-    }
-
-    void OnMouseUp()
-    {
-        isBeingDragged = false;
-
-        Vector3 velocity = Vector3.zero;
-        if (recentPositions.Count >= 2)
-        {
-            var oldest = recentPositions.Peek();
-            var newest = transform.position;
-            float timeSpan = Time.time - oldest.time;
-            if (timeSpan > 0.001f)
-                velocity = (newest - oldest.pos) / timeSpan;
-            else
-                velocity = new Vector2(0, -1f);
-        }
-        else
-        {
-            velocity = new Vector2(0, -1f);
-        }
-
-        float maxSpeed = 30f;
-        if (velocity.magnitude > maxSpeed)
-            velocity = velocity.normalized * maxSpeed;
-
-        if (rb != null)
-        {
-            rb.gravityScale = 1f;
-            rb.velocity = velocity;
-        }
-    }
-
-    private Vector3 GetMouseWorldPosition()
-    {
-        Vector3 mouseScreen = Input.mousePosition;
-        mouseScreen.z = -mainCamera.transform.position.z;
-        return mainCamera.ScreenToWorldPoint(mouseScreen);
     }
 }
