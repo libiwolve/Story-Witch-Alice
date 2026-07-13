@@ -64,7 +64,6 @@ public class PhysicsElement : MonoBehaviour, IBeginDragHandler, IDragHandler, IE
 
     public void OnBeginDrag(PointerEventData eventData)
     {
-        Debug.Log($"[PhysicsElement] OnBeginDrag - 被拖拽的元素: {gameObject.name}");
         if (isControlledByNodeDrag || isDraggedByOrbit) return;
         if (eventData.button != PointerEventData.InputButton.Left) return;
 

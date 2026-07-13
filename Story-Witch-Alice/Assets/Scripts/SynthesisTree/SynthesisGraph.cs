@@ -35,6 +35,8 @@ public class SynthesisGraph : MonoBehaviour
 
     [Header("生成范围")]
     public Vector2 spawnArea = new Vector2(6f, 6f);
+    [Header("生成偏移")]
+    public Vector2 spawnOffset = new Vector2(0f, 0f);  // 在 Inspector 里调整
 
     [Header("星图边界（固定，硬边界）")]
     public Vector2 mapSize = new Vector2(16f, 12f);
@@ -50,6 +52,9 @@ public class SynthesisGraph : MonoBehaviour
     [Header("橡皮筋边界")]
     public float maxOverdrag = 1.5f;
     public float rubberBandForce = 8f;
+
+    [HideInInspector]
+    public bool enableZoom = true;
 
     private List<SynthesisNodeData> allNodes = new List<SynthesisNodeData>();
     private SynthesisNodeData draggedNode;
@@ -161,8 +166,8 @@ public class SynthesisGraph : MonoBehaviour
         var node = new SynthesisNodeData();
         node.elementID = id;
         node.position = new Vector2(
-            Random.Range(-spawnArea.x / 2f, spawnArea.x / 2f),
-            Random.Range(-spawnArea.y / 2f, spawnArea.y / 2f)
+            Random.Range(-spawnArea.x / 2f, spawnArea.x / 2f) + spawnOffset.x,
+            Random.Range(-spawnArea.y / 2f, spawnArea.y / 2f) + spawnOffset.y
         );
         node.nodeObject = Instantiate(nodePrefab, node.position, Quaternion.identity, transform);
         node.nodeObject.name = id;
@@ -308,6 +313,7 @@ public class SynthesisGraph : MonoBehaviour
 
     void HandleZoom()
     {
+        if (!enableZoom) return; 
         Vector3 mousePos = Input.mousePosition;
         if (mousePos.x < 0 || mousePos.x > Screen.width ||
             mousePos.y < 0 || mousePos.y > Screen.height)
@@ -315,7 +321,17 @@ public class SynthesisGraph : MonoBehaviour
 
         float scroll = Input.GetAxis("Mouse ScrollWheel");
         if (scroll != 0)
-            targetScale = Mathf.Clamp(targetScale + scroll * zoomSpeed, minScale, maxScale);
+        {
+            // ★ 用非线性映射让缩放更细腻
+            // scroll 的值通常为 0.1 或 -0.1（每格滚轮）
+            float delta = scroll * zoomSpeed;
+            
+            // 使用平方根曲线：小幅度滚动时变化更小，大幅度滚动时变化更大
+            // 但限制了最大单帧变化量
+            delta = Mathf.Sign(delta) * Mathf.Pow(Mathf.Abs(delta), 1.5f) * 0.5f;
+            
+            targetScale = Mathf.Clamp(targetScale + delta, minScale, maxScale);
+        }
 
         float newScale = Mathf.SmoothDamp(transform.localScale.x, targetScale, ref scaleVelocity, zoomSmoothTime);
         if (Mathf.Abs(newScale - transform.localScale.x) < 0.001f) return;
@@ -323,14 +339,24 @@ public class SynthesisGraph : MonoBehaviour
         Vector3 mouseWorldBefore = mainCamera.ScreenToWorldPoint(Input.mousePosition);
         mouseWorldBefore.z = 0;
 
+        float scaleFactor = newScale / transform.localScale.x;
+
         transform.localScale = Vector3.one * newScale;
 
         Vector3 mouseWorldAfter = mainCamera.ScreenToWorldPoint(Input.mousePosition);
         mouseWorldAfter.z = 0;
 
         transform.position += mouseWorldBefore - mouseWorldAfter;
-    }
 
+        Vector3 chartCenter = transform.position;
+        foreach (var node in allNodes)
+        {
+            Vector3 relativePos = node.position - (Vector2)chartCenter;
+            relativePos *= scaleFactor;
+            node.position = (Vector2)chartCenter + (Vector2)relativePos;
+            node.nodeObject.transform.position = node.position;
+        }
+    }
     void UpdateLines()
     {
         if (starChartMesh == null) return;
@@ -365,42 +391,37 @@ public class SynthesisGraph : MonoBehaviour
             if (node.nodeObject == null) continue;
             Vector2 pos = node.position;
 
-            // 只有被拖拽的节点才有橡皮筋效果
-            if (node == draggedNode)
-            {
-                // X 轴橡皮筋
-                if (pos.x < mapMinX)
-                {
-                    float overshoot = mapMinX - pos.x;
-                    float force = Mathf.Min(overshoot, maxOverdrag) * rubberBandForce;
-                    node.velocity += new Vector2(force * Time.deltaTime, 0);
-                }
-                else if (pos.x > mapMaxX)
-                {
-                    float overshoot = pos.x - mapMaxX;
-                    float force = Mathf.Min(overshoot, maxOverdrag) * rubberBandForce;
-                    node.velocity -= new Vector2(force * Time.deltaTime, 0);
-                }
+            // ★ 对所有越界节点施加回弹力（不仅仅是 draggedNode）
+            
 
-                // Y 轴橡皮筋
-                if (pos.y < mapMinY)
-                {
-                    float overshoot = mapMinY - pos.y;
-                    float force = Mathf.Min(overshoot, maxOverdrag) * rubberBandForce;
-                    node.velocity += new Vector2(0, force * Time.deltaTime);
-                }
-                else if (pos.y > mapMaxY)
-                {
-                    float overshoot = pos.y - mapMaxY;
-                    float force = Mathf.Min(overshoot, maxOverdrag) * rubberBandForce;
-                    node.velocity -= new Vector2(0, force * Time.deltaTime);
-                }
+           // ★ 只施加回弹力，不钳制位置，让节点自然弹回
+            if (pos.x < mapMinX)
+            {
+                float overshoot = mapMinX - pos.x;
+                float force = Mathf.Clamp(overshoot * rubberBandForce, 0f, maxOverdrag * rubberBandForce);
+                node.velocity += new Vector2(force * Time.deltaTime, 0f);
+            }
+            else if (pos.x > mapMaxX)
+            {
+                float overshoot = pos.x - mapMaxX;
+                float force = Mathf.Clamp(overshoot * rubberBandForce, 0f, maxOverdrag * rubberBandForce);
+                node.velocity -= new Vector2(force * Time.deltaTime, 0f);
             }
 
-            // 硬限制：所有节点都不能超出 maxOverdrag
-            pos.x = Mathf.Clamp(pos.x, mapMinX - maxOverdrag, mapMaxX + maxOverdrag);
-            pos.y = Mathf.Clamp(pos.y, mapMinY - maxOverdrag, mapMaxY + maxOverdrag);
+            if (pos.y < mapMinY)
+            {
+                float overshoot = mapMinY - pos.y;
+                float force = Mathf.Clamp(overshoot * rubberBandForce, 0f, maxOverdrag * rubberBandForce);
+                node.velocity += new Vector2(0f, force * Time.deltaTime);
+            }
+            else if (pos.y > mapMaxY)
+            {
+                float overshoot = pos.y - mapMaxY;
+                float force = Mathf.Clamp(overshoot * rubberBandForce, 0f, maxOverdrag * rubberBandForce);
+                node.velocity -= new Vector2(0f, force * Time.deltaTime);
+            }
 
+            // 位置不钳制，直接更新
             node.position = pos;
             node.nodeObject.transform.position = pos;
         }
@@ -560,5 +581,75 @@ public class SynthesisGraph : MonoBehaviour
 
         Gizmos.color = new Color(1, 1, 1, 0.5f);
         Gizmos.DrawWireCube(mapCenter, spawnArea);
+    }
+    /// <summary>
+    /// 根据一组元素ID，高亮并定位星盘视野到这些元素的中心点
+    /// </summary>
+    public void HighlightNodesByTag(List<string> elementIDs)
+    {
+        Debug.Log($"HighlightNodesByTag 被调用，elementIDs 数量: {elementIDs?.Count ?? 0}");
+        if (elementIDs == null || elementIDs.Count == 0) return;
+
+        var targetNodes = allNodes.Where(n => elementIDs.Contains(n.elementID)).ToList();
+        if (targetNodes.Count == 0) return;
+
+        // 1. 高亮目标节点，其他变暗
+        foreach (var n in allNodes)
+        {
+            var sr = n.nodeObject?.GetComponent<SpriteRenderer>();
+            if (sr == null) continue;
+            if (targetNodes.Contains(n))
+            {
+                sr.material.SetColor("_Color", highlightColor);
+                n.nodeObject.transform.localScale = Vector3.one * nodeBaseScale * productScaleMultiplier * 1.3f;
+            }
+            else
+            {
+                sr.material.SetColor("_Color", dimColor);
+                n.nodeObject.transform.localScale = Vector3.one * nodeBaseScale;
+            }
+        }
+
+        // 2. 计算包围盒中心
+        Vector3 center = Vector3.zero;
+        foreach (var node in targetNodes)
+            center += node.nodeObject.transform.position;
+        center /= targetNodes.Count;
+
+        // 3. 平滑移动视野
+        StartCoroutine(MoveViewToCenter(center));
+    }
+
+    /// <summary>
+    /// 平滑移动视野，使目标世界坐标位于屏幕中心
+    /// </summary>
+    IEnumerator MoveViewToCenter(Vector3 targetWorldPos)
+    {
+        Debug.Log($"MoveViewToCenter 启动，目标世界坐标: {targetWorldPos}");
+        Vector3 screenCenter = mainCamera.ScreenToWorldPoint(new Vector3(Screen.width / 2f, Screen.height / 2f, 0));
+        screenCenter.z = 0;
+
+        Vector3 targetChartPos = transform.position + (screenCenter - targetWorldPos);
+
+        // 如果超出硬边界，钳制到边界内
+        float mapHalfW = mapSize.x / 2f;
+        float mapHalfH = mapSize.y / 2f;
+        targetChartPos.x = Mathf.Clamp(targetChartPos.x, mapCenter.x - mapHalfW, mapCenter.x + mapHalfW);
+        targetChartPos.y = Mathf.Clamp(targetChartPos.y, mapCenter.y - mapHalfH, mapCenter.y + mapHalfH);
+
+        Vector3 startPos = transform.position;
+        float duration = 0.5f;
+        float elapsed = 0f;
+
+        while (elapsed < duration)
+        {
+            elapsed += Time.deltaTime;
+            float t = elapsed / duration;
+            t = 1f - Mathf.Pow(1f - t, 3f); // ease-out
+            transform.position = Vector3.Lerp(startPos, targetChartPos, t);
+            yield return null;
+        }
+
+        transform.position = targetChartPos;
     }
 }
