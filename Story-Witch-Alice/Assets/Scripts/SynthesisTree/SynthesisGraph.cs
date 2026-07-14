@@ -242,7 +242,7 @@ public class SynthesisGraph : MonoBehaviour
             node.velocity += force * dt;
             node.velocity *= damping;
             node.position += node.velocity * dt;
-            node.nodeObject.transform.position = node.position;
+            node.nodeObject.transform.localPosition = transform.InverseTransformPoint(node.position);
         }
     }
 
@@ -270,7 +270,7 @@ public class SynthesisGraph : MonoBehaviour
         // 记录拖拽速度（只用于被拖拽的节点）
         Vector2 previousPos = draggedNode.position;
         draggedNode.position = mouseWorld;
-        draggedNode.nodeObject.transform.position = mouseWorld;
+        draggedNode.nodeObject.transform.localPosition = transform.InverseTransformPoint(mouseWorld);
 
         dragVelocity = (draggedNode.position - previousPos) / Time.deltaTime;
     }
@@ -306,7 +306,7 @@ public class SynthesisGraph : MonoBehaviour
             foreach (var node in allNodes)
             {
                 node.position += (Vector2)delta;
-                node.nodeObject.transform.position = node.position;
+                node.nodeObject.transform.localPosition = transform.InverseTransformPoint(node.position);
             }
         }
     }
@@ -423,7 +423,7 @@ public class SynthesisGraph : MonoBehaviour
 
             // 位置不钳制，直接更新
             node.position = pos;
-            node.nodeObject.transform.position = pos;
+            node.nodeObject.transform.localPosition = transform.InverseTransformPoint(pos);
         }
     }
 
@@ -564,16 +564,6 @@ public class SynthesisGraph : MonoBehaviour
     /// <summary>
 /// 窗口拖拽后，同步所有节点的 position 数据
 /// </summary>
-    public void SyncNodePositionsAfterDrag(Vector3 delta)
-    {
-        Vector2 delta2D = delta;
-        foreach (var node in allNodes)
-        {
-            node.position += delta2D;
-        }
-        mapCenter += delta2D;
-    }
-
     void OnDrawGizmos()
     {
         Gizmos.color = Color.cyan;

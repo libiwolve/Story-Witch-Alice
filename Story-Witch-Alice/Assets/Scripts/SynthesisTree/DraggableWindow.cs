@@ -6,10 +6,8 @@ public class DraggableWindow : MonoBehaviour, IBeginDragHandler, IDragHandler
     [Header("拖拽手柄")]
     public RectTransform dragHandle;          // TitleBar 的 RectTransform
 
-    [Header("需要一起移动的物体")]
-    public RectTransform titleBarRect;         // TitleBar 的 RectTransform
-    public RectTransform backgroundRect;       // StarChartBackground 的 RectTransform
-    public Transform starChartTransform;       // StarChart 的 Transform（世界空间）
+    [Header("整个星盘的根物体")]
+    public Transform starChartRoot;           // StarChart 的 Transform
 
     public void OnBeginDrag(PointerEventData eventData)
     {
@@ -23,20 +21,11 @@ public class DraggableWindow : MonoBehaviour, IBeginDragHandler, IDragHandler
     {
         Vector2 delta = eventData.delta;
 
-        // 移动 UI 物体
-        if (titleBarRect != null) titleBarRect.anchoredPosition += delta;
-        if (backgroundRect != null) backgroundRect.anchoredPosition += delta;
+        // 把屏幕像素位移转成世界空间位移
+        float worldPerPixel = Camera.main.orthographicSize * 2f / Screen.height;
+        Vector3 worldDelta = new Vector3(delta.x * worldPerPixel, delta.y * worldPerPixel, 0);
 
-        // 移动 StarChart（世界空间）
-        if (starChartTransform != null)
-        {
-            float worldPerPixel = Camera.main.orthographicSize * 2f / Screen.height;
-            Vector3 worldDelta = new Vector3(delta.x * worldPerPixel, delta.y * worldPerPixel, 0);
-            starChartTransform.position += worldDelta;
-
-            var graph = starChartTransform.GetComponent<SynthesisGraph>();
-            if (graph != null)
-                graph.SyncNodePositionsAfterDrag(worldDelta);
-        }
+        // 移动根物体，所有子物体自动跟随
+        starChartRoot.position += worldDelta;
     }
 }
