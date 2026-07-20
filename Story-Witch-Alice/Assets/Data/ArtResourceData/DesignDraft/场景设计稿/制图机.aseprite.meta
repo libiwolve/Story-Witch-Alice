@@ -124,7 +124,7 @@ ScriptedImporter:
   animatedSpriteImportData:
   - name: "\u5236\u56FE\u673A"
     originalName: 
-    pivot: {x: 0.45454547, y: -0.54347825}
+    pivot: {x: 0.5, y: -0.014492753}
     alignment: 9
     border: {x: 0, y: 0, z: 0, w: 0}
     rect:
@@ -160,8 +160,8 @@ ScriptedImporter:
       frameIndex: 0
       additiveSortOrder: 0
       cellRect:
-        x: 91
-        y: 150
+        x: 1
+        y: 4
         width: 363
         height: 276
       spriteId: d090bac49689f0e4aa4a6eee53e73a53
@@ -183,5 +183,5 @@ ScriptedImporter:
   generatePhysicsShape: 0
   secondarySpriteTextures: []
   spritePackingTag: 
-  canvasSize: {x: 512, y: 512}
+  canvasSize: {x: 365, y: 286}
   previousTextureSize: {x: 512, y: 512}
