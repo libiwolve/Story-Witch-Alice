@@ -7,6 +7,10 @@ using UnityEditor;
 
 public class PhysicsElement : MonoBehaviour, IBeginDragHandler, IDragHandler, IEndDragHandler
 {
+    [Header("遗弃标记")]
+    public GameObject markIcon;              // 垃圾桶图标预制体（在 Inspector 里拖入）
+    private GameObject currentMarkIcon;      // 当前生成的图标实例
+    private bool isMarkedForRemoval = false;  // 是否被标记为移除
     public ElementData elementData;
     public UIDraggableElement sourceSlot;
 
@@ -56,6 +60,24 @@ public class PhysicsElement : MonoBehaviour, IBeginDragHandler, IDragHandler, IE
             else if (anim != null)
             {
                 Destroy(anim);
+            }
+        }
+        if (markIcon == null)
+        {
+            markIcon = Resources.Load<GameObject>("Icons/MarkIcon");  // 如果放在 Resources/Icons/ 下
+            // 如果直接放在 Resources/ 下，改成：
+            // markIcon = Resources.Load<GameObject>("MarkIcon");j
+        }
+    }
+    void Update()
+    {
+        if (Input.GetMouseButtonDown(1))
+        {
+            Ray ray = mainCamera.ScreenPointToRay(Input.mousePosition);
+            RaycastHit2D hit = Physics2D.GetRayIntersection(ray);
+            if (hit.collider != null && hit.collider.gameObject == gameObject)
+            {
+                ToggleMark();
             }
         }
     }
@@ -191,11 +213,70 @@ public class PhysicsElement : MonoBehaviour, IBeginDragHandler, IDragHandler, IE
     private static RuntimeAnimatorController GetElementAnimController(string id)
     {
         if (string.IsNullOrEmpty(id)) return null;
-#if UNITY_EDITOR
-        string path = $"Assets/Animations/PhysicElement Animation/Physic{id}.controller";
-        return AssetDatabase.LoadAssetAtPath<RuntimeAnimatorController>(path);
-#else
-        return null;
-#endif
+    #if UNITY_EDITOR
+            string path = $"Assets/Animations/PhysicElement Animation/Physic{id}.controller";
+            return AssetDatabase.LoadAssetAtPath<RuntimeAnimatorController>(path);
+    #else
+            return null;
+    #endif
+    }
+    void ToggleMark()
+    {
+        isMarkedForRemoval = !isMarkedForRemoval;
+
+        SpriteRenderer sr = GetComponent<SpriteRenderer>();
+
+        if (isMarkedForRemoval)
+        {
+            // 把元素颜色变灰
+            if (sr != null)
+                sr.color = new Color(0.5f, 0.5f, 0.5f, 1f);  // 灰色
+
+            // 生成垃圾桶图标（挂在元素上方）
+            if (markIcon != null && currentMarkIcon == null)
+            {
+                currentMarkIcon = Instantiate(markIcon, transform.position + Vector3.up * 0.5f, Quaternion.identity, transform);
+                currentMarkIcon.transform.localScale = Vector3.one * 0.8f;
+            }
+
+            ElementDisposalManager.Instance?.MarkElement(this);
+        }
+        else
+        {
+            // 恢复元素原色
+            if (sr != null)
+                sr.color = Color.white;  // 恢复原色
+
+            // 移除图标
+            if (currentMarkIcon != null)
+            {
+                Destroy(currentMarkIcon);
+                currentMarkIcon = null;
+            }
+
+            ElementDisposalManager.Instance?.UnmarkElement(this);
+        }
+    }
+
+    /// <summary>
+    /// 清除标记（被管理器调用）
+    /// </summary>
+    public void ClearMark()
+    {
+        if (currentMarkIcon != null)
+        {
+            Destroy(currentMarkIcon);
+            currentMarkIcon = null;
+        }
+        isMarkedForRemoval = false;
+    }
+
+    /// <summary>
+    /// 强制销毁元素（被管理器调用）
+    /// </summary>
+    public void ForceDestroy()
+    {
+        ClearMark();
+        Destroy(gameObject);
     }
 }
