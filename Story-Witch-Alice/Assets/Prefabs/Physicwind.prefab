@@ -100,10 +100,13 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 45bc396420326004991db88f8329e9fd, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  markIcon: {fileID: 3388603597068337152, guid: 614ca2c4dfc249f479f5e6869a875425, type: 3}
   elementData: {fileID: 11400000, guid: 3a4f8159fff82ca4c81728befccc5f5a, type: 2}
   sourceSlot: {fileID: 0}
   velocitySampleFrames: 5
   dirtTrail: {fileID: 0}
+  isControlledByNodeDrag: 0
+  isDraggedByOrbit: 0
 --- !u!60 &6314273204002422385
 PolygonCollider2D:
   m_ObjectHideFlags: 0

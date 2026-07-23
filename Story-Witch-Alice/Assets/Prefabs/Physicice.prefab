@@ -76,7 +76,7 @@ SpriteRenderer:
   m_LightmapParameters: {fileID: 0}
   m_SortingLayerID: -1638354951
   m_SortingLayer: 4
-  m_SortingOrder: 30
+  m_SortingOrder: 3
   m_Sprite: {fileID: 21300000, guid: 361b0dd41a4483c44a8488f223e96282, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_FlipX: 0
@@ -172,10 +172,13 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 45bc396420326004991db88f8329e9fd, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  markIcon: {fileID: 0}
   elementData: {fileID: 11400000, guid: 8c94f4e416613a748bfeceb82bebd7d0, type: 2}
   sourceSlot: {fileID: 0}
   velocitySampleFrames: 5
   dirtTrail: {fileID: 8234350732336305397}
+  isControlledByNodeDrag: 0
+  isDraggedByOrbit: 0
 --- !u!1 &654916777877242482
 GameObject:
   m_ObjectHideFlags: 0

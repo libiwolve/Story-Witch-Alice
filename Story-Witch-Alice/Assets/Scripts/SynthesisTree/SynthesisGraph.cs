@@ -60,6 +60,9 @@ public class SynthesisGraph : MonoBehaviour
     private SynthesisNodeData draggedNode;
     private Camera mainCamera;
     private Dictionary<string, List<string>> synthesisMap = new Dictionary<string, List<string>>();
+    // 待点亮的新元素队列
+    private List<SynthesisNodeData> pendingHighlightNodes = new List<SynthesisNodeData>();
+    private bool isWelcomePlaying = false;  // 是否正在播放欢迎动画
 
     private bool isPanning = false;
     private Vector3 panStartMouseScreen;
@@ -76,6 +79,13 @@ public class SynthesisGraph : MonoBehaviour
         targetScale = transform.localScale.x;
         BuildSynthesisMap();
         CreateNodes();
+    }
+    void OnEnable()
+    {
+        if (pendingHighlightNodes.Count > 0 && !isWelcomePlaying)
+        {
+            StartCoroutine(PlayWelcomeAnimation());
+        }
     }
 
     void BuildSynthesisMap()
@@ -100,6 +110,105 @@ public class SynthesisGraph : MonoBehaviour
         }
         foreach (var key in synthesisMap.Keys.ToList())
             synthesisMap[key] = synthesisMap[key].Distinct().ToList();
+    }
+    IEnumerator PlayWelcomeAnimation()
+{
+    isWelcomePlaying = true;
+
+    foreach (var node in pendingHighlightNodes)
+    {
+        if (node == null || node.nodeObject == null) continue;
+
+        // 1. 移动镜头到该节点
+        yield return StartCoroutine(MoveViewToCenterSmooth(node.nodeObject.transform.position));
+
+        // 2. 等待一小段
+        yield return new WaitForSeconds(0.3f);
+
+        // 3. 点亮动画：从 dimColor 渐变到 normalColor
+        yield return StartCoroutine(LightUpNode(node));
+
+        // 4. 弹跳一下表示欢迎
+        yield return StartCoroutine(BounceNode(node.nodeObject));
+
+        // 5. 间隔
+        yield return new WaitForSeconds(0.5f);
+    }
+
+    pendingHighlightNodes.Clear();
+    isWelcomePlaying = false;
+}
+
+IEnumerator LightUpNode(SynthesisNodeData node)
+{
+    SpriteRenderer sr = node.nodeObject?.GetComponent<SpriteRenderer>();
+    if (sr == null) yield break;
+
+    Color startColor = dimColor;
+    Color endColor = normalColor;
+    float duration = 0.5f;
+    float elapsed = 0f;
+
+    while (elapsed < duration)
+    {
+        elapsed += Time.deltaTime;
+        float t = elapsed / duration;
+        t = 1f - Mathf.Pow(1f - t, 3f);
+        sr.material.SetColor("_Color", Color.Lerp(startColor, endColor, t));
+        yield return null;
+    }
+
+    sr.material.SetColor("_Color", endColor);
+}
+
+    IEnumerator BounceNode(GameObject nodeObj)
+    {
+        Vector3 origScale = nodeObj.transform.localScale;
+        float duration = 0.4f;
+
+        // 放大
+        float elapsed = 0f;
+        while (elapsed < duration * 0.5f)
+        {
+            elapsed += Time.deltaTime;
+            float t = elapsed / (duration * 0.5f);
+            nodeObj.transform.localScale = Vector3.Lerp(origScale, origScale * 1.5f, t);
+            yield return null;
+        }
+
+        // 弹回
+        elapsed = 0f;
+        while (elapsed < duration * 0.5f)
+        {
+            elapsed += Time.deltaTime;
+            float t = elapsed / (duration * 0.5f);
+            nodeObj.transform.localScale = Vector3.Lerp(origScale * 1.5f, origScale, t);
+            yield return null;
+        }
+
+        nodeObj.transform.localScale = origScale;
+    }
+
+    IEnumerator MoveViewToCenterSmooth(Vector3 targetWorldPos)
+    {
+        Vector3 screenCenter = mainCamera.ScreenToWorldPoint(new Vector3(Screen.width / 2f, Screen.height / 2f, 0));
+        screenCenter.z = 0;
+        Vector3 targetChartPos = transform.position + (screenCenter - targetWorldPos);
+
+        Vector3 startPos = transform.position;
+        float duration = 0.6f;
+        float elapsed = 0f;
+
+        while (elapsed < duration)
+        {
+            elapsed += Time.deltaTime;
+            float t = elapsed / duration;
+            t = 1f - Mathf.Pow(1f - t, 3f);
+            transform.position = Vector3.Lerp(startPos, targetChartPos, t);
+            yield return null;
+        }
+
+        transform.position = targetChartPos;
     }
 
     void CreateNodes()
@@ -159,7 +268,7 @@ public class SynthesisGraph : MonoBehaviour
         }
     }
 
-    void CreateSingleNode(string id)
+    void CreateSingleNode(string id, bool startDim = false)
     {
         if (allNodes.Any(n => n.elementID == id)) return;
 
@@ -177,21 +286,49 @@ public class SynthesisGraph : MonoBehaviour
         drag.graph = this;
         drag.nodeData = node;
 
-       SpriteRenderer sr = node.nodeObject.GetComponent<SpriteRenderer>();
+      SpriteRenderer sr = node.nodeObject.GetComponent<SpriteRenderer>();
         if (sr != null)
         {
-            var elemData = GetElementData(id);
-            if (elemData != null && elemData.elementIcon != null)
-                sr.sprite = elemData.elementIcon;
+            // 如果是待点亮的节点，初始设为暗色
+            if (startDim)
+                sr.material.SetColor("_Color", dimColor);
+            else
+                sr.material.SetColor("_Color", normalColor);
 
-            // 和 CreateNodes 保持完全一致的缩放
+            // 缩放逻辑不变
             float scale = nodeBaseScale * (IsProduct(id) ? productScaleMultiplier : 1f);
             node.nodeObject.transform.localScale = Vector3.one * scale;
-
-            sr.material.SetColor("_Color", normalColor);
         }
 
         allNodes.Add(node);
+    }
+    /// <summary>
+    /// 外部调用（制图桌/商人/事件）：添加元素到星图，但不立刻亮起
+    /// </summary>
+    public void AddNodePendingWelcome(string elementID)
+    {
+        if (allNodes.Any(n => n.elementID == elementID)) return;
+
+        // 创建节点，初始暗色
+        CreateSingleNode(elementID, startDim: true);
+
+        // 更新连接关系（和 AddNode 一样）
+        var node = allNodes.Find(n => n.elementID == elementID);
+        if (node != null && synthesisMap.ContainsKey(elementID))
+        {
+            foreach (string neighborID in synthesisMap[elementID])
+            {
+                var neighbor = allNodes.Find(n => n.elementID == neighborID);
+                if (neighbor != null && !node.connectedNodeIDs.Contains(neighborID))
+                    node.connectedNodeIDs.Add(neighborID);
+                if (neighbor != null && !neighbor.connectedNodeIDs.Contains(elementID))
+                    neighbor.connectedNodeIDs.Add(elementID);
+            }
+        }
+
+        // 加入待点亮队列
+        if (node != null)
+            pendingHighlightNodes.Add(node);
     }
 
     void Update()
