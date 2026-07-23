@@ -487,10 +487,10 @@ MonoBehaviour:
   currentRemnant: {fileID: 11400000, guid: a6bffdba8abf95c4497ff535508a7b57, type: 2}
   shopItems:
   - {fileID: 11400000, guid: e92550f77b30fab4e986cfe161e5110b, type: 2}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
+  - {fileID: 11400000, guid: 239c38aaa3473d746b93cef1ff72281b, type: 2}
+  - {fileID: 11400000, guid: 1d3cd62392bc1bb4fbc3b4e3c49f4a45, type: 2}
+  - {fileID: 11400000, guid: 41c85ad9202ed1143ac477fc023d255f, type: 2}
+  - {fileID: 11400000, guid: db9ceae3c3d74d54d99c58fa56409711, type: 2}
 --- !u!4 &649883614
 Transform:
   m_ObjectHideFlags: 0
@@ -1282,9 +1282,9 @@ Camera:
   m_LensShift: {x: 0, y: 0}
   m_NormalizedViewPortRect:
     serializedVersion: 2
-    x: 0.11697723
+    x: 0
     y: 0
-    width: 0.7664555
+    width: 1
     height: 1
   near clip plane: 0.3
   far clip plane: 1000

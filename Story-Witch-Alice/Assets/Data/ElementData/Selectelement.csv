@@ -13,3 +13,9 @@
 雾,fog,水与气的最亲密结合——迷失、边界消融、未知。,material;natural;gas;soft;obscuring,1,0,0,0,0,0,density:10;humidity:80;visibility:10
 沙,sand,气与土的离散——荒芜的开端，流逝与抓不住。,material;natural;granular;dry;shifting,1,0,0,0,0,0,density:80;fluidity:30
 泥,mud,水与土的交融——浑浊、困顿、孕育生命的摇篮。,material;natural;wet;soft;fertile,1,0,0,0,0,0,density:50;humidity:70
+铁,iron,工业革命的骨骼——从矿石中解放的黑色力量，撑起桥梁与舰船的雄心。,material;natural;solid;industrial;foundational;civilization,1,0,0,0,0,0,density:100;hardness:80;meltingPoint:100
+煤,coal,地底的黑金——燃烧自己驱动活塞与涡轮，文明由它吐出第一口浓烟。,material;natural;solid;fuel;industrial;civilization,1,0,0,0,0,0,density:60;hardness:30;combustibility:100
+铜,copper,电力的初代信使——赤色导线中奔涌的微弱脉搏，让远方的消息瞬间抵达。,material;natural;solid;conductive;malleable;civilization,1,0,0,0,0,0,density:85;hardness:35;conductivity:80
+锌,zinc,被遗忘的防腐者——用自身锈蚀换取铁桥百年不朽，沉默的工业牺牲品。,material;natural;solid;protective;corrosionResistant;industrial,1,0,0,0,0,0,density:70;hardness:40;corrosionResistance:100
+黄铜,brass,蒸汽时代的金色妆容——黄铜阀门与仪表在锅炉旁闪烁，为机械增添体面与尊严。,material;synthetic;solid;resonant;golden;alloy;industrial;civilization,1,0,0,0,0,0,density:82;hardness:55;soundResonance:80
+时间,time,万物的刻度——无形却不可逆的流逝，文明的一切终将被它检阅。,basic;fundamental;abstract;universal;flow,0,0,0,0,0,0,speed:0;direction:forward

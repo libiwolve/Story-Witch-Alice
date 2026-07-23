@@ -16,10 +16,10 @@ MonoBehaviour:
   itemName: Time
   description: 
   icon: {fileID: 210216434, guid: d46aef2119ab884459c254f6170afa81, type: 3}
-  price: 200
-  category: 0
-  rewardElement: {fileID: 0}
-  remnantID: 
+  price: 1200
+  category: 1
+  rewardElement: {fileID: 11400000, guid: 5d6bdb3e0a131254caf479ab793d7962, type: 2}
+  remnantID: 3
   requiredAffinity: 0
   hasDiscount: 0
   discountRate: 0
