@@ -2,6 +2,7 @@ using UnityEngine;
 using UnityEditor;
 using System.IO;
 using System.Collections.Generic;
+// System.Text.RegularExpressions no longer needed
 
 public class ShopDataBatchCreator
 {
@@ -42,16 +43,17 @@ public class ShopDataBatchCreator
         for (int i = 1; i < lines.Length; i++)
         {
             string[] cols = ParseCSVLine(lines[i].Trim());
-            if (cols.Length < 6) continue;
+            if (cols.Length < 5) continue;
 
-            string id = cols[0];
-            string name = cols[1];
-            string desc = cols[2];
-            int price = int.TryParse(cols[3], out int p) ? p : 0;
-            string catStr = cols[4];
-            string rewardID = cols[5];
-            string remnantID = cols.Length > 6 ? cols[6] : "";
+            // 新格式: itemName,description,price,rewardElement,remnantID
+            string name = cols[0];
+            string desc = cols[1];
+            int price = int.TryParse(cols[2], out int p) ? p : 0;
+            string rewardID = cols[3];
+            string remnantID = cols.Length > 4 ? cols[4] : "";
 
+            // itemID = rewardElement 的英文 ID（文件名也用它）
+            string id = string.IsNullOrEmpty(rewardID) ? name : rewardID;
             csvIDs.Add(id);
 
             // 加载 ElementData
@@ -62,9 +64,14 @@ public class ShopDataBatchCreator
                 reward = AssetDatabase.LoadAssetAtPath<ElementData>(epath);
             }
 
-            ShopItemCategory cat = catStr == "AbstractConcept" ? ShopItemCategory.AbstractConcept : ShopItemCategory.Material;
-
-            string assetPath = (saveFolder + "/" + id + ".asset").Replace("\\", "/");
+            // 按遗民编号分文件夹：ShopData/{remnantID}/{id}.asset
+            string subFolder = string.IsNullOrEmpty(remnantID) ? saveFolder : saveFolder + "/" + remnantID;
+            if (!AssetDatabase.IsValidFolder(subFolder))
+            {
+                System.IO.Directory.CreateDirectory(subFolder.Replace("Assets/", ""));
+                AssetDatabase.Refresh();
+            }
+            string assetPath = (subFolder + "/" + id + ".asset").Replace("\\", "/");
             ShopItemData asset = AssetDatabase.LoadAssetAtPath<ShopItemData>(assetPath);
             bool isNew = asset == null;
 
@@ -83,14 +90,13 @@ public class ShopDataBatchCreator
             asset.itemName = name;
             asset.description = desc;
             asset.price = price;
-            asset.category = cat;
             asset.rewardElement = reward;
             asset.remnantID = remnantID;
 
-            // 加载图标
-            string iconPath = $"Assets/Data/ArtResourceData/Design/Icon/{id}.png";
-            Sprite icon = AssetDatabase.LoadAssetAtPath<Sprite>(iconPath);
-            if (icon == null) icon = AssetDatabase.LoadAssetAtPath<Sprite>($"Assets/Data/ArtResourceData/Design/Icon/{id}UI.png");
+            // 图标（忽略大小写）
+            string iconDir = "Assets/Data/IconData";
+            Sprite icon = FindIconIgnoreCase(iconDir, id);
+            if (icon == null) icon = FindIconIgnoreCase(iconDir, id + "UI");
             asset.icon = icon;
 
             EditorUtility.SetDirty(asset);
@@ -111,6 +117,26 @@ public class ShopDataBatchCreator
 
         AssetDatabase.Refresh();
         Debug.Log($"店铺数据导入完成！新建 {created}，更新 {updated} 个。");
+    }
+
+    /// <summary>在图标文件夹中忽略大小写查找 Sprite，并保证导入类型为 Sprite</summary>
+    private static Sprite FindIconIgnoreCase(string folder, string name)
+    {
+        if (!AssetDatabase.IsValidFolder(folder)) return null;
+        string[] guids = AssetDatabase.FindAssets($"{name} t:Texture2D", new[] { folder });
+        if (guids.Length > 0)
+        {
+            string path = AssetDatabase.GUIDToAssetPath(guids[0]);
+            // 强制设为 Sprite 类型
+            TextureImporter imp = AssetImporter.GetAtPath(path) as TextureImporter;
+            if (imp != null && imp.textureType != TextureImporterType.Sprite)
+            {
+                imp.textureType = TextureImporterType.Sprite;
+                imp.SaveAndReimport();
+            }
+            return AssetDatabase.LoadAssetAtPath<Sprite>(path);
+        }
+        return null;
     }
 
     private static string[] ParseCSVLine(string line)

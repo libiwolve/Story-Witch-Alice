@@ -10,15 +10,15 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 99df12f4cfca88d44aa3b3f414d9d2f2, type: 3}
-  m_Name: Time
+  m_Name: iron
   m_EditorClassIdentifier: 
-  itemID: 
-  itemName: Time
-  description: 
-  icon: {fileID: 210216434, guid: d46aef2119ab884459c254f6170afa81, type: 3}
-  price: 1200
-  category: 1
-  rewardElement: {fileID: 11400000, guid: 5d6bdb3e0a131254caf479ab793d7962, type: 2}
+  itemID: iron
+  itemName: "\u94C1"
+  description: "\u5DE5\u4E1A\u9769\u547D\u7684\u9AA8\u9ABC\u2014\u2014\u4ECE\u77FF\u77F3\u4E2D\u89E3\u653E\u7684\u9ED1\u8272\u529B\u91CF\uFF0C\u6491\u8D77\u6865\u6881\u4E0E\u8230\u8239\u7684\u96C4\u5FC3\u3002"
+  icon: {fileID: 21300000, guid: 303cde13d47962142a3e7b0510e52f73, type: 3}
+  price: 200
+  category: 0
+  rewardElement: {fileID: 11400000, guid: 506c123da9144a449bb9749e71963a87, type: 2}
   remnantID: 3
   requiredAffinity: 0
   hasDiscount: 0
