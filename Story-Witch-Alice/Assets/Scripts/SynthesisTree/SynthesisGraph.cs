@@ -286,10 +286,15 @@ IEnumerator LightUpNode(SynthesisNodeData node)
         drag.graph = this;
         drag.nodeData = node;
 
-      SpriteRenderer sr = node.nodeObject.GetComponent<SpriteRenderer>();
+        SpriteRenderer sr = node.nodeObject.GetComponent<SpriteRenderer>();
         if (sr != null)
         {
             // 如果是待点亮的节点，初始设为暗色
+            var elemData = GetElementData(id);
+            if (elemData != null && elemData.elementIcon != null)
+                sr.sprite = elemData.elementIcon;
+            else
+                sr.sprite = null;  // 或者设为默认星星 Sprite
             if (startDim)
                 sr.material.SetColor("_Color", dimColor);
             else
@@ -491,7 +496,8 @@ IEnumerator LightUpNode(SynthesisNodeData node)
             Vector3 relativePos = node.position - (Vector2)chartCenter;
             relativePos *= scaleFactor;
             node.position = (Vector2)chartCenter + (Vector2)relativePos;
-            node.nodeObject.transform.position = node.position;
+            // ★ 统一用 localPosition
+            node.nodeObject.transform.localPosition = transform.InverseTransformPoint(node.position);
         }
     }
     void UpdateLines()

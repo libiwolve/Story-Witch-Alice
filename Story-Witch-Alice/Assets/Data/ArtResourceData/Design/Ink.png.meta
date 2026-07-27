@@ -1,5 +1,5 @@
 fileFormatVersion: 2
-guid: a14cecea52a94be468a95bf7be84e434
+guid: c25d00195334bcf40989de452ba0ebc0
 TextureImporter:
   internalIDToNameTable: []
   externalObjects: {}
@@ -97,7 +97,7 @@ TextureImporter:
     serializedVersion: 2
     sprites:
     - serializedVersion: 2
-      name: trashbin-sheet_0
+      name: Ink 1_0
       rect:
         serializedVersion: 2
         x: 0
@@ -111,14 +111,14 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: 0
       bones: []
-      spriteID: 01181038c9be1974d8927cf83d7c3d30
-      internalID: 541233230
+      spriteID: a34f967f495c88e4cbdd4ff39e112a32
+      internalID: -789462909
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: trashbin-sheet_1
+      name: Ink 1_1
       rect:
         serializedVersion: 2
         x: 128
@@ -132,14 +132,14 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: 0
       bones: []
-      spriteID: 3280df60e342f2d45a7630a91f756e2f
-      internalID: -248211983
+      spriteID: deb187071eab6664c8189a832af54003
+      internalID: -1673872298
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: trashbin-sheet_2
+      name: Ink 1_2
       rect:
         serializedVersion: 2
         x: 256
@@ -153,14 +153,14 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: 0
       bones: []
-      spriteID: 2910dc7399c78764ab767b5486d9cb05
-      internalID: 1605438561
+      spriteID: a70495463c35b5447a227499fb6682e4
+      internalID: -1742234643
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: trashbin-sheet_3
+      name: Ink 1_3
       rect:
         serializedVersion: 2
         x: 384
@@ -174,14 +174,14 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: 0
       bones: []
-      spriteID: 639e336eec4c2764196afce60122a721
-      internalID: 504157245
+      spriteID: 9e3d6b65334e6954ab7621fdb7e49bc1
+      internalID: -335079169
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: trashbin-sheet_4
+      name: Ink 1_4
       rect:
         serializedVersion: 2
         x: 512
@@ -195,14 +195,14 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: 0
       bones: []
-      spriteID: f14dba14deb7c164e8408c28af8e193e
-      internalID: 1966055858
+      spriteID: 5b27cbd38151c4b49ba52251c961494d
+      internalID: -1566814432
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: trashbin-sheet_5
+      name: Ink 1_5
       rect:
         serializedVersion: 2
         x: 0
@@ -216,14 +216,14 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: 0
       bones: []
-      spriteID: 276ca700588a86547b428cb0d0630947
-      internalID: 819653289
+      spriteID: c74c7032e8b4ec44eb69d195c4f2914f
+      internalID: -2016952488
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: trashbin-sheet_6
+      name: Ink 1_6
       rect:
         serializedVersion: 2
         x: 128
@@ -237,14 +237,14 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: 0
       bones: []
-      spriteID: 4b53e5877c21bda4d87bcce241f161a0
-      internalID: -988035050
+      spriteID: bb088aab9856b8441be2d682a0029f10
+      internalID: 1408962185
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: trashbin-sheet_7
+      name: Ink 1_7
       rect:
         serializedVersion: 2
         x: 256
@@ -258,14 +258,14 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: 0
       bones: []
-      spriteID: 99f3b2941efe7b547b3d40f7a89e9759
-      internalID: 74474381
+      spriteID: c4b773bddb4358f4d9c57929b36470e2
+      internalID: 309981195
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: trashbin-sheet_8
+      name: Ink 1_8
       rect:
         serializedVersion: 2
         x: 384
@@ -279,14 +279,14 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: 0
       bones: []
-      spriteID: c6028f46ba9bce5478cce44f97ca2ec3
-      internalID: -1556788091
+      spriteID: dd1325d7350203f478f2147812ce0114
+      internalID: -1541120384
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: trashbin-sheet_9
+      name: Ink 1_9
       rect:
         serializedVersion: 2
         x: 512
@@ -300,14 +300,14 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: 0
       bones: []
-      spriteID: 0ded39fcc6429884987e96e60172e552
-      internalID: -1312396527
+      spriteID: d3fea75011e304d4193b3a7695e8a765
+      internalID: 1703868412
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: trashbin-sheet_10
+      name: Ink 1_10
       rect:
         serializedVersion: 2
         x: 0
@@ -321,14 +321,14 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: 0
       bones: []
-      spriteID: ca75e218bb71843409de11f3ac3da732
-      internalID: -1552704891
+      spriteID: 0420150b9ff915143927a83d54f0304b
+      internalID: 2114623419
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: trashbin-sheet_11
+      name: Ink 1_11
       rect:
         serializedVersion: 2
         x: 128
@@ -342,14 +342,14 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: 0
       bones: []
-      spriteID: bab7a746594b3124981f71a9d4a15d74
-      internalID: -421141390
+      spriteID: 5f06973b600cf4946b3cbc072b4ec381
+      internalID: 881392299
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: trashbin-sheet_12
+      name: Ink 1_12
       rect:
         serializedVersion: 2
         x: 256
@@ -363,14 +363,14 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: 0
       bones: []
-      spriteID: e3ce48a232791af4280d718940490b31
-      internalID: 1639391715
+      spriteID: 275cb3d059b35f84abb6a3fd763cde9c
+      internalID: 428280882
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: trashbin-sheet_13
+      name: Ink 1_13
       rect:
         serializedVersion: 2
         x: 384
@@ -384,14 +384,14 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: 0
       bones: []
-      spriteID: 3b86352b259a6644fa8dc8806528fa55
-      internalID: -1004654080
+      spriteID: 3048c1216b2fd954cb4795922070822e
+      internalID: -189799441
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: trashbin-sheet_14
+      name: Ink 1_14
       rect:
         serializedVersion: 2
         x: 512
@@ -405,14 +405,14 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: 0
       bones: []
-      spriteID: 59ac1d7c9eb527840aac9f361fdc4649
-      internalID: -1932780759
+      spriteID: 3aa00900ddf74bc4aa2bda35fa8f0702
+      internalID: 1025811255
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: trashbin-sheet_15
+      name: Ink 1_15
       rect:
         serializedVersion: 2
         x: 0
@@ -426,14 +426,14 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: 0
       bones: []
-      spriteID: 28e22fd54f5520640a3b5f96945b21e2
-      internalID: -687172617
+      spriteID: d6d1f18e4e429aa4ba7782747e1a05ab
+      internalID: -1753720995
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: trashbin-sheet_16
+      name: Ink 1_16
       rect:
         serializedVersion: 2
         x: 128
@@ -447,8 +447,29 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: 0
       bones: []
-      spriteID: af26db1002a136e4e81d87887ff802b7
-      internalID: -1831292317
+      spriteID: 53b3d7485c2bf8f46b0c6def4979cbe5
+      internalID: 1119094078
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Ink 1_17
+      rect:
+        serializedVersion: 2
+        x: 256
+        y: 0
+        width: 128
+        height: 128
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 362ee98227ab30b48be25c4b11b67cfa
+      internalID: -1500480476
       vertices: []
       indices: 
       edges: []
@@ -464,23 +485,24 @@ TextureImporter:
     weights: []
     secondaryTextures: []
     nameFileIdTable:
-      trashbin-sheet_0: 541233230
-      trashbin-sheet_1: -248211983
-      trashbin-sheet_10: -1552704891
-      trashbin-sheet_11: -421141390
-      trashbin-sheet_12: 1639391715
-      trashbin-sheet_13: -1004654080
-      trashbin-sheet_14: -1932780759
-      trashbin-sheet_15: -687172617
-      trashbin-sheet_16: -1831292317
-      trashbin-sheet_2: 1605438561
-      trashbin-sheet_3: 504157245
-      trashbin-sheet_4: 1966055858
-      trashbin-sheet_5: 819653289
-      trashbin-sheet_6: -988035050
-      trashbin-sheet_7: 74474381
-      trashbin-sheet_8: -1556788091
-      trashbin-sheet_9: -1312396527
+      Ink 1_0: -789462909
+      Ink 1_1: -1673872298
+      Ink 1_10: 2114623419
+      Ink 1_11: 881392299
+      Ink 1_12: 428280882
+      Ink 1_13: -189799441
+      Ink 1_14: 1025811255
+      Ink 1_15: -1753720995
+      Ink 1_16: 1119094078
+      Ink 1_17: -1500480476
+      Ink 1_2: -1742234643
+      Ink 1_3: -335079169
+      Ink 1_4: -1566814432
+      Ink 1_5: -2016952488
+      Ink 1_6: 1408962185
+      Ink 1_7: 309981195
+      Ink 1_8: -1541120384
+      Ink 1_9: 1703868412
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 
