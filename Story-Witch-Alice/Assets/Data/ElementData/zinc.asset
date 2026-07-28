@@ -14,7 +14,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   elementName: "\u950C"
   elementID: zinc
-  elementIcon: {fileID: 0}
+  elementIcon: {fileID: 21300000, guid: 9917a236c2b4dc7479e889023ae7c538, type: 3}
   description: "\u88AB\u9057\u5FD8\u7684\u9632\u8150\u8005\u2014\u2014\u7528\u81EA\u8EAB\u9508\u8680\u6362\u53D6\u94C1\u6865\u767E\u5E74\u4E0D\u673D\uFF0C\u6C89\u9ED8\u7684\u5DE5\u4E1A\u727A\u7272\u54C1\u3002"
   tags:
   - material

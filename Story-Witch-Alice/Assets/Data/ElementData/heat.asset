@@ -14,7 +14,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   elementName: "\u70ED\u80FD"
   elementID: heat
-  elementIcon: {fileID: 0}
+  elementIcon: {fileID: 1017271763, guid: 3aad919a496042a4b8bb32f41bfc53aa, type: 3}
   description: "\u706B\u7684\u7EAF\u7CB9\u672C\u8D28\u2014\u2014\u65E0\u5F62\u800C\u70BD\u70ED\u7684\u80FD\u91CF\uFF0C\u6539\u53D8\u7269\u8D28\u5F62\u6001\u7684\u63A8\u624B\u3002"
   tags:
   - material

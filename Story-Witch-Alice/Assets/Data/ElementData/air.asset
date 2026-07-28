@@ -14,7 +14,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   elementName: "\u6C14"
   elementID: air
-  elementIcon: {fileID: 0}
+  elementIcon: {fileID: -1283647465, guid: b9bc388e970b2cf41b9af2e7ab8df8d8, type: 3}
   description: "\u65E0\u5F62\u65E0\u5F71\uFF0C\u5374\u627F\u8F7D\u7740\u4E07\u7269\u7684\u547C\u5438\u3002"
   tags:
   - basic

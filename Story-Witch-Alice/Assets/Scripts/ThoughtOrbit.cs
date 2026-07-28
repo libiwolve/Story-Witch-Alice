@@ -44,7 +44,7 @@ public class ThoughtOrbit : MonoBehaviour
         if (Instance == null)
         {
             Instance = this;
-            DontDestroyOnLoad(gameObject);
+            DontDestroyOnLoad(transform.root.gameObject);
             SceneManager.sceneLoaded += OnSceneLoaded;
         }
         else
