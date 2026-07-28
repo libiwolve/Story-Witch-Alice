@@ -23,7 +23,14 @@ public class CurrencyManager : MonoBehaviour
 
     void Awake()
     {
-        if (Instance != null) { Destroy(gameObject); return; }
+        if (Instance != null)
+        {
+            // 保留已有实例的余额数据，销毁新实例
+            CurrentThoughts = Instance.CurrentThoughts;
+            Destroy(gameObject);
+            return;
+        }
+        DontDestroyOnLoad(gameObject);
         Instance = this;
         CurrentThoughts = startingThoughts;
     }

@@ -1,0 +1,25 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 99df12f4cfca88d44aa3b3f414d9d2f2, type: 3}
+  m_Name: coal
+  m_EditorClassIdentifier: 
+  itemID: coal
+  itemName: "\u7164"
+  description: "\u5730\u5E95\u7684\u9ED1\u91D1\u2014\u2014\u71C3\u70E7\u81EA\u5DF1\u9A71\u52A8\u6D3B\u585E\u4E0E\u6DA1\u8F6E\uFF0C\u6587\u660E\u7531\u5B83\u5410\u51FA\u7B2C\u4E00\u53E3\u6D53\u70DF\u3002"
+  icon: {fileID: 21300000, guid: 5e4c60f9f4591a441832d725aa1c91c0, type: 3}
+  price: 200
+  category: 0
+  rewardElement: {fileID: 11400000, guid: 70f4b99212e9df84b8f119a98c7536f5, type: 2}
+  remnantID: 3
+  requiredAffinity: 0
+  hasDiscount: 0
+  discountRate: 0

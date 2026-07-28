@@ -4860,7 +4860,7 @@ Transform:
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0.7071068, w: 0.7071068}
   m_LocalPosition: {x: 3.4931693, y: -2.055112, z: 0}
-  m_LocalScale: {x: 1.99, y: 1.99, z: 1.99}
+  m_LocalScale: {x: 2.147011, y: 2.460834, z: 1.99}
   m_ConstrainProportionsScale: 1
   m_Children:
   - {fileID: 5561437091909654154}
@@ -4957,10 +4957,13 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 45bc396420326004991db88f8329e9fd, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  markIcon: {fileID: 0}
   elementData: {fileID: 11400000, guid: 950a082fd3280c94c952542ee8a7e74e, type: 2}
   sourceSlot: {fileID: 0}
   velocitySampleFrames: 5
   dirtTrail: {fileID: 1600136559336547327}
+  isControlledByNodeDrag: 0
+  isDraggedByOrbit: 0
 --- !u!60 &5665144384947951336
 PolygonCollider2D:
   m_ObjectHideFlags: 0

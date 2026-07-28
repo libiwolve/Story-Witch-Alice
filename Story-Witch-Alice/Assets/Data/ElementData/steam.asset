@@ -14,7 +14,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   elementName: "\u84B8\u6C7D"
   elementID: steam
-  elementIcon: {fileID: 1152465761, guid: 9b52897c0369c394e8a5409c8045af00, type: 3}
+  elementIcon: {fileID: 0}
   description: "\u706B\u4E0E\u6C34\u7684\u51B2\u7A81\u4E0E\u5171\u5B58\u2014\u2014\u4E34\u754C\u72B6\u6001\u7684\u8FF7\u96FE\u3002"
   tags:
   - material

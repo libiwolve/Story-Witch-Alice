@@ -14,7 +14,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   elementName: "\u6C99"
   elementID: sand
-  elementIcon: {fileID: 21300000, guid: db9f2833f9ff70e479a89dafa222ff9f, type: 3}
+  elementIcon: {fileID: 0}
   description: "\u6C14\u4E0E\u571F\u7684\u79BB\u6563\u2014\u2014\u8352\u829C\u7684\u5F00\u7AEF\uFF0C\u6D41\u901D\u4E0E\u6293\u4E0D\u4F4F\u3002"
   tags:
   - material

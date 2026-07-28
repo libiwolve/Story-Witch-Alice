@@ -14,7 +14,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   elementName: "\u571F"
   elementID: soil
-  elementIcon: {fileID: 21300000, guid: 4491f63f25794c64a9cbde8ceb317177, type: 3}
+  elementIcon: {fileID: 0}
   description: "\u4E07\u7269\u751F\u957F\u7684\u6E29\u5E8A\uFF0C\u6587\u660E\u6700\u521D\u7684\u753B\u5E03\u3002"
   tags:
   - basic

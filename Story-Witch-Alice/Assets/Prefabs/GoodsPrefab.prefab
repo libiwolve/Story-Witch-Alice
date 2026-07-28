@@ -34,7 +34,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: 0.0012244, y: 0.0000078678}
+  m_AnchoredPosition: {x: 0.0012244, y: 0.0000076293945}
   m_SizeDelta: {x: 114.62, y: 107.32}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!222 &5977546137089077839
@@ -248,8 +248,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: -248, y: 79}
-  m_SizeDelta: {x: 160, y: 30}
+  m_AnchoredPosition: {x: 0, y: 0}
+  m_SizeDelta: {x: 300, y: 80}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!222 &4154842418431756145
 CanvasRenderer:
@@ -348,7 +348,6 @@ MonoBehaviour:
   iconImage: {fileID: 4244644214673648578}
   nameText: {fileID: 5700159062774491079}
   priceText: {fileID: 7363086108359435820}
-  buyButton: {fileID: 6209384062815194707}
 --- !u!1 &7177624187273718941
 GameObject:
   m_ObjectHideFlags: 0
