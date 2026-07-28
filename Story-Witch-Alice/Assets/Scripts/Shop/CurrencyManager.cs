@@ -30,7 +30,7 @@ public class CurrencyManager : MonoBehaviour
             Destroy(gameObject);
             return;
         }
-        DontDestroyOnLoad(gameObject);
+        DontDestroyOnLoad(transform.root.gameObject);
         Instance = this;
         CurrentThoughts = startingThoughts;
     }
