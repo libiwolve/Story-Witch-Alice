@@ -1,6 +1,7 @@
 using System.Collections.Generic;
 using System.Collections;
 using System.Linq;
+using UnityEngine.SceneManagement;
 using UnityEngine;
 using UnityEngine.UI;
 #if UNITY_EDITOR
@@ -54,6 +55,56 @@ public class AlchemyManager : MonoBehaviour
 
     [Header("Recipe Panel")]
     public RecipeListUI recipeListUI;
+
+    void Start()
+    {
+        // 场景切换后重链场景引用（DontDestroyOnLoad 的引用会失效）
+        SceneManager.sceneLoaded += OnSceneLoaded;
+    }
+
+    void OnDestroy()
+    {
+        SceneManager.sceneLoaded -= OnSceneLoaded;
+    }
+
+    void OnSceneLoaded(Scene scene, LoadSceneMode mode)
+    {
+        // ★ 完整重链场景引用（场景切换后 DontDestroyOnLoad 的引用全部失效）
+
+        // 坩埚 Transform — 有 "Pot" 标签
+        if (potTransform == null)
+        {
+            GameObject potGO = GameObject.FindGameObjectWithTag("Pot");
+            if (potGO != null) potTransform = potGO.transform;
+        }
+
+        // 音频源
+        if (audioSource == null)
+            audioSource = FindObjectOfType<AudioSource>();
+
+        // 坩埚宝石动画
+        if (potGemController == null)
+            potGemController = FindObjectOfType<PotGemController>();
+
+        // 日志文字
+        if (logText == null)
+        {
+            Text found = FindObjectOfType<Text>();
+            if (found != null) logText = found;
+        }
+
+        // 合成图（星盘）
+        if (synthesisGraph == null)
+            synthesisGraph = FindObjectOfType<SynthesisGraph>();
+
+        // 配方列表 UI
+        if (recipeListUI == null)
+            recipeListUI = FindObjectOfType<RecipeListUI>();
+
+        // ThoughtOrbit（已是 DontDestroyOnLoad，仅兜底）
+        if (thoughtOrbit == null)
+            thoughtOrbit = FindObjectOfType<ThoughtOrbit>();
+    }
 
     void Awake()
     {

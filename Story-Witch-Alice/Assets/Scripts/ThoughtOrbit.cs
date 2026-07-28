@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 #if UNITY_EDITOR
 using UnityEditor; 
 #endif
@@ -36,10 +37,110 @@ public class ThoughtOrbit : MonoBehaviour
     
     private float maxRadius = 4f;
 
+    public static ThoughtOrbit Instance { get; private set; }
+
+    void Awake()
+    {
+        if (Instance == null)
+        {
+            Instance = this;
+            DontDestroyOnLoad(gameObject);
+            SceneManager.sceneLoaded += OnSceneLoaded;
+        }
+        else
+        {
+            Destroy(gameObject);
+        }
+    }
+
+    void OnDestroy()
+    {
+        if (Instance == this)
+        {
+            SceneManager.sceneLoaded -= OnSceneLoaded;
+        }
+    }
+
+    void OnSceneLoaded(Scene scene, LoadSceneMode mode)
+    {
+        // 重新查找场景中的 Parchment（场景切换后原引用失效）
+        RelinkSceneReferences();
+        // 重建被场景卸载销毁的轨道视觉元素
+        RebuildOrbitVisuals();
+        // 每次场景加载后同步已解锁元素（兜底，防止队列中有遗漏）
+        SyncFromAlchemyManager();
+    }
+
+    void RelinkSceneReferences()
+    {
+        if (parchmentRect == null)
+        {
+            GameObject parchment = GameObject.Find("Parchment");
+            if (parchment != null)
+                parchmentRect = parchment.GetComponent<RectTransform>();
+        }
+        UpdateMaxRadiusFromParchment();
+    }
+
+    /// <summary>
+    /// 场景切换后重建轨道视觉元素。
+    /// queue 数据层幸存但 OrbitElement 子对象被销毁时调用。
+    /// </summary>
+    void RebuildOrbitVisuals()
+    {
+        // 清理已销毁的 OrbitElement 引用
+        orbitElements.RemoveAll(oe => oe == null);
+
+        // 如果视觉元素数量已经匹配队列数量，无需重建
+        if (orbitElements.Count >= queue.Count)
+            return;
+
+        // 为每个缺少视觉元素的队列条目重建 OrbitElement
+        for (int i = 0; i < queue.Count; i++)
+        {
+            ElementData element = queue[i];
+            if (element == null) continue;
+
+            (float angle, float radius) = FindNonOverlappingPosition();
+            OrbitElement oe = CreateOrbitElement(element, angle, radius);
+            orbitElements.Insert(i, oe);
+        }
+        RecalculateAllAlphas();
+    }
+
     void Start()
     {
         UpdateMaxRadiusFromParchment();
-        InitializeQueue();
+        // 首次运行时初始化基础元素队列
+        if (queue.Count == 0)
+        {
+            InitializeQueue();
+        }
+        // 同步已解锁的元素
+        SyncFromAlchemyManager();
+    }
+
+    /// <summary>
+    /// 从 AlchemyManager 同步已解锁的非基础元素到轨道
+    /// 解决场景切换后已购买/合成的元素丢失问题
+    /// </summary>
+    void SyncFromAlchemyManager()
+    {
+        if (AlchemyManager.Instance == null || AlchemyManager.Instance.allElements == null) return;
+
+        foreach (var element in AlchemyManager.Instance.allElements)
+        {
+            if (element == null) continue;
+            // 基础元素已在 InitializeQueue 中添加，跳过
+            if (element.elementID == "fire" || element.elementID == "air" ||
+                element.elementID == "water" || element.elementID == "soil") continue;
+
+            // 如果已解锁且不在队列中，加入轨道
+            if (AlchemyManager.Instance.IsElementUnlocked(element.elementID))
+            {
+                AddToFront(element);
+            }
+        }
     }
 
     void InitializeQueue()
@@ -199,24 +300,36 @@ public class ThoughtOrbit : MonoBehaviour
         // 多轮尝试
         for (int attempt = 0; attempt < 100; attempt++)
         {
-            // 随机半径（优先外圈）
+            // 半径：从 maxRadius 到 minRadius 之间随机
             float r = Random.Range(minRadius, maxRadius);
-            // 随机角度
-            float a = Random.Range(0f, 2f * Mathf.PI);
             
-            Vector2 newPos = new Vector2(Mathf.Cos(a) * r, Mathf.Sin(a) * r);
+            // 角度：完全随机，但是如果尝试次数较多，尝试固定间隔
+            float a;
+            if (attempt < 20)
+            {
+                a = Random.Range(0f, 2f * Mathf.PI);
+            }
+            else
+            {
+                // 固定角度间隔，均匀分布在圆上
+                float angleStep = 2f * Mathf.PI / (orbitElements.Count + 1);
+                int slotIndex = attempt - 20;
+                a = (slotIndex % (orbitElements.Count + 1)) * angleStep;
+            }
             
-            // 检查与所有已有元素的距离
+            // 检查这个位置是否远离已有元素
             bool tooClose = false;
             foreach (var oe in orbitElements)
             {
                 if (oe == null) continue;
-                Vector2 existingPos = new Vector2(
+                Vector3 otherPos = transform.position + new Vector3(
                     Mathf.Cos(oe.currentAngle) * oe.targetRadius,
-                    Mathf.Sin(oe.currentAngle) * oe.targetRadius
+                    Mathf.Sin(oe.currentAngle) * oe.targetRadius,
+                    0
                 );
-                
-                if (Vector2.Distance(newPos, existingPos) < minDistance)
+                Vector3 testPos = transform.position + new Vector3(Mathf.Cos(a), Mathf.Sin(a), 0) * r;
+                float dist = Vector3.Distance(otherPos, testPos);
+                if (dist < minDistance)
                 {
                     tooClose = true;
                     break;
@@ -224,55 +337,13 @@ public class ThoughtOrbit : MonoBehaviour
             }
             
             if (!tooClose)
-                return (a, r);
-        }
-
-        // 如果随机尝试都失败了（几乎不可能），用网格法
-        return FindPositionByGrid(minDistance);
-    }
-
-    /// <summary>
-    /// 网格法兜底：把轨道区域分成网格，找最空旷的位置
-    /// </summary>
-    (float angle, float radius) FindPositionByGrid(float minDistance)
-    {
-        float bestAngle = 0f;
-        float bestRadius = maxRadius;
-        float bestMinDist = 0f;
-        
-        int angleSteps = 36;
-        int radiusSteps = 10;
-        
-        for (int ai = 0; ai < angleSteps; ai++)
-        {
-            float a = (ai / (float)angleSteps) * 2f * Mathf.PI;
-            for (int ri = 0; ri < radiusSteps; ri++)
             {
-                float r = Mathf.Lerp(minRadius, maxRadius, ri / (float)(radiusSteps - 1));
-                Vector2 pos = new Vector2(Mathf.Cos(a) * r, Mathf.Sin(a) * r);
-                
-                float minDistToOthers = float.MaxValue;
-                foreach (var oe in orbitElements)
-                {
-                    if (oe == null) continue;
-                    Vector2 ep = new Vector2(
-                        Mathf.Cos(oe.currentAngle) * oe.targetRadius,
-                        Mathf.Sin(oe.currentAngle) * oe.targetRadius
-                    );
-                    float d = Vector2.Distance(pos, ep);
-                    if (d < minDistToOthers) minDistToOthers = d;
-                }
-                
-                if (minDistToOthers > bestMinDist)
-                {
-                    bestMinDist = minDistToOthers;
-                    bestAngle = a;
-                    bestRadius = r;
-                }
+                return (a, r);
             }
         }
         
-        return (bestAngle, bestRadius);
+        // 实在找不到位置，放在随机位置
+        return (Random.Range(0f, 2f * Mathf.PI), Random.Range(minRadius, maxRadius));
     }
 
     OrbitElement CreateOrbitElement(ElementData data, float angle, float radius)
@@ -359,7 +430,7 @@ public class ThoughtOrbit : MonoBehaviour
         oe.transform.localScale = Vector3.zero;
         oe.SetAlpha(0f);
 
-        float duration = 0.5f;
+        float duration = 0.4f;
         float elapsed = 0f;
 
         while (elapsed < duration)
@@ -368,11 +439,9 @@ public class ThoughtOrbit : MonoBehaviour
             elapsed += Time.deltaTime;
             float t = elapsed / duration;
             t = 1f - Mathf.Pow(1f - t, 3f);
-
             oe.transform.position = Vector3.Lerp(transform.position, targetPos, t);
-            oe.transform.localScale = Vector3.one * Mathf.Lerp(0f, targetScale, t);
-            oe.SetAlpha(Mathf.Lerp(0f, 1f, t));
-
+            oe.transform.localScale = Vector3.Lerp(Vector3.zero, Vector3.one * targetScale, t);
+            oe.SetAlpha(t);
             yield return null;
         }
 
@@ -380,6 +449,7 @@ public class ThoughtOrbit : MonoBehaviour
         {
             oe.transform.position = targetPos;
             oe.transform.localScale = Vector3.one * targetScale;
+            oe.SetAlpha(1f);
         }
     }
 
@@ -388,23 +458,13 @@ public class ThoughtOrbit : MonoBehaviour
         if (oe == null) yield break;
 
         float elapsed = 0f;
-        SpriteRenderer sr = oe.GetComponent<SpriteRenderer>();
-        Vector3 startScale = oe.transform.localScale;
-        Color startColor = sr != null ? sr.color : Color.white;
-
         while (elapsed < fadeOutDuration)
         {
             if (oe == null) yield break;
             elapsed += Time.deltaTime;
             float t = elapsed / fadeOutDuration;
-
-            oe.transform.localScale = Vector3.Lerp(startScale, Vector3.zero, t);
-            if (sr != null)
-            {
-                Color c = startColor;
-                c.a = Mathf.Lerp(1f, 0f, t);
-                sr.color = c;
-            }
+            oe.SetAlpha(1f - t);
+            oe.transform.localScale = Vector3.Lerp(Vector3.one * orbitElementScale, Vector3.zero, t);
             yield return null;
         }
 
@@ -444,26 +504,20 @@ public class ThoughtOrbit : MonoBehaviour
 
     Sprite ResolveElementSprite(ElementData data)
     {
+        if (data == null) return null;
         if (data.elementIcon != null) return data.elementIcon;
 
-        string id = data.elementID;
-        if (string.IsNullOrEmpty(id)) return OrbitElement.GetFallbackSpriteStatic();
-
+        // 从编辑器加载专属预制体的 Sprite
 #if UNITY_EDITOR
-        string iconDir = "Assets/Data/ArtResourceData/Design/Icon/";
-        string[] candidates = { $"{iconDir}{id}.png" };
-        foreach (string p in candidates)
+        if (!string.IsNullOrEmpty(data.elementID))
         {
-            Sprite s = AssetDatabase.LoadAssetAtPath<Sprite>(p);
-            if (s != null) return s;
-        }
-
-        string prefabPath = $"Assets/Prefabs/Physic{id}.prefab";
-        GameObject prefab = AssetDatabase.LoadAssetAtPath<GameObject>(prefabPath);
-        if (prefab != null)
-        {
-            SpriteRenderer psr = prefab.GetComponent<SpriteRenderer>();
-            if (psr != null && psr.sprite != null) return psr.sprite;
+            string path = $"Assets/Prefabs/Physic{data.elementID}.prefab";
+            GameObject specific = AssetDatabase.LoadAssetAtPath<GameObject>(path);
+            if (specific != null)
+            {
+                SpriteRenderer sr = specific.GetComponent<SpriteRenderer>();
+                if (sr != null && sr.sprite != null) return sr.sprite;
+            }
         }
 #endif
         return OrbitElement.GetFallbackSpriteStatic();

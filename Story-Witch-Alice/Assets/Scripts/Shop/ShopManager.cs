@@ -23,7 +23,7 @@ public class ShopManager : MonoBehaviour
     public RemnantData currentRemnant;
     public List<ShopItemData> shopItems; // 与场景中商品顺序对应
 
-    private HashSet<string> purchasedItemIDs = new HashSet<string>();
+    // purchasedItemIDs 改为由 AlchemyManager.IsElementUnlocked 判断（持久化）
 
     void Start()
     {
@@ -75,7 +75,9 @@ public class ShopManager : MonoBehaviour
             ItemEntryUI ui = child.GetComponent<ItemEntryUI>();
             if (ui != null) ui.Setup(item, this);
 
-            bool bought = purchasedItemIDs.Contains(item.itemID);
+            // 通过 AlchemyManager 判断元素是否已解锁（持久化）
+            bool bought = item.rewardElement != null && AlchemyManager.Instance != null
+                && AlchemyManager.Instance.IsElementUnlocked(item.rewardElement.elementID);
             Image bg = child.GetComponent<Image>();
             if (bg != null) bg.color = bought ? Color.gray : Color.white;
             Button btn = child.GetComponent<Button>();
@@ -86,7 +88,11 @@ public class ShopManager : MonoBehaviour
 
     public void BuyItem(ShopItemData item)
     {
-        if (item == null || purchasedItemIDs.Contains(item.itemID)) return;
+        if (item == null) return;
+        // 如果元素已解锁，阻止重复购买（通过持久化的 AlchemyManager 数据判断）
+        if (item.rewardElement != null && AlchemyManager.Instance != null
+            && AlchemyManager.Instance.IsElementUnlocked(item.rewardElement.elementID))
+            return;
 
         int price = item.hasDiscount
             ? Mathf.RoundToInt(item.price * (1f - item.discountRate))
@@ -97,10 +103,14 @@ public class ShopManager : MonoBehaviour
             if (item.rewardElement != null && AlchemyManager.Instance != null)
             {
                 AlchemyManager.Instance.OnElementCrafted(item.rewardElement);
+
+                // 添加到轨道，使玩家可以拖拽使用
+                if (AlchemyManager.Instance.thoughtOrbit != null)
+                    AlchemyManager.Instance.thoughtOrbit.AddToFront(item.rewardElement);
+
                 Debug.Log($"购买成功！解锁：{item.rewardElement.elementName}");
             }
 
-            purchasedItemIDs.Add(item.itemID);
             OnItemPurchased?.Invoke(item);
             RefreshItemStates();
         }
