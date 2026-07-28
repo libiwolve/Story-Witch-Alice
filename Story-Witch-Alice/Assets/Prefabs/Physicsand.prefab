@@ -4860,7 +4860,7 @@ Transform:
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 1.21, y: -4.288, z: 0}
-  m_LocalScale: {x: 2.3, y: 2.3, z: 2.3}
+  m_LocalScale: {x: 3.45115, y: 3.3989398, z: 2.3}
   m_ConstrainProportionsScale: 1
   m_Children:
   - {fileID: 3437628968572397972}
@@ -4930,10 +4930,13 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 45bc396420326004991db88f8329e9fd, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  markIcon: {fileID: 0}
   elementData: {fileID: 11400000, guid: dc3bbad206d62de41b7dc0e40c077b00, type: 2}
   sourceSlot: {fileID: 0}
   velocitySampleFrames: 5
   dirtTrail: {fileID: 4530840642457099446}
+  isControlledByNodeDrag: 0
+  isDraggedByOrbit: 0
 --- !u!50 &7685853565466079414
 Rigidbody2D:
   serializedVersion: 4

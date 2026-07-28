@@ -4862,7 +4862,7 @@ Transform:
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: -0.60122114, y: -1.5847725, z: 0}
-  m_LocalScale: {x: 1.8273575, y: 1.8273575, z: 1.8273575}
+  m_LocalScale: {x: 2.6646528, y: 2.6122077, z: 1.8273575}
   m_ConstrainProportionsScale: 1
   m_Children:
   - {fileID: 7232029805019322171}
@@ -5025,10 +5025,13 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 45bc396420326004991db88f8329e9fd, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  markIcon: {fileID: 0}
   elementData: {fileID: 11400000, guid: c8d548763a848cd4f8f810cfcfe9f1c0, type: 2}
   sourceSlot: {fileID: 0}
   velocitySampleFrames: 5
   dirtTrail: {fileID: 0}
+  isControlledByNodeDrag: 0
+  isDraggedByOrbit: 0
 --- !u!95 &8184609296195852966
 Animator:
   serializedVersion: 5
