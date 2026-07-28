@@ -44,7 +44,7 @@ public class ThoughtOrbit : MonoBehaviour
         if (Instance == null)
         {
             Instance = this;
-            DontDestroyOnLoad(transform.root.gameObject);
+            // ★ 删除 DontDestroyOnLoad，AlchemyManager 已经处理了跨场景保留
             SceneManager.sceneLoaded += OnSceneLoaded;
         }
         else
