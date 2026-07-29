@@ -52,8 +52,11 @@ TagManager:
   - name: Character
     uniqueID: 3133165669
     locked: 0
-  - name: Foreground
+  - name: FunctionalLayer
     uniqueID: 2656612345
+    locked: 0
+  - name: Foreground
+    uniqueID: 2212395985
     locked: 0
   - name: UI
     uniqueID: 1766564327

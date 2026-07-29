@@ -24,7 +24,6 @@ public class ElementDataBatchCreator
             AssetDatabase.Refresh();
         }
 
-        // 用共享读取模式避免"文件被占用"错误
         string[] lines;
         using (var fs = new FileStream(csvPath, FileMode.Open, FileAccess.Read, FileShare.ReadWrite))
         using (var sr = new StreamReader(fs))
@@ -41,8 +40,8 @@ public class ElementDataBatchCreator
 
         int createdCount = 0;
         int updatedCount = 0;
-        int iconFoundCount = 0;
-        int iconMissingCount = 0;
+        int iconAutoMatchedCount = 0;
+        int iconSkippedCount = 0;
         HashSet<string> csvIDs = new HashSet<string>();
 
         for (int i = 1; i < lines.Length; i++)
@@ -53,7 +52,7 @@ public class ElementDataBatchCreator
             string[] cols = ParseCSVLine(line);
             if (cols.Length < 11)
             {
-                Debug.LogWarning($"第{i + 1}行列数不足({cols.Length})，跳过：{line.Substring(0, Mathf.Min(50, line.Length))}");
+                Debug.LogWarning($"第{i + 1}行列数不足({cols.Length})，跳过");
                 continue;
             }
 
@@ -80,29 +79,25 @@ public class ElementDataBatchCreator
                 asset = ScriptableObject.CreateInstance<ElementData>();
                 AssetDatabase.CreateAsset(asset, assetPath);
                 createdCount++;
+
+                // ★ 只有新创建的才自动匹配图标
+                Sprite icon = LoadIcon(eID);
+                asset.elementIcon = icon;
+                if (icon != null)
+                    iconAutoMatchedCount++;
             }
             else
             {
                 updatedCount++;
+                // ★ 已存在的元素保留原有 elementIcon，不做任何改动
+                iconSkippedCount++;
             }
 
+            // 更新其他字段
             asset.elementName = eName;
             asset.elementID = eID;
             asset.description = desc;
             asset.tags = new List<string>(tagsStr.Split(';'));
-
-            // 自动加载图标
-            Sprite icon = LoadIcon(eID);
-            if (icon != null)
-            {
-                asset.elementIcon = icon;
-                iconFoundCount++;
-            }
-            else
-            {
-                asset.elementIcon = null;
-                iconMissingCount++;
-            }
 
             // 重建属性
             asset.Properties = new List<ElementProperty>();
@@ -129,7 +124,7 @@ public class ElementDataBatchCreator
 
         AssetDatabase.SaveAssets();
 
-        // 清理孤立资产（CSV 中已不存在的旧 .asset 文件）
+        // 清理孤立资产
         if (Directory.Exists(saveFolder))
         {
             string[] existingFiles = Directory.GetFiles(saveFolder, "*.asset");
@@ -144,11 +139,46 @@ public class ElementDataBatchCreator
                 }
             }
             if (deletedCount > 0)
-                Debug.Log($"已删除 {deletedCount} 个孤立资产（CSV 中不存在的旧元素）");
+                Debug.Log($"已删除 {deletedCount} 个孤立资产");
         }
 
         AssetDatabase.Refresh();
-        Debug.Log($"批量处理完成！新建 {createdCount} 个，更新 {updatedCount} 个。图标匹配 {iconFoundCount} 个，缺失 {iconMissingCount} 个。");
+        Debug.Log($"处理完成！新建 {createdCount} 个（图标自动匹配 {iconAutoMatchedCount} 个），更新 {updatedCount} 个（图标保留原值 {iconSkippedCount} 个）。");
+    }
+
+    /// <summary>
+    /// 强制刷新所有元素的图标（当你新画了图标或移动了图标文件时使用）
+    /// </summary>
+    [MenuItem("Tools/Force Refresh All Element Icons")]
+    public static void ForceRefreshAllIcons()
+    {
+        if (!AssetDatabase.IsValidFolder(saveFolder))
+        {
+            Debug.LogError($"找不到文件夹：{saveFolder}");
+            return;
+        }
+
+        string[] files = Directory.GetFiles(saveFolder, "*.asset");
+        int matchedCount = 0;
+        int missingCount = 0;
+
+        foreach (string file in files)
+        {
+            string assetPath = file.Replace("\\", "/");
+            ElementData asset = AssetDatabase.LoadAssetAtPath<ElementData>(assetPath);
+            if (asset == null) continue;
+
+            Sprite icon = LoadIcon(asset.elementID);
+            asset.elementIcon = icon;
+            EditorUtility.SetDirty(asset);
+
+            if (icon != null) matchedCount++;
+            else missingCount++;
+        }
+
+        AssetDatabase.SaveAssets();
+        AssetDatabase.Refresh();
+        Debug.Log($"图标强制刷新完成！匹配 {matchedCount} 个，缺失 {missingCount} 个。");
     }
 
     private static Sprite LoadIcon(string elementID)
@@ -159,7 +189,6 @@ public class ElementDataBatchCreator
         foreach (string name in names)
         {
             string path = iconFolder + "/" + name;
-            // 确保 PNG 以 Sprite 形式导入
             EnsureImportedAsSprite(path);
             Sprite s = AssetDatabase.LoadAssetAtPath<Sprite>(path);
             if (s != null) return s;
@@ -167,9 +196,6 @@ public class ElementDataBatchCreator
         return null;
     }
 
-    /// <summary>
-    /// 强制 PNG 以 Sprite(2D and UI) 模式导入，否则 LoadAssetAtPath&lt;Sprite&gt; 会返回 null
-    /// </summary>
     private static void EnsureImportedAsSprite(string path)
     {
         TextureImporter imp = AssetImporter.GetAtPath(path) as TextureImporter;

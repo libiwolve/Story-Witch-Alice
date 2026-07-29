@@ -6,18 +6,19 @@ public class Funnel : MonoBehaviour
 
     void OnTriggerEnter2D(Collider2D other)
     {
-        // 检测被拖入的物理元素
         PhysicsElement pe = other.GetComponent<PhysicsElement>();
-        if (pe == null) return;
-        if (pe.elementData == null) return;
+        if (pe == null || pe.elementData == null) return;
 
-        // 加入星图
+        // 只接收向下掉落的元素
+        Rigidbody2D rb = other.GetComponent<Rigidbody2D>();
+        if (rb == null || rb.velocity.y >= 0) return;
+
+        // 加入星图（待欢迎队列）
         if (synthesisGraph != null)
-            synthesisGraph.AddNode(pe.elementData.elementID);
+            synthesisGraph.AddNodePendingWelcome(pe.elementData.elementID);
 
         Debug.Log($"漏斗接收元素: {pe.elementData.elementName}，已加入星图");
 
-        // 销毁拖入的物理元素
         Destroy(other.gameObject);
     }
 }

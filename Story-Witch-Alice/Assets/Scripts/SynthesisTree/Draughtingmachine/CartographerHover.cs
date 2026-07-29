@@ -4,16 +4,18 @@ using UnityEngine.EventSystems;
 public class CartographerHover : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler
 {
     public Animator animator;
-    public string triggerName = "Pointer";
+    public string hoverTrigger = "Pointer";   // 悬停时触发
+    public string closeTrigger = "Close";     // 移开时触发
 
     public void OnPointerEnter(PointerEventData eventData)
     {
         if (animator != null)
-            animator.SetTrigger(triggerName);
+            animator.SetTrigger(hoverTrigger);
     }
 
     public void OnPointerExit(PointerEventData eventData)
     {
-        // 不需要在退出时做什么，Animator 里用 Idle 状态自动过渡即可
+        if (animator != null)
+            animator.SetTrigger(closeTrigger);
     }
 }
