@@ -14,7 +14,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   elementName: "\u77F3"
   elementID: stone
-  elementIcon: {fileID: 0}
+  elementIcon: {fileID: 21300000, guid: 21aa8138bf1e6564da003262bc746795, type: 3}
   description: "\u571F\u7684\u51DD\u805A\u4E0E\u56FA\u5316\u2014\u2014\u6C89\u9ED8\u7684\u89C1\u8BC1\u8005\uFF0C\u5927\u5730\u7684\u9AA8\u9ABC\u3002"
   tags:
   - material

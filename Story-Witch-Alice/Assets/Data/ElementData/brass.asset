@@ -14,7 +14,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   elementName: "\u9EC4\u94DC"
   elementID: brass
-  elementIcon: {fileID: 0}
+  elementIcon: {fileID: 21300000, guid: 0581e40a7b1598640b6e802d5a5fbabb, type: 3}
   description: "\u84B8\u6C7D\u65F6\u4EE3\u7684\u91D1\u8272\u5986\u5BB9\u2014\u2014\u9EC4\u94DC\u9600\u95E8\u4E0E\u4EEA\u8868\u5728\u9505\u7089\u65C1\u95EA\u70C1\uFF0C\u4E3A\u673A\u68B0\u589E\u6DFB\u4F53\u9762\u4E0E\u5C0A\u4E25\u3002"
   tags:
   - material

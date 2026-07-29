@@ -14,7 +14,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   elementName: "\u96FE"
   elementID: fog
-  elementIcon: {fileID: 0}
+  elementIcon: {fileID: -693755023, guid: 14c7d685524c13d44946dcbb85b1121a, type: 3}
   description: "\u6C34\u4E0E\u6C14\u7684\u6700\u4EB2\u5BC6\u7ED3\u5408\u2014\u2014\u8FF7\u5931\u3001\u8FB9\u754C\u6D88\u878D\u3001\u672A\u77E5\u3002"
   tags:
   - material

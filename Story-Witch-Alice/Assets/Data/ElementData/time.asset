@@ -14,7 +14,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   elementName: "\u65F6\u95F4"
   elementID: time
-  elementIcon: {fileID: 0}
+  elementIcon: {fileID: 210216434, guid: d46aef2119ab884459c254f6170afa81, type: 3}
   description: "\u4E07\u7269\u7684\u523B\u5EA6\u2014\u2014\u65E0\u5F62\u5374\u4E0D\u53EF\u9006\u7684\u6D41\u901D\uFF0C\u6587\u660E\u7684\u4E00\u5207\u7EC8\u5C06\u88AB\u5B83\u68C0\u9605\u3002"
   tags:
   - basic
