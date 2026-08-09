@@ -142,8 +142,8 @@ MonoBehaviour:
       m_Calls: []
   m_text: Button
   m_isRightToLeft: 0
-  m_fontAsset: {fileID: 11400000, guid: 2571c9c6edf5b1e4dad7cff13433ed0c, type: 2}
-  m_sharedMaterial: {fileID: 2180264, guid: 2571c9c6edf5b1e4dad7cff13433ed0c, type: 2}
+  m_fontAsset: {fileID: 11400000, guid: 546fd0ff6262bda4b9f2abe215d28d88, type: 2}
+  m_sharedMaterial: {fileID: -6441538231825877647, guid: 546fd0ff6262bda4b9f2abe215d28d88, type: 2}
   m_fontSharedMaterials: []
   m_fontMaterial: {fileID: 0}
   m_fontMaterials: []
@@ -329,7 +329,7 @@ MonoBehaviour:
     m_SelectedTrigger: Selected
     m_DisabledTrigger: Disabled
   m_Interactable: 1
-  m_TargetGraphic: {fileID: 0}
+  m_TargetGraphic: {fileID: 1893846446659312237}
   m_OnClick:
     m_PersistentCalls:
       m_Calls: []
@@ -382,8 +382,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: 19.255, y: -110.3}
-  m_SizeDelta: {x: 153.12, y: 47.47}
+  m_AnchoredPosition: {x: 41.2364, y: -110.3}
+  m_SizeDelta: {x: 197.083, y: 47.47}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!222 &5799583149517954035
 CanvasRenderer:
@@ -415,8 +415,8 @@ MonoBehaviour:
       m_Calls: []
   m_text: Price
   m_isRightToLeft: 0
-  m_fontAsset: {fileID: 11400000, guid: 2571c9c6edf5b1e4dad7cff13433ed0c, type: 2}
-  m_sharedMaterial: {fileID: 2180264, guid: 2571c9c6edf5b1e4dad7cff13433ed0c, type: 2}
+  m_fontAsset: {fileID: 11400000, guid: 546fd0ff6262bda4b9f2abe215d28d88, type: 2}
+  m_sharedMaterial: {fileID: -6441538231825877647, guid: 546fd0ff6262bda4b9f2abe215d28d88, type: 2}
   m_fontSharedMaterials: []
   m_fontMaterial: {fileID: 0}
   m_fontMaterials: []

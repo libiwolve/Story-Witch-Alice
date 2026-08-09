@@ -13,6 +13,7 @@ public class CurrencyManager : MonoBehaviour
     [Header("货币设置")]
     public int startingThoughts = 99999;
 
+    
     public int CurrentThoughts { get; private set; }
 
     // 事件
