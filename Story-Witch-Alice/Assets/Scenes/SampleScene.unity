@@ -15249,7 +15249,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d12b8c77cf0824845a614b221db1fce4, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  maxElements: 20
+  maxElements: 12
   orbitSpeed: 18
   wobbleAmplitude: 0.3
   wobbleSpeed: 1.5
@@ -15257,6 +15257,8 @@ MonoBehaviour:
   edgePadding: 0.25
   maxRadiusOverride: 3
   minRadius: 1.2
+  overlapPadding: 0.1
+  overlapSolverIterations: 64
   minAlpha: 0.2
   maxAlpha: 1
   fadeOutDuration: 0.6

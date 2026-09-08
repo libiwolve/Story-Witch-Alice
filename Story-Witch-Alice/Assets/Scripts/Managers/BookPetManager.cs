@@ -15,12 +15,14 @@ public class BookPet : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler,
 
     private bool isUIOpen = false;
 
-    void Start()
+    void OnEnable()
     {
-        if (fullUIPanel != null)
-            fullUIPanel.SetActive(false);
-        if (orbitCenter != null)
-            orbitCenter.SetActive(false);
+        ResetToClosedState(true);
+    }
+
+    void OnDisable()
+    {
+        ResetToClosedState(false);
     }
 
     public void OnPointerEnter(PointerEventData eventData)
@@ -58,13 +60,35 @@ public class BookPet : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler,
 
     public void CloseUI()
     {
+        ResetToClosedState(false);
+
+        if (animator != null)
+            animator.SetTrigger(closeTrigger);
+    }
+
+    public void PrepareForSceneTransition()
+    {
+        ResetToClosedState(true);
+    }
+
+    private void ResetToClosedState(bool resetAnimator)
+    {
         isUIOpen = false;
-        GetComponent<Collider2D>().enabled = true;
+
+        Collider2D bookCollider = GetComponent<Collider2D>();
+        if (bookCollider != null)
+            bookCollider.enabled = true;
+
         if (fullUIPanel != null)
             fullUIPanel.SetActive(false);
         if (orbitCenter != null)
             orbitCenter.SetActive(false);
 
-        animator.SetTrigger(closeTrigger);
+        if (!resetAnimator || animator == null) return;
+
+        animator.ResetTrigger(hoverTrigger);
+        animator.ResetTrigger(closeTrigger);
+        animator.Rebind();
+        animator.Update(0f);
     }
 }

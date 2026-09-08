@@ -376,7 +376,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   startingThoughts: 99999
-  mainSceneRoot: {fileID: 0}
 --- !u!4 &465709576
 Transform:
   m_ObjectHideFlags: 0
@@ -513,10 +512,10 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: "\u601D\u7EEA99999"
+  m_text: "\u601D\u7EEA\uFF1A99999"
   m_isRightToLeft: 0
-  m_fontAsset: {fileID: 11400000, guid: ac73f0f9ef472974d9ad9324d09beff9, type: 2}
-  m_sharedMaterial: {fileID: 1968246048004539371, guid: ac73f0f9ef472974d9ad9324d09beff9, type: 2}
+  m_fontAsset: {fileID: 11400000, guid: 0c00b8b4fea68bb438a40dc67228680a, type: 2}
+  m_sharedMaterial: {fileID: 1968246048004539371, guid: 0c00b8b4fea68bb438a40dc67228680a, type: 2}
   m_fontSharedMaterials: []
   m_fontMaterial: {fileID: 0}
   m_fontMaterials: []
@@ -547,7 +546,7 @@ MonoBehaviour:
   m_fontSizeMin: 18
   m_fontSizeMax: 72
   m_fontStyle: 0
-  m_HorizontalAlignment: 4
+  m_HorizontalAlignment: 1
   m_VerticalAlignment: 512
   m_textAlignment: 65535
   m_characterSpacing: 0
@@ -807,8 +806,8 @@ MonoBehaviour:
       m_Calls: []
   m_text: Back
   m_isRightToLeft: 0
-  m_fontAsset: {fileID: 11400000, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
-  m_sharedMaterial: {fileID: 2180264, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
+  m_fontAsset: {fileID: 11400000, guid: 2571c9c6edf5b1e4dad7cff13433ed0c, type: 2}
+  m_sharedMaterial: {fileID: 2180264, guid: 2571c9c6edf5b1e4dad7cff13433ed0c, type: 2}
   m_fontSharedMaterials: []
   m_fontMaterial: {fileID: 0}
   m_fontMaterials: []
@@ -1945,10 +1944,10 @@ Camera:
   m_LensShift: {x: 0, y: 0}
   m_NormalizedViewPortRect:
     serializedVersion: 2
-    x: 0
-    y: 0.0009259259
-    width: 1
-    height: 0.9988648
+    x: 0.04037267
+    y: 0
+    width: 0.9193781
+    height: 1.0006684
   near clip plane: 0.3
   far clip plane: 1000
   field of view: 60

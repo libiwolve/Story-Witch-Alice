@@ -2,31 +2,45 @@ using UnityEngine;
 
 public class PotGemController : MonoBehaviour
 {
+    private static readonly string[] GemStateNames =
+    {
+        "Idle",
+        "OneGem",
+        "TwoGems",
+        "ThreeGems"
+    };
+
     private Animator animator;
     private int currentGemCount = 0;
 
-    void Start()
+    void Awake()
     {
         animator = GetComponent<Animator>();
+        SetIngredientCount(0);
     }
 
     public void OnIngredientAdded(int totalCount)
     {
-        if (animator == null) return;
-        Debug.Log($"OnIngredientAdded 被调用, totalCount={totalCount}, animator是否为空={animator == null}");
-        animator.SetInteger("GemCount", totalCount);     // 1, 2, 3 → 对应动画
-                    // 无操作
+        SetIngredientCount(totalCount);
     }
 
     public void OnPotCleared()
     {
-       if (animator == null) return;
-            animator.SetInteger("GemCount", 0); 
+        SetIngredientCount(0);
     }
 
-    void UpdateGemAnimation()
+    public void SetIngredientCount(int totalCount)
     {
-        if (animator != null)
-            animator.SetInteger("GemCount", currentGemCount);
+        currentGemCount = Mathf.Clamp(totalCount, 0, 3);
+        if (animator == null)
+            animator = GetComponent<Animator>();
+        if (animator == null) return;
+
+        animator.SetInteger("GemCount", currentGemCount);
+
+        // 直接进入与锅内数量对应的状态，避免连续快速投料时 Animator
+        // 还停留在上一个过渡状态，造成亮起宝石数量与原料数不一致。
+        animator.Play(GemStateNames[currentGemCount], 0, 0f);
+        animator.Update(0f);
     }
 }

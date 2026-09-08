@@ -9,7 +9,7 @@ using UnityEditor;
 public class ThoughtOrbit : MonoBehaviour
 {
     [Header("Queue")]
-    public int maxElements = 20;
+    public int maxElements = 12;
 
     [Header("Orbit")]
     public float orbitSpeed = 25f;
@@ -19,6 +19,10 @@ public class ThoughtOrbit : MonoBehaviour
     public float edgePadding = 0.85f;
     public float maxRadiusOverride = 0f;
     public float minRadius = 0.8f;
+
+    [Header("Overlap Prevention")]
+    [Min(0f)] public float overlapPadding = 0.1f;
+    [Range(1, 64)] public int overlapSolverIterations = 64;
 
     [Header("Visual")]
     public float minAlpha = 0.2f;
@@ -34,6 +38,8 @@ public class ThoughtOrbit : MonoBehaviour
 
     private List<ElementData> queue = new List<ElementData>();
     private List<OrbitElement> orbitElements = new List<OrbitElement>();
+    private readonly List<Vector2> framePositions = new List<Vector2>(12);
+    private readonly List<float> frameRadii = new List<float>(12);
     
     private float maxRadius = 4f;
 
@@ -101,7 +107,7 @@ public class ThoughtOrbit : MonoBehaviour
             ElementData element = queue[i];
             if (element == null) continue;
 
-            (float angle, float radius) = FindNonOverlappingPosition();
+            (float angle, float radius) = FindNonOverlappingPosition(element);
             OrbitElement oe = CreateOrbitElement(element, angle, radius);
             orbitElements.Insert(i, oe);
         }
@@ -156,10 +162,18 @@ public class ThoughtOrbit : MonoBehaviour
     void Update()
     {
         float time = Time.time;
+        framePositions.Clear();
+        frameRadii.Clear();
+
         for (int i = 0; i < orbitElements.Count; i++)
         {
             OrbitElement oe = orbitElements[i];
-            if (oe == null) continue;
+            if (oe == null)
+            {
+                framePositions.Add(transform.position);
+                frameRadii.Add(0f);
+                continue;
+            }
 
             oe.currentAngle += orbitSpeed * Mathf.Deg2Rad * Time.deltaTime;
 
@@ -167,12 +181,22 @@ public class ThoughtOrbit : MonoBehaviour
             float wobble = Mathf.Sin(phase) * wobbleAmplitude;
             float currentRadius = oe.targetRadius + wobble;
 
-            Vector3 pos = transform.position + new Vector3(
+            Vector2 pos = (Vector2)transform.position + new Vector2(
                 Mathf.Cos(oe.currentAngle) * currentRadius,
-                Mathf.Sin(oe.currentAngle) * currentRadius,
-                0
+                Mathf.Sin(oe.currentAngle) * currentRadius
             );
-            oe.transform.position = pos;
+
+            framePositions.Add(pos);
+            frameRadii.Add(GetVisualRadius(oe));
+        }
+
+        ResolveOverlaps(framePositions, frameRadii);
+
+        for (int i = 0; i < orbitElements.Count; i++)
+        {
+            OrbitElement oe = orbitElements[i];
+            if (oe == null) continue;
+            oe.transform.position = framePositions[i];
         }
 
         #if UNITY_EDITOR
@@ -245,7 +269,7 @@ public class ThoughtOrbit : MonoBehaviour
         queue.Insert(0, element);
         
         // 只为新元素找一个不重叠的位置
-        (float angle, float radius) = FindNonOverlappingPosition();
+        (float angle, float radius) = FindNonOverlappingPosition(element);
         
         OrbitElement oe = CreateOrbitElement(element, angle, radius);
         orbitElements.Insert(0, oe);
@@ -286,7 +310,7 @@ public class ThoughtOrbit : MonoBehaviour
     /// 找到一个与已有元素不重叠的新位置
     /// 用多轮尝试：从外到内，从不同角度，直到找到足够远离其他元素的位置
     /// </summary>
-    (float angle, float radius) FindNonOverlappingPosition()
+    (float angle, float radius) FindNonOverlappingPosition(ElementData element)
     {
         // 如果还没有元素，放在最外圈随机位置
         if (orbitElements.Count == 0)
@@ -294,56 +318,196 @@ public class ThoughtOrbit : MonoBehaviour
             return (Random.Range(0f, 2f * Mathf.PI), maxRadius);
         }
 
-        // 需要的最小距离（根据图标大小估算）
-        float minDistance = orbitElementScale * 0.8f;  // 假设图标直径约1单位，scale 2.5时约2.5单位直径
-        
-        // 多轮尝试
-        for (int attempt = 0; attempt < 100; attempt++)
+        float newElementRadius = EstimateVisualRadius(element);
+        float bestClearance = float.NegativeInfinity;
+        float bestAngle = Random.Range(0f, 2f * Mathf.PI);
+        float bestRadius = maxRadius;
+        float randomAngleOffset = Random.Range(0f, 2f * Mathf.PI);
+        const float goldenAngle = 2.39996323f;
+
+        // 优先随机尝试，之后使用黄金角补齐覆盖，避免连续随机命中同一区域。
+        for (int attempt = 0; attempt < 160; attempt++)
         {
-            // 半径：从 maxRadius 到 minRadius 之间随机
-            float r = Random.Range(minRadius, maxRadius);
-            
-            // 角度：完全随机，但是如果尝试次数较多，尝试固定间隔
-            float a;
-            if (attempt < 20)
-            {
-                a = Random.Range(0f, 2f * Mathf.PI);
-            }
-            else
-            {
-                // 固定角度间隔，均匀分布在圆上
-                float angleStep = 2f * Mathf.PI / (orbitElements.Count + 1);
-                int slotIndex = attempt - 20;
-                a = (slotIndex % (orbitElements.Count + 1)) * angleStep;
-            }
-            
-            // 检查这个位置是否远离已有元素
-            bool tooClose = false;
+            float availableMaxRadius = Mathf.Max(minRadius, maxRadius - newElementRadius);
+            float r = Random.Range(minRadius, availableMaxRadius);
+            float a = attempt < 48
+                ? Random.Range(0f, 2f * Mathf.PI)
+                : randomAngleOffset + attempt * goldenAngle;
+
+            Vector2 testPos = (Vector2)transform.position + new Vector2(Mathf.Cos(a), Mathf.Sin(a)) * r;
+            float minimumClearance = float.PositiveInfinity;
+
             foreach (var oe in orbitElements)
             {
                 if (oe == null) continue;
-                Vector3 otherPos = transform.position + new Vector3(
-                    Mathf.Cos(oe.currentAngle) * oe.targetRadius,
-                    Mathf.Sin(oe.currentAngle) * oe.targetRadius,
-                    0
-                );
-                Vector3 testPos = transform.position + new Vector3(Mathf.Cos(a), Mathf.Sin(a), 0) * r;
-                float dist = Vector3.Distance(otherPos, testPos);
-                if (dist < minDistance)
-                {
-                    tooClose = true;
-                    break;
-                }
+                float requiredDistance = newElementRadius + GetVisualRadius(oe) + overlapPadding;
+                float clearance = Vector2.Distance(oe.transform.position, testPos) - requiredDistance;
+                minimumClearance = Mathf.Min(minimumClearance, clearance);
             }
-            
-            if (!tooClose)
+
+            if (minimumClearance >= 0f)
             {
                 return (a, r);
             }
+
+            if (minimumClearance > bestClearance)
+            {
+                bestClearance = minimumClearance;
+                bestAngle = a;
+                bestRadius = r;
+            }
         }
-        
-        // 实在找不到位置，放在随机位置
-        return (Random.Range(0f, 2f * Mathf.PI), Random.Range(minRadius, maxRadius));
+
+        // 空间紧张时使用最宽松的候选点，随后由每帧约束继续分离。
+        return (bestAngle, bestRadius);
+    }
+
+    void ResolveOverlaps(List<Vector2> positions, List<float> radii)
+    {
+        if (positions.Count < 2) return;
+
+        Vector2 center = transform.position;
+        int iterations = Mathf.Max(1, overlapSolverIterations);
+
+        for (int iteration = 0; iteration < iterations; iteration++)
+        {
+            bool foundOverlap = false;
+
+            for (int i = 0; i < positions.Count - 1; i++)
+            {
+                if (radii[i] <= 0f) continue;
+
+                for (int j = i + 1; j < positions.Count; j++)
+                {
+                    if (radii[j] <= 0f) continue;
+
+                    Vector2 delta = positions[j] - positions[i];
+                    float minimumDistance = radii[i] + radii[j] + overlapPadding;
+                    float sqrDistance = delta.sqrMagnitude;
+                    if (sqrDistance >= minimumDistance * minimumDistance) continue;
+
+                    foundOverlap = true;
+                    float distance = Mathf.Sqrt(sqrDistance);
+                    Vector2 direction;
+                    if (distance > 0.0001f)
+                    {
+                        direction = delta / distance;
+                    }
+                    else
+                    {
+                        // 完全重合时使用稳定的确定性方向，避免随机抖动。
+                        float angle = (i * 37f + j * 83f) * Mathf.Deg2Rad;
+                        direction = new Vector2(Mathf.Cos(angle), Mathf.Sin(angle));
+                    }
+
+                    Vector2 correction = direction * ((minimumDistance - distance) * 0.5f + 0.0001f);
+                    positions[i] -= correction;
+                    positions[j] += correction;
+                }
+            }
+
+            for (int i = 0; i < positions.Count; i++)
+            {
+                if (radii[i] <= 0f) continue;
+                positions[i] = ClampToOrbitArea(positions[i], radii[i], center);
+            }
+
+            if (!foundOverlap) break;
+        }
+
+        // 极端密集或完全重合的初始布局可能让局部求解陷入死角。
+        // 最后使用安全环形排列兜底，确保画面上不会保留任何重叠。
+        if (HasOverlaps(positions, radii))
+            ArrangeOnSafeRing(positions, radii, center);
+    }
+
+    bool HasOverlaps(List<Vector2> positions, List<float> radii)
+    {
+        for (int i = 0; i < positions.Count - 1; i++)
+        {
+            if (radii[i] <= 0f) continue;
+
+            for (int j = i + 1; j < positions.Count; j++)
+            {
+                if (radii[j] <= 0f) continue;
+                float minimumDistance = radii[i] + radii[j] + overlapPadding;
+                if ((positions[j] - positions[i]).sqrMagnitude < minimumDistance * minimumDistance)
+                    return true;
+            }
+        }
+
+        return false;
+    }
+
+    void ArrangeOnSafeRing(List<Vector2> positions, List<float> radii, Vector2 center)
+    {
+        List<int> activeIndices = new List<int>();
+        float largestRadius = 0f;
+
+        for (int i = 0; i < positions.Count; i++)
+        {
+            if (radii[i] <= 0f) continue;
+            activeIndices.Add(i);
+            largestRadius = Mathf.Max(largestRadius, radii[i]);
+        }
+
+        if (activeIndices.Count == 0) return;
+
+        activeIndices.Sort((a, b) =>
+        {
+            Vector2 offsetA = positions[a] - center;
+            Vector2 offsetB = positions[b] - center;
+            return Mathf.Atan2(offsetA.y, offsetA.x).CompareTo(Mathf.Atan2(offsetB.y, offsetB.x));
+        });
+
+        Vector2 firstOffset = positions[activeIndices[0]] - center;
+        float startAngle = firstOffset.sqrMagnitude > 0.0001f
+            ? Mathf.Atan2(firstOffset.y, firstOffset.x)
+            : 0f;
+        float ringRadius = Mathf.Max(minRadius, maxRadius - largestRadius);
+        float angleStep = 2f * Mathf.PI / activeIndices.Count;
+
+        for (int slot = 0; slot < activeIndices.Count; slot++)
+        {
+            float angle = startAngle + slot * angleStep;
+            positions[activeIndices[slot]] = center + new Vector2(Mathf.Cos(angle), Mathf.Sin(angle)) * ringRadius;
+        }
+    }
+
+    Vector2 ClampToOrbitArea(Vector2 position, float visualRadius, Vector2 center)
+    {
+        Vector2 offset = position - center;
+        float distance = offset.magnitude;
+        Vector2 direction = distance > 0.0001f ? offset / distance : Vector2.right;
+        float maximumCenterRadius = Mathf.Max(minRadius, maxRadius - visualRadius);
+        float clampedDistance = Mathf.Clamp(distance, minRadius, maximumCenterRadius);
+        return center + direction * clampedDistance;
+    }
+
+    float GetVisualRadius(OrbitElement orbitElement)
+    {
+        if (orbitElement == null) return 0f;
+
+        SpriteRenderer spriteRenderer = orbitElement.GetComponent<SpriteRenderer>();
+        if (spriteRenderer != null && spriteRenderer.sprite != null)
+        {
+            Vector3 extents = spriteRenderer.bounds.extents;
+            return Mathf.Max(extents.x, extents.y);
+        }
+
+        return Mathf.Max(0.05f, orbitElementScale * 0.15f);
+    }
+
+    float EstimateVisualRadius(ElementData element)
+    {
+        Sprite sprite = ResolveElementSprite(element);
+        if (sprite == null)
+            return Mathf.Max(0.05f, orbitElementScale * 0.15f);
+
+        Vector3 parentScale = transform.lossyScale;
+        float worldScale = orbitElementScale * Mathf.Max(Mathf.Abs(parentScale.x), Mathf.Abs(parentScale.y));
+        Vector3 extents = sprite.bounds.extents;
+        return Mathf.Max(extents.x, extents.y) * worldScale;
     }
 
     OrbitElement CreateOrbitElement(ElementData data, float angle, float radius)
@@ -556,12 +720,11 @@ public class ThoughtOrbit : MonoBehaviour
     void DrawDebugInfo()
     {
         // 显示每个元素的安全距离范围
-        float minDistance = orbitElementScale * 0.8f;
         foreach (var oe in orbitElements)
         {
             if (oe == null) continue;
             Vector3 pos = oe.transform.position;
-            DrawCircle(pos, minDistance / 2f, Color.red, 0.2f);
+            DrawCircle(pos, GetVisualRadius(oe) + overlapPadding * 0.5f, Color.red, 0.2f);
         }
         
         // 显示可用区域边界

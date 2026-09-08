@@ -16,6 +16,10 @@ public class LoadShopScene : MonoBehaviour
 
     public void OpenShop()
     {
+        BookPet bookPet = FindObjectOfType<BookPet>();
+        if (bookPet != null)
+            bookPet.PrepareForSceneTransition();
+
         if (mainSceneRoot != null)
             mainSceneRoot.SetActive(false);
 

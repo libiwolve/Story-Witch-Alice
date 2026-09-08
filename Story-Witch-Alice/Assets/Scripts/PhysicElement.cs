@@ -9,6 +9,7 @@ public class PhysicsElement : MonoBehaviour, IBeginDragHandler, IDragHandler, IE
 {
     [Header("遗弃标记")]
     public GameObject markIcon;              // 垃圾桶图标预制体（在 Inspector 里拖入）
+    public float markIconVerticalOffset = 0.5f;
     private GameObject currentMarkIcon;      // 当前生成的图标实例
     private bool isMarkedForRemoval = false;  // 是否被标记为移除
     public ElementData elementData;
@@ -80,6 +81,11 @@ public class PhysicsElement : MonoBehaviour, IBeginDragHandler, IDragHandler, IE
                 ToggleMark();
             }
         }
+    }
+
+    void LateUpdate()
+    {
+        UpdateMarkIconTransform();
     }
 
     // ========== EventSystem 拖拽接口 ==========
@@ -235,8 +241,9 @@ public class PhysicsElement : MonoBehaviour, IBeginDragHandler, IDragHandler, IE
             // 生成垃圾桶图标（挂在元素上方）
             if (markIcon != null && currentMarkIcon == null)
             {
-                currentMarkIcon = Instantiate(markIcon, transform.position + Vector3.up * 0.5f, Quaternion.identity, transform);
+                currentMarkIcon = Instantiate(markIcon, transform.position, Quaternion.identity, transform);
                 currentMarkIcon.transform.localScale = Vector3.one * 0.8f;
+                UpdateMarkIconTransform();
             }
 
             ElementDisposalManager.Instance?.MarkElement(this);
@@ -256,6 +263,16 @@ public class PhysicsElement : MonoBehaviour, IBeginDragHandler, IDragHandler, IE
 
             ElementDisposalManager.Instance?.UnmarkElement(this);
         }
+    }
+
+    void UpdateMarkIconTransform()
+    {
+        if (currentMarkIcon == null) return;
+
+        // 标记跟随元素的位置，但使用世界坐标的正上方和零旋转，
+        // 避免元素受物理影响翻滚时图标跟着旋转或绕到侧面。
+        currentMarkIcon.transform.position = transform.position + Vector3.up * markIconVerticalOffset;
+        currentMarkIcon.transform.rotation = Quaternion.identity;
     }
 
     /// <summary>

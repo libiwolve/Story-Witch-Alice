@@ -85,6 +85,7 @@ public class AlchemyManager : MonoBehaviour
         // 坩埚宝石动画
         if (potGemController == null)
             potGemController = FindObjectOfType<PotGemController>();
+        SyncPotGemCount();
 
         // 日志文字
         if (logText == null)
@@ -252,9 +253,12 @@ public class AlchemyManager : MonoBehaviour
 
     public void AddIngredient(ElementData element)
     {
+        if (element == null) return;
+
         if (currentIngredients.Count >= 3)
         {
             AddLog("锅里已经满了，最多放3个原料");
+            SyncPotGemCount();
             return;
         }
 
@@ -263,8 +267,7 @@ public class AlchemyManager : MonoBehaviour
         thoughtOrbit?.MoveToFront(element.elementID);
         AddLog($"放入原料: {element.elementName}，当前锅里有 {currentIngredients.Count} 个原料");
 
-        if (potGemController != null)
-            potGemController.OnIngredientAdded(currentIngredients.Count);
+        SyncPotGemCount();
     }
 
     public void ManualCombine()
@@ -337,20 +340,14 @@ public class AlchemyManager : MonoBehaviour
             
 
             currentIngredients.Clear();
-            if (potGemController != null)
-            {    
-                potGemController.OnPotCleared();
-            }
+            SyncPotGemCount();
         }
         else
         {
             PlaySound(failSound);
             AddLog("合成失败，原料不匹配任何配方");
             currentIngredients.Clear();
-            if (potGemController != null)  
-            {
-                potGemController.OnPotCleared();
-            }
+            SyncPotGemCount();
         }
     }
 
@@ -395,7 +392,7 @@ public class AlchemyManager : MonoBehaviour
             glowObj.transform.localScale = Vector3.one * 0.6f;
 
             SpriteRenderer sr = glowObj.AddComponent<SpriteRenderer>();
-            sr.sortingLayerName = "Foreground";
+            PlaceGlowBehindProduct(sr, product);
 
             Animator anim = glowObj.AddComponent<Animator>();
             anim.runtimeAnimatorController = goldGlowController;
@@ -410,7 +407,7 @@ public class AlchemyManager : MonoBehaviour
             glowObj.transform.localScale = Vector3.one * 0.6f;
 
             SpriteRenderer sr = glowObj.AddComponent<SpriteRenderer>();
-            sr.sortingLayerName = "Foreground";
+            PlaceGlowBehindProduct(sr, product);
 
             Animator anim = glowObj.AddComponent<Animator>();
             anim.runtimeAnimatorController = blueGlowController;
@@ -438,8 +435,43 @@ public class AlchemyManager : MonoBehaviour
     {
         currentIngredients.Clear();
         AddLog("锅已清空");
+        SyncPotGemCount();
+    }
+
+    private void SyncPotGemCount()
+    {
         if (potGemController != null)
-            potGemController.OnPotCleared();
+            potGemController.SetIngredientCount(currentIngredients.Count);
+    }
+
+    private static void PlaceGlowBehindProduct(SpriteRenderer glowRenderer, GameObject product)
+    {
+        SpriteRenderer[] productRenderers = product.GetComponentsInChildren<SpriteRenderer>(true);
+        SpriteRenderer backmostRenderer = null;
+
+        foreach (SpriteRenderer renderer in productRenderers)
+        {
+            if (renderer == null || renderer == glowRenderer) continue;
+
+            if (backmostRenderer == null)
+            {
+                backmostRenderer = renderer;
+                continue;
+            }
+
+            int layerValue = SortingLayer.GetLayerValueFromID(renderer.sortingLayerID);
+            int backmostLayerValue = SortingLayer.GetLayerValueFromID(backmostRenderer.sortingLayerID);
+            if (layerValue < backmostLayerValue ||
+                (layerValue == backmostLayerValue && renderer.sortingOrder < backmostRenderer.sortingOrder))
+            {
+                backmostRenderer = renderer;
+            }
+        }
+
+        if (backmostRenderer == null) return;
+
+        glowRenderer.sortingLayerID = backmostRenderer.sortingLayerID;
+        glowRenderer.sortingOrder = backmostRenderer.sortingOrder - 1;
     }
 
     /// <summary>
