@@ -72,6 +72,7 @@ public class PhysicsElement : MonoBehaviour, IBeginDragHandler, IDragHandler, IE
     }
     void Update()
     {
+        if (EventCardSystem.BlocksInput) return;
         if (Input.GetMouseButtonDown(1))
         {
             Ray ray = mainCamera.ScreenPointToRay(Input.mousePosition);

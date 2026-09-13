@@ -419,6 +419,7 @@ IEnumerator LightUpNode(SynthesisNodeData node)
 
     void HandlePan()
     {
+        if (EventCardSystem.BlocksInput) return;
         if (Input.GetMouseButtonDown(2))
         {
             isPanning = true;

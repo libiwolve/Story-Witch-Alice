@@ -24,6 +24,12 @@ public class ShopManager : MonoBehaviour
             CurrencyManager.Instance.OnThoughtsChanged += UpdateThoughtsDisplay;
     }
 
+    void OnDestroy()
+    {
+        if (CurrencyManager.Instance != null)
+            CurrencyManager.Instance.OnThoughtsChanged -= UpdateThoughtsDisplay;
+    }
+
     public void OpenShop(RemnantData remnant)
     {
         currentRemnant = remnant;

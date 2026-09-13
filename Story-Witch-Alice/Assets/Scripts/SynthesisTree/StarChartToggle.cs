@@ -12,6 +12,7 @@ public class StarChartToggle : MonoBehaviour, IPointerClickHandler
 
     void Update()
     {
+        if (EventCardSystem.BlocksInput) return;
         if (Input.GetKeyDown(KeyCode.Tab))
             Toggle();
     }

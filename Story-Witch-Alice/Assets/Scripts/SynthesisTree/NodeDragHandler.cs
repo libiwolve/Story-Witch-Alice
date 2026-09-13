@@ -47,6 +47,7 @@ public class NodeDragHandler : MonoBehaviour
 
     void Update()
     {
+        if (EventCardSystem.BlocksInput) return;
         // 右键拖出
         if (isHovering && Input.GetMouseButtonDown(1))
         {

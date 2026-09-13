@@ -23,6 +23,7 @@ public class ElementDisposalManager : MonoBehaviour
 
     void Update()
     {
+        if (EventCardSystem.BlocksInput) return;
         if (Input.GetKeyDown(clearAllKey) && !isDisposing)
         {
             StartCoroutine(DisposeAllMarkedElements());
