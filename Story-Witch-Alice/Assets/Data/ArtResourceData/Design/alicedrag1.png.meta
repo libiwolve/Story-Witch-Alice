@@ -101,9 +101,9 @@ TextureImporter:
       rect:
         serializedVersion: 2
         x: 0
-        y: 1152
-        width: 256
-        height: 384
+        y: 0
+        width: 720
+        height: 1080
       alignment: 0
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -121,10 +121,10 @@ TextureImporter:
       name: alicedrag1_1
       rect:
         serializedVersion: 2
-        x: 256
-        y: 1152
-        width: 256
-        height: 384
+        x: 720
+        y: 0
+        width: 720
+        height: 1080
       alignment: 0
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -142,10 +142,10 @@ TextureImporter:
       name: alicedrag1_2
       rect:
         serializedVersion: 2
-        x: 512
-        y: 1152
-        width: 256
-        height: 384
+        x: 1440
+        y: 0
+        width: 720
+        height: 1080
       alignment: 0
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -163,10 +163,10 @@ TextureImporter:
       name: alicedrag1_3
       rect:
         serializedVersion: 2
-        x: 768
-        y: 1152
-        width: 256
-        height: 384
+        x: 2160
+        y: 0
+        width: 720
+        height: 1080
       alignment: 0
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -184,10 +184,10 @@ TextureImporter:
       name: alicedrag1_4
       rect:
         serializedVersion: 2
-        x: 0
-        y: 768
-        width: 256
-        height: 384
+        x: 2880
+        y: 0
+        width: 720
+        height: 1080
       alignment: 0
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -205,10 +205,10 @@ TextureImporter:
       name: alicedrag1_5
       rect:
         serializedVersion: 2
-        x: 256
-        y: 768
-        width: 256
-        height: 384
+        x: 3600
+        y: 0
+        width: 720
+        height: 1080
       alignment: 0
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -226,10 +226,10 @@ TextureImporter:
       name: alicedrag1_6
       rect:
         serializedVersion: 2
-        x: 512
-        y: 768
-        width: 256
-        height: 384
+        x: 4320
+        y: 0
+        width: 720
+        height: 1080
       alignment: 0
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -247,10 +247,10 @@ TextureImporter:
       name: alicedrag1_7
       rect:
         serializedVersion: 2
-        x: 768
-        y: 768
-        width: 256
-        height: 384
+        x: 5040
+        y: 0
+        width: 720
+        height: 1080
       alignment: 0
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -260,132 +260,6 @@ TextureImporter:
       bones: []
       spriteID: 29f71bf01de3444468c8e6bcd3728ef6
       internalID: -1835728744
-      vertices: []
-      indices: 
-      edges: []
-      weights: []
-    - serializedVersion: 2
-      name: alicedrag1_8
-      rect:
-        serializedVersion: 2
-        x: 0
-        y: 384
-        width: 256
-        height: 384
-      alignment: 0
-      pivot: {x: 0, y: 0}
-      border: {x: 0, y: 0, z: 0, w: 0}
-      outline: []
-      physicsShape: []
-      tessellationDetail: 0
-      bones: []
-      spriteID: abccd22de13fc2e49b12ff92df1591d9
-      internalID: -1426992772
-      vertices: []
-      indices: 
-      edges: []
-      weights: []
-    - serializedVersion: 2
-      name: alicedrag1_9
-      rect:
-        serializedVersion: 2
-        x: 256
-        y: 384
-        width: 256
-        height: 384
-      alignment: 0
-      pivot: {x: 0, y: 0}
-      border: {x: 0, y: 0, z: 0, w: 0}
-      outline: []
-      physicsShape: []
-      tessellationDetail: 0
-      bones: []
-      spriteID: 2691459b04b19ef4c95e47851483e616
-      internalID: -1537437865
-      vertices: []
-      indices: 
-      edges: []
-      weights: []
-    - serializedVersion: 2
-      name: alicedrag1_10
-      rect:
-        serializedVersion: 2
-        x: 512
-        y: 384
-        width: 256
-        height: 384
-      alignment: 0
-      pivot: {x: 0, y: 0}
-      border: {x: 0, y: 0, z: 0, w: 0}
-      outline: []
-      physicsShape: []
-      tessellationDetail: 0
-      bones: []
-      spriteID: e6887f3fc37247943873d68c139f7cf1
-      internalID: -1669591268
-      vertices: []
-      indices: 
-      edges: []
-      weights: []
-    - serializedVersion: 2
-      name: alicedrag1_11
-      rect:
-        serializedVersion: 2
-        x: 768
-        y: 384
-        width: 256
-        height: 384
-      alignment: 0
-      pivot: {x: 0, y: 0}
-      border: {x: 0, y: 0, z: 0, w: 0}
-      outline: []
-      physicsShape: []
-      tessellationDetail: 0
-      bones: []
-      spriteID: 9ec45f664378ff14691bfbc0734bf84d
-      internalID: 300443144
-      vertices: []
-      indices: 
-      edges: []
-      weights: []
-    - serializedVersion: 2
-      name: alicedrag1_12
-      rect:
-        serializedVersion: 2
-        x: 0
-        y: 0
-        width: 256
-        height: 384
-      alignment: 0
-      pivot: {x: 0, y: 0}
-      border: {x: 0, y: 0, z: 0, w: 0}
-      outline: []
-      physicsShape: []
-      tessellationDetail: 0
-      bones: []
-      spriteID: c864ea2c640365245890f0e8bf0599f9
-      internalID: 317277776
-      vertices: []
-      indices: 
-      edges: []
-      weights: []
-    - serializedVersion: 2
-      name: alicedrag1_13
-      rect:
-        serializedVersion: 2
-        x: 256
-        y: 0
-        width: 256
-        height: 384
-      alignment: 0
-      pivot: {x: 0, y: 0}
-      border: {x: 0, y: 0, z: 0, w: 0}
-      outline: []
-      physicsShape: []
-      tessellationDetail: 0
-      bones: []
-      spriteID: 8fe17d63bf1eede4381dc3a6185f062b
-      internalID: -632933707
       vertices: []
       indices: 
       edges: []
@@ -403,18 +277,12 @@ TextureImporter:
     nameFileIdTable:
       alicedrag1_0: -751563281
       alicedrag1_1: -1302323270
-      alicedrag1_10: -1669591268
-      alicedrag1_11: 300443144
-      alicedrag1_12: 317277776
-      alicedrag1_13: -632933707
       alicedrag1_2: -943776169
       alicedrag1_3: 157515990
       alicedrag1_4: -376799087
       alicedrag1_5: 772185977
       alicedrag1_6: -264904893
       alicedrag1_7: -1835728744
-      alicedrag1_8: -1426992772
-      alicedrag1_9: -1537437865
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 
